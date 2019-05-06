@@ -277,7 +277,7 @@ class readFile:
                     pass
 
                 # soluzione Subproblem Prob2
-                if (row[0].startswitch("M")):
+                if (row[0].startswith("M")):
                     row.pop(0)
                     self.listaMezzi = []
                     for i in range(len(row)):
@@ -289,7 +289,7 @@ class readFile:
                     pass
 
                 # lettura dei clienti assegnati al relativo satellite
-                if (row[0].startwitch("C")):
+                if (row[0].startswith("C")):
                     row.pop(0)
                     self.conta_PsGa += 1
                     self.listaClienti = []
@@ -297,7 +297,7 @@ class readFile:
                     pass
 
                 # lettura domande dei rispettivi clienti al punto sopra
-                if (row[0].startwitch("D")):
+                if (row[0].startswith("D")):
                     row.pop(0)
                     for i in range(len(row)):
                         myKey = (self.conta_PsGa, self.listaClienti[i])
