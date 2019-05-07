@@ -56,6 +56,9 @@ class readFile:
         # max number of pallets cross-docking in satellite s in S
         self.pisPark = {}
 
+        # set of Sneg
+        self. Sneg = []
+
         # dictionary of K2diS[s]
         # mezzi k2 assegnati ad ogni satellite
         self.K2diS = {}
@@ -278,6 +281,8 @@ class readFile:
 
                 # soluzione Subproblem Prob2
                 if (row[0].startswith("M")):
+                    # aggiunto il satellite alla lista Sneg poichè soluzione del Probl 1
+                    self.Sneg.append(int(''.join(filter(str.isdigit, row[0]))))
                     row.pop(0)
                     self.listaMezzi = []
                     for i in range(len(row)):
@@ -404,3 +409,7 @@ class readFile:
     # dictionary of parameter PsGa
     def get_PsGa (self):
         return self.PsGa
+
+    # set of Sneg
+    def get_Sneg (self):
+        return self.Sneg

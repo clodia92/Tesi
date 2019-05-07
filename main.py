@@ -37,6 +37,7 @@ class Prob3:
         print("Lunghezza A2 --> ", len(myRead.get_setOfArcA2()))
         print("Mezzi Prob2 -->", myRead.get_K2diS())
         print("Domande -->", myRead.get_PsGa())
+        print("Sneg -->", myRead.get_Sneg())
 
         pass
 
