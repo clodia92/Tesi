@@ -123,13 +123,13 @@ class readFile:
                     # print("conta_a2 = ", self.conta_a2)
 
                     # number of vehicles in the second echelon K2
-                    self.NumberOfVehiclesEchelon2Park = int(row[4]);
+                    self.NumberOfVehiclesEchelon2Park = int(row[4])
                     
                     for i in range(self.NumberOfVehiclesEchelon2Park):
                         self.vehiclesK2SetPark.append(i + self.NumberOfVehiclesEchelon1Park + 1)
                         pass
 
-                        # number of customers GAMMA
+                    # number of customers GAMMA
                     self.NumberOfCustomersPark = int(row[5])
                     for i in range(self.NumberOfCustomersPark):
                         self.customersSetPark.append(i + 1 + self.NumberOfSatellitesPark)
@@ -267,7 +267,7 @@ class readFile:
                         else:
                             self.Pgac[myKey] = 1
                         pass
-                    self.pcPark[self.conta_Pc] = self.listCustomers;
+                    self.pcPark[self.conta_Pc] = self.listCustomers
                     # print ("pcPark = ", self.pcPark)
 
                     self.conta_Pc += 1

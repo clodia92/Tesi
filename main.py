@@ -1,4 +1,5 @@
 from lettura import readFile
+from solutionBase import Solution
 
 
 class Prob3:
@@ -113,10 +114,10 @@ class Prob3:
         # set of vehicles K2 (second echelon)
         self.K2 = myRead.get_setOfVehicles2nd()
 
-        # dictionary of x2[k][gamma](i,j) variables (second echelon)
+        # dictionary of x2[(k, gamma, i, j)] variables (second echelon)
         self.x2 = {}
 
-        # dictionary of w2[k](i,j) variables (second echelon)
+        # dictionary of w2[(k, i, j)] variables (second echelon)
         self.w2 = {}
 
         # dictionary of C[s]
@@ -152,3 +153,12 @@ if __name__ == "__main__":
     print("Start Prob3: ")
     myProb = Prob3("2_2_100_0_20")
 
+    # ogni rotta viene calcolata per ogni satellite separatamente
+    # for s in myProb.Sneg:
+    #     mySolution = Solution()
+    #
+    #     mySolution.findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+
+    # solo primo satellite temporaneamente (vedi for precedente
+    mySolution = Solution()
+    mySolution.findSolutionBase(1, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
