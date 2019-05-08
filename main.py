@@ -161,4 +161,4 @@ if __name__ == "__main__":
 
     # solo primo satellite temporaneamente (vedi for precedente
     mySolution = Solution()
-    mySolution.findSolutionBase(1, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+    mySolution.findSolutionBase(2, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)

@@ -9,19 +9,26 @@ class Solution:
 
         # x2[(k, gamma, i, j)]
         # w2[(k, i, j)]
-        # uk2
+        #- uk2
         # Pgac
-        # PsGa
-        # K2diS[s]
-        # A2
-        # GammadiS
+        #- PsGa
+        #- K2diS[s]
+        #- A2
+        #- GammadiS
         # CdiS
 
         for v in K2diS[s]:
             print("uk2[{}]: {}".format(v, uk2[v]))
-        print("Pgac: {}".format(Pgac))
-        print("PsGa: {}".format(PsGa))
+
+        for gamma in GammadiS[s]:
+            print("PsGa[({}, {})]: {}".format(s, gamma, PsGa[(s, gamma)]))
+
         print("K2diS[{}]: {}".format(s, K2diS[s]))
-        print("A2: {}".format(A2))
-        print("GammadiS: {}".format(GammadiS))
+
+        print("A2: ")
+        for arc in A2:
+            if ((s == arc[0]) and arc[1] in GammadiS[s]) or ((arc[0] in GammadiS[s]) and (arc[1] in GammadiS[s])):
+                    print(arc)
+
+        print("GammadiS[{}]: {}".format(s, GammadiS[s]))
         print("CdiS: {}".format(CdiS))
