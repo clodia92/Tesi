@@ -56,6 +56,10 @@ class readFile:
         # max number of pallets cross-docking in satellite s in S
         self.pisPark = {}
 
+        # dictionary of Pgac[c,ga]
+        # number of pallets in container c in C which have destination ga in gam
+        self.Pgac = {}
+
         # set of Sneg
         self. Sneg = []
 
@@ -255,7 +259,13 @@ class readFile:
                     row.pop(0)
                     self.listCustomers = []
                     for i in range(len(row)):
-                        self.listCustomers.append(int(row[i]))
+                        self.cliente=int(row[i])
+                        myKey = (self.conta_Pc, self.cliente)
+                        self.listCustomers.append(self.cliente)
+                        if myKey in self.Pgac:
+                            self.Pgac[myKey] += 1
+                        else:
+                            self.Pgac[myKey] = 1
                         pass
                     self.pcPark[self.conta_Pc] = self.listCustomers;
                     # print ("pcPark = ", self.pcPark)
@@ -413,3 +423,7 @@ class readFile:
     # set of Sneg
     def get_Sneg (self):
         return self.Sneg
+
+    # dictionary of Pgac[c,ga]
+    def get_Pgac (self):
+        return self.Pgac

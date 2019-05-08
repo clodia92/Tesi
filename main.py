@@ -38,6 +38,7 @@ class Prob3:
         # print("Mezzi Prob2 -->", myRead.get_K2diS())
         # print("Domande -->", myRead.get_PsGa())
         # print("Sneg -->", myRead.get_Sneg())
+        # print("Pgac -->", myRead.get_Pgac())
 
         # fixed cost of selection of satellite s in S
         self.fs = myRead.get_dictionaryOfFs()
@@ -66,13 +67,12 @@ class Prob3:
 
         # dictionary of Pgac[c,ga]
         # number of pallets in container c in C which have destination ga in gam
-        self.Pgac = {}    ### <------- si può ricavare da pc1, pc2, ...
+        self.Pgac = myRead.get_Pgac()
 
         self.PalletInContainer = myRead.get_dictionaryOfPalletInContainer()
 
         # max number of pallets can be carried by vehicle k in K2 (second echelon)
         self.uk2 = myRead.get_dictionaryOfUk2()
-        print("self.uk2: ", self.uk2)
 
         # max number of containers entering satellite s in S
         self.us = myRead.get_dictionaryOfUs()
