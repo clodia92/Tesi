@@ -17,4 +17,11 @@ class Solution:
         # GammadiS
         # CdiS
 
-        print("K2diS: ", K2diS[s])
+        for v in K2diS[s]:
+            print("uk2[{}]: {}".format(v, uk2[v]))
+        print("Pgac: {}".format(Pgac))
+        print("PsGa: {}".format(PsGa))
+        print("K2diS[{}]: {}".format(s, K2diS[s]))
+        print("A2: {}".format(A2))
+        print("GammadiS: {}".format(GammadiS))
+        print("CdiS: {}".format(CdiS))

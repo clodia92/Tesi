@@ -130,7 +130,7 @@ class Prob3:
 
         # dictionary of Gamma[s]
         # set of customers served by satellite s
-        self.GammadiS = {}
+        self.GammadiS = myRead.get_GammadiS()
 
         # dictionary of K2diS[s]
         # set of vehicules K2 assigned to satellite s (when zks is 1)

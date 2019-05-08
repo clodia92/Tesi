@@ -61,7 +61,10 @@ class readFile:
         self.Pgac = {}
 
         # set of Sneg
-        self. Sneg = []
+        self.Sneg = []
+
+        # dictionary of GammadiS[s]
+        self.GammadiS = {}
 
         # dictionary of K2diS[s]
         # mezzi k2 assegnati ad ogni satellite
@@ -305,10 +308,12 @@ class readFile:
 
                 # lettura dei clienti assegnati al relativo satellite
                 if (row[0].startswith("C")):
+                    myKey = int(''.join(filter(str.isdigit, row[0])))
                     row.pop(0)
                     self.conta_PsGa += 1
                     self.listaClienti = []
                     self.listaClienti = [int(i) for i in row]
+                    self.GammadiS[myKey] = self.listaClienti
                     pass
 
                 # lettura domande dei rispettivi clienti al punto sopra
@@ -423,6 +428,10 @@ class readFile:
     # set of Sneg
     def get_Sneg (self):
         return self.Sneg
+
+    # dictionary of GammadiS[s]
+    def get_GammadiS(self):
+        return self.GammadiS
 
     # dictionary of Pgac[c,ga]
     def get_Pgac (self):
