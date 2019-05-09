@@ -35,3 +35,7 @@ class Solution:
         print("GammadiS[{}]: {}".format(s, GammadiS[s]))
         print("CdiS: {}".format(CdiS))
 
+
+        numeroVeicoliDiS= len(K2diS[s])
+
+
