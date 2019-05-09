@@ -17,15 +17,36 @@ class Solution:
         #- GammadiS
         # CdiS
 
+        # dizionatio che contiene i pallet richiesti dai clienti di s
+        PGa = {}
+
+        # lista dei veicoli assegnati ad s nel Prob2
+        K2 = []
+
+        # numero massimo di pallet trasportabili dal veicolo k che serve s
+        uk2diS = {}
+
+        # lista dei clienti di s
+        Gamma = GammadiS[s]
+
+        # pallet totali che partono da s
+        palletDaConsegnare = 0
+
         for v in K2diS[s]:
             print("uk2[{}]: {}".format(v, uk2[v]))
+            uk2diS [v] = uk2[v]
+
 
         print("Pgac: {}".format(Pgac))
 
         for gamma in GammadiS[s]:
             print("PsGa[({}, {})]: {}".format(s, gamma, PsGa[(s, gamma)]))
+            PGa[gamma] = PsGa[(s, gamma)]
+            palletDaConsegnare += PGa[gamma]
 
         print("K2diS[{}]: {}".format(s, K2diS[s]))
+
+        K2 = K2diS[s]
 
         print("A2: ")
         for arc in A2:
@@ -35,7 +56,13 @@ class Solution:
         print("GammadiS[{}]: {}".format(s, GammadiS[s]))
         print("CdiS: {}".format(CdiS))
 
+        # iterazione per scorrere i veicoli e i clienti di gamma
+        posV = 0
+        posG = 0
 
-        numeroVeicoliDiS= len(K2diS[s])
+
+        #while (palletDaConsegnare > 0):
+
+
 
 

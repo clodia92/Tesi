@@ -37,9 +37,9 @@ class Prob3:
         # print("Dizionario di pis -->", myRead.get_dictionaryOfPis())
         # print("Lunghezza A2 --> ", len(myRead.get_setOfArcA2()))
         # print("Mezzi Prob2 -->", myRead.get_K2diS())
-        print("Domande -->", myRead.get_PsGa())
+        # print("Domande -->", myRead.get_PsGa())
         # print("Sneg -->", myRead.get_Sneg())
-        print("Pgac -->", myRead.get_Pgac())
+        # print("Pgac -->", myRead.get_Pgac())
 
         # fixed cost of selection of satellite s in S
         self.fs = myRead.get_dictionaryOfFs()
