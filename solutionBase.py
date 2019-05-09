@@ -23,11 +23,17 @@ class Solution:
         # lista dei veicoli assegnati ad s nel Prob2
         K2 = []
 
+        # pallet trasportati da ogni k2 che serve s
+        palletTrasportati = []
+
         # numero massimo di pallet trasportabili dal veicolo k che serve s
         uk2diS = {}
 
         # lista dei clienti di s
         Gamma = GammadiS[s]
+
+        # dizionario delle rotte per ogni veicolo : rotta [ k ] = ( gamma1, pallet1) , ( gamma2, pallet2) , ( gamma3, pallet3) ....
+        rotte = {}
 
         # pallet totali che partono da s
         palletDaConsegnare = 0
@@ -60,9 +66,38 @@ class Solution:
         posV = 0
         posG = 0
 
+        for k in K2:
+            palletTrasportati[k] = 0
 
-        #while (palletDaConsegnare > 0):
+        while (palletDaConsegnare > 0):
+            # cicla finchè non trova un veicolo con ancora spazio
+            while (palletTrasportati[posV] >= uk2 [posV]):
+                posV = (posV + 1) % len(K2)
+
+            # se il cliente deve ancora ricevere dei pallet
+            if (PGa[posG] > 0):
+                # consegna a gamma
+                if (PGa[posG] <= (uk2diS[posV] - palletTrasportati[posV])):
+                    # aggiorno le rotte
+                    rotte[K2[posV]] += [(Gamma[posG], PGa[posG])]
+
+                    palletDaConsegnare -= PGa[posG]
+                    palletTrasportati[posV] += PGa[posG]
+                    PGa[posG] = 0
+                else:
+                    # aggiorno le rotte
+                    rotte[K2[posV]] += [(Gamma[posG], (uk2diS[posV] - palletTrasportati[posV]))]
+                    
+                    palletDaConsegnare -= uk2diS[posV] - palletTrasportati[posV]
+                    PGa[posG] -= uk2diS[posV] - palletTrasportati[posV]
+                    palletTrasportati[posV] += PGa[posG] # full
+
+                # passo al veicolo sucessivo
+                posV = (posV + 1) % len(K2)
+
+            # passo al cliente sucessivo
+            posG = (posG + 1) % len(Gamma)
 
 
-
+        # aggiornare x2 e w2 in base a rotte[k]
 
