@@ -37,9 +37,9 @@ class Prob3:
         # print("Dizionario di pis -->", myRead.get_dictionaryOfPis())
         # print("Lunghezza A2 --> ", len(myRead.get_setOfArcA2()))
         # print("Mezzi Prob2 -->", myRead.get_K2diS())
-        # print("Domande -->", myRead.get_PsGa())
+        print("Domande -->", myRead.get_PsGa())
         # print("Sneg -->", myRead.get_Sneg())
-        # print("Pgac -->", myRead.get_Pgac())
+        print("Pgac -->", myRead.get_Pgac())
 
         # fixed cost of selection of satellite s in S
         self.fs = myRead.get_dictionaryOfFs()
@@ -160,5 +160,5 @@ if __name__ == "__main__":
     #     mySolution.findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
 
     # solo primo satellite temporaneamente (vedi for precedente
-    mySolution = Solution()
-    mySolution.findSolutionBase(2, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+    #mySolution = Solution()
+    #mySolution.findSolutionBase(2, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)

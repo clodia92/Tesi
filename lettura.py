@@ -66,6 +66,12 @@ class readFile:
         # dictionary of GammadiS[s]
         self.GammadiS = {}
 
+        #dictionary of CdiS[s]
+        self.CdiS = {}
+
+        # lista container satellite s
+        self.listaContainer = []
+
         # dictionary of K2diS[s]
         # mezzi k2 assegnati ad ogni satellite
         self.K2diS = {}
@@ -307,7 +313,7 @@ class readFile:
                     pass
 
                 # lettura dei clienti assegnati al relativo satellite
-                if (row[0].startswith("C")):
+                if (row[0].startswith("G")):
                     myKey = int(''.join(filter(str.isdigit, row[0])))
                     row.pop(0)
                     self.conta_PsGa += 1
@@ -323,6 +329,15 @@ class readFile:
                         myKey = (self.conta_PsGa, self.listaClienti[i])
                         self.PsGa[myKey] = int(row[i])
                         pass
+                    pass
+
+                if (row[0].startswith("C")):
+                    myKey = int(''.join(filter(str.isdigit, row[0])))
+                    row.pop(0)
+
+                    self.listaContainer = []
+                    self.listaContainer = [int(i) for i in row]
+                    self.CdiS[myKey] = self.listaContainer
                     pass
 
     # number of satellites S
