@@ -1,6 +1,6 @@
 from lettura import readFile
 from solutionBase import Solution
-
+from generateVariables import generateVariablesModelThree
 
 class Prob3:
 
@@ -154,11 +154,13 @@ if __name__ == "__main__":
     myProb = Prob3("2_2_100_0_20")
 
     # ogni rotta viene calcolata per ogni satellite separatamente
-    # for s in myProb.Sneg:
-    #     mySolution = Solution()
-    #
-    #     mySolution.findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+    for s in myProb.Sneg:
+        # generate variables for Model Three
+        generateVariablesModelThree(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, s)
+        mySolution = Solution()
+
+        mySolution.findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
 
     # solo primo satellite temporaneamente (vedi for precedente
-    mySolution = Solution()
-    mySolution.findSolutionBase(2, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+    #mySolution = Solution()
+    #mySolution.findSolutionBase(2, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)

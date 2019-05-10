@@ -66,8 +66,8 @@ class Solution:
         posV = 0
         posG = 0
 
-        for k in K2:
-            palletTrasportati[k] = 0
+
+        palletTrasportati = [0] * len(K2)
 
         while (palletDaConsegnare > 0):
             # cicla finchè non trova un veicolo con ancora spazio
@@ -87,7 +87,7 @@ class Solution:
                 else:
                     # aggiorno le rotte
                     rotte[K2[posV]] += [(Gamma[posG], (uk2diS[posV] - palletTrasportati[posV]))]
-                    
+
                     palletDaConsegnare -= uk2diS[posV] - palletTrasportati[posV]
                     PGa[posG] -= uk2diS[posV] - palletTrasportati[posV]
                     palletTrasportati[posV] += PGa[posG] # full
@@ -100,4 +100,14 @@ class Solution:
 
 
         # aggiornare x2 e w2 in base a rotte[k]
+        arcoI = s
+
+        for k in K2:
+            for (g , p) in rotte[k]:
+                x2[(k , g, arcoI, g)] = p
+                w2[(k, arcoI, g)]=1
+
+                arcoI=g
+
+        
 
