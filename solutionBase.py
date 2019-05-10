@@ -39,28 +39,28 @@ class Solution:
         palletDaConsegnare = 0
 
         for v in K2diS[s]:
-            print("uk2[{}]: {}".format(v, uk2[v]))
+            # print("uk2[{}]: {}".format(v, uk2[v]))
             uk2diS [v] = uk2[v]
 
 
-        print("Pgac: {}".format(Pgac))
+        # print("Pgac: {}".format(Pgac))
 
         for gamma in GammadiS[s]:
-            print("PsGa[({}, {})]: {}".format(s, gamma, PsGa[(s, gamma)]))
+            # print("PsGa[({}, {})]: {}".format(s, gamma, PsGa[(s, gamma)]))
             PGa[gamma] = PsGa[(s, gamma)]
             palletDaConsegnare += PGa[gamma]
 
-        print("K2diS[{}]: {}".format(s, K2diS[s]))
+        # print("K2diS[{}]: {}".format(s, K2diS[s]))
 
         K2 = K2diS[s]
 
-        print("A2: ")
-        for arc in A2:
-            if ((s == arc[0]) and arc[1] in GammadiS[s]) or ((arc[0] in GammadiS[s]) and (arc[1] in GammadiS[s])):
-                print(arc)
-
-        print("GammadiS[{}]: {}".format(s, GammadiS[s]))
-        print("CdiS: {}".format(CdiS))
+        # print("A2: ")
+        # for arc in A2:
+        #     if ((s == arc[0]) and arc[1] in GammadiS[s]) or ((arc[0] in GammadiS[s]) and (arc[1] in GammadiS[s])):
+        #         print(arc)
+        #
+        # print("GammadiS[{}]: {}".format(s, GammadiS[s]))
+        # print("CdiS: {}".format(CdiS))
 
         # iterazione per scorrere i veicoli e i clienti di gamma
         posV = 0
@@ -71,26 +71,32 @@ class Solution:
 
         while (palletDaConsegnare > 0):
             # cicla finchè non trova un veicolo con ancora spazio
-            while (palletTrasportati[posV] >= uk2 [posV]):
+            while (palletTrasportati[posV] >= uk2diS [K2[posV]]):
                 posV = (posV + 1) % len(K2)
 
             # se il cliente deve ancora ricevere dei pallet
-            if (PGa[posG] > 0):
+            if (PGa[Gamma[posG]] > 0):
                 # consegna a gamma
-                if (PGa[posG] <= (uk2diS[posV] - palletTrasportati[posV])):
+                if (PGa[Gamma[posG]] <= (uk2diS[K2[posV]] - palletTrasportati[posV])):
                     # aggiorno le rotte
-                    rotte[K2[posV]] += [(Gamma[posG], PGa[posG])]
+                    if K2[posV] in rotte:
+                        rotte[K2[posV]] += [(Gamma[posG], PGa[Gamma[posG]])]
+                    else:
+                        rotte[K2[posV]] = [(Gamma[posG], PGa[Gamma[posG]])]
 
-                    palletDaConsegnare -= PGa[posG]
-                    palletTrasportati[posV] += PGa[posG]
-                    PGa[posG] = 0
+                    palletDaConsegnare -= PGa[Gamma[posG]]
+                    palletTrasportati[posV] += PGa[Gamma[posG]]
+                    PGa[Gamma[posG]] = 0
                 else:
                     # aggiorno le rotte
-                    rotte[K2[posV]] += [(Gamma[posG], (uk2diS[posV] - palletTrasportati[posV]))]
+                    if K2[posV] in rotte:
+                        rotte[K2[posV]] += [(Gamma[posG], (uk2diS[K2[posV]] - palletTrasportati[posV]))]
+                    else:
+                        rotte[K2[posV]] = [(Gamma[posG], (uk2diS[K2[posV]] - palletTrasportati[posV]))]
 
-                    palletDaConsegnare -= uk2diS[posV] - palletTrasportati[posV]
-                    PGa[posG] -= uk2diS[posV] - palletTrasportati[posV]
-                    palletTrasportati[posV] += PGa[posG] # full
+                    palletDaConsegnare -= uk2diS[K2[posV]] - palletTrasportati[posV]
+                    PGa[Gamma[posG]] -= uk2diS[K2[posV]] - palletTrasportati[posV]
+                    palletTrasportati[posV] += PGa[Gamma[posG]] # full
 
                 # passo al veicolo sucessivo
                 posV = (posV + 1) % len(K2)
@@ -109,5 +115,5 @@ class Solution:
 
                 arcoI=g
 
-        
 
+        print(rotte)
