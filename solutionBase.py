@@ -34,10 +34,6 @@ class Solution:
 
         # dizionario delle rotte per ogni veicolo : rotta [ k ] = ( gamma1, pallet1) , ( gamma2, pallet2) , ( gamma3, pallet3) ....
         rotte = {}
-        # dizionario delle rotte per ogni veicolo (contiene solo i clienti)
-        rotteOnlyGamma = {}
-        # dizionario delle rotte per ogni veicolo (contiene solo i pallet)
-        rotteOnlypallet = {}
 
         # pallet totali che partono da s
         palletDaConsegnare = 0
@@ -113,21 +109,10 @@ class Solution:
         arcoI = s
 
         for k in K2:
-            # rotteOnlyGamma[k]: [[rotta], pallet totali]
-            rotteOnlyGamma[k] = [[tuple[0] for tuple in rotte.get(k, [])], sum(p for _, p in rotte.get(k, []))]
-            rotteOnlyGamma[k][0].insert(0, s)
-
-            #for g in rotteOnlyGamma[k]
-
             for (g , p) in rotte[k]:
                 x2[(k , g, arcoI, g)] = p
                 w2[(k, arcoI, g)] = 1
 
                 arcoI = g
 
-        # for k in K2:
-        #    for i, j in rotteOnlyGamma[k]:
-        #        # prendere da rotte il numero di pallet e sommare
-
         print("rotte: {}".format(rotte))
-        print("rotteOnlyGamma: {}".format(rotteOnlyGamma))
