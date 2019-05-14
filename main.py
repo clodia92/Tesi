@@ -160,6 +160,11 @@ if __name__ == "__main__":
         mySolution = Solution()
 
 
-
-        mySolution.findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+        # trova una soluzione di base ammissibile
+        if mySolution.findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS):
+            # procedi con local search
+            print("soluzione di base trovata")
+        else:
+            # trova un'altra soluzione
+            print("trova un'altra soluzione")
 
