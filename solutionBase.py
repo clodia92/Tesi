@@ -1,5 +1,6 @@
 from functions import assignx2w2
 
+
 class Solution:
 
     # struttura che contiene tutte le mosse con relativi costi
@@ -14,12 +15,12 @@ class Solution:
 
         # x2[(k, gamma, i, j)]
         # w2[(k, i, j)]
-        #- uk2
+        # - uk2
         # Pgac
-        #- PsGa
-        #- K2diS[s]
-        #- A2
-        #- GammadiS
+        # - PsGa
+        # - K2diS[s]
+        # - A2
+        # - GammadiS
         # CdiS
 
         # dizionatio che contiene i pallet richiesti dai clienti di s
@@ -47,8 +48,7 @@ class Solution:
 
         for v in K2diS[s]:
             # print("uk2[{}]: {}".format(v, uk2[v]))
-            uk2diS [v] = uk2[v]
-
+            uk2diS[v] = uk2[v]
 
         # print("Pgac: {}".format(Pgac))
 
@@ -73,12 +73,11 @@ class Solution:
         posV = 0
         posG = 0
 
-
         palletTrasportatiDiK2 = [0] * len(K2)
 
         while (palletDaConsegnare > 0):
             # cicla finchè non trova un veicolo con ancora spazio
-            while (palletTrasportatiDiK2[posV] >= uk2diS [K2[posV]]):
+            while (palletTrasportatiDiK2[posV] >= uk2diS[K2[posV]]):
                 posV = (posV + 1) % len(K2)
 
             # se il cliente deve ancora ricevere dei pallet
@@ -104,19 +103,21 @@ class Solution:
                 else:
                     # aggiorno le rotte
                     if K2[posV] in trasportoPalletDiGamma:
-                        trasportoPalletDiGamma[K2[posV]] += [(Gamma[posG], (uk2diS[K2[posV]] - palletTrasportatiDiK2[posV]))]
+                        trasportoPalletDiGamma[K2[posV]] += [
+                            (Gamma[posG], (uk2diS[K2[posV]] - palletTrasportatiDiK2[posV]))]
 
                         # aggiorno rotte[k]
                         rotte[K2[posV]] += [(rotte[K2[posV]][-1][1], Gamma[posG])]
                     else:
-                        trasportoPalletDiGamma[K2[posV]] = [(Gamma[posG], (uk2diS[K2[posV]] - palletTrasportatiDiK2[posV]))]
+                        trasportoPalletDiGamma[K2[posV]] = [
+                            (Gamma[posG], (uk2diS[K2[posV]] - palletTrasportatiDiK2[posV]))]
 
                         # aggiorno rotte[k]
                         rotte[K2[posV]] = [(s, Gamma[posG])]
 
                     palletDaConsegnare -= uk2diS[K2[posV]] - palletTrasportatiDiK2[posV]
                     PGa[Gamma[posG]] -= uk2diS[K2[posV]] - palletTrasportatiDiK2[posV]
-                    palletTrasportatiDiK2[posV] += PGa[Gamma[posG]] # full
+                    palletTrasportatiDiK2[posV] += PGa[Gamma[posG]]  # full
 
                 # passo al veicolo sucessivo
                 posV = (posV + 1) % len(K2)
@@ -124,13 +125,12 @@ class Solution:
             # passo al cliente sucessivo
             posG = (posG + 1) % len(Gamma)
 
-
         # aggiornare x2 e w2 in base a rotte[k]
         arcoI = s
 
         for k in K2:
-            for (g , p) in trasportoPalletDiGamma[k]:
-                x2[(k , g, arcoI, g)] = p
+            for (g, p) in trasportoPalletDiGamma[k]:
+                x2[(k, g, arcoI, g)] = p
                 w2[(k, arcoI, g)] = 1
 
                 arcoI = g
@@ -139,7 +139,7 @@ class Solution:
         print("rotte : {}".format(rotte))
 
         assignx2w2(x2TMP, w2TMP, trasportoPalletDiGamma, rotte)
-        #print("x2TMP: ", x2TMP)
+        # print("x2TMP: ", x2TMP)
 
         ### VERIFICA AMMISSIBILITA' DELLA SOLUZIONE
         # if ammissibile:
@@ -150,6 +150,3 @@ class Solution:
         # else:
             # trova altra soluzione di base
             # return False
-
-
-

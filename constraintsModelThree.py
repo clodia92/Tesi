@@ -91,7 +91,7 @@ def BuildConstr29(myModelThree, GammadiS, x2, K2diS, PsGa, sat):
     # for all customers
     for ga in GammadiS[sat]:
         myModelThree += pulp.lpSum([[x2[(k, ga, sat, j)] for k in K2diS[sat]] for j in GammadiS[sat] if sat != j]) == (
-        PsGa[(sat, ga)]), "C29_ga_%s" % (ga)
+            PsGa[(sat, ga)]), "C29_ga_%s" % (ga)
         pass
     pass
 
@@ -128,9 +128,9 @@ def BuildConstr31(myModelThree, GammadiS, K2diS, x2, sat):
                 for k in K2diS[sat]:
                     myModelThree += pulp.lpSum([x2[(k, ga_1, i, ga_2)] for i in parcheggio + GammadiS[sat] if
                                                 i != ga_2 and x2.has_key((k, ga_1, i, ga_2))]) == (
-                                    [x2[(k, ga_1, ga_2, i)] for i in GammadiS[sat] if
-                                     ga_2 != i and x2.has_key((k, ga_1, ga_2, i))]), "C31_ga1_%s_ga2_%s_k_%s" % (
-                                    ga_1, ga_2, k)
+                                        [x2[(k, ga_1, ga_2, i)] for i in GammadiS[sat] if
+                                         ga_2 != i and x2.has_key((k, ga_1, ga_2, i))]), "C31_ga1_%s_ga2_%s_k_%s" % (
+                                        ga_1, ga_2, k)
                     pass
                 pass
             pass
@@ -169,8 +169,8 @@ def BuildConstr34(myModelThree, K2diS, GammadiS, w2, sat):
         for j in GammadiS[sat]:
             myModelThree += pulp.lpSum(
                 [w2[(k, i, j)] for i in parcheggio + GammadiS[sat] if i != j and w2.has_key((k, i, j))]) >= (
-                            [w2[(k, j, l)] for l in GammadiS[sat] if
-                             j != l and w2.has_key((k, j, l))]), "C34_k2_%s_j_%s" % (k, j)
+                                [w2[(k, j, l)] for l in GammadiS[sat] if
+                                 j != l and w2.has_key((k, j, l))]), "C34_k2_%s_j_%s" % (k, j)
             pass
         pass
     pass
@@ -187,7 +187,7 @@ def BuildConstr35(myModelThree, K2diS, A2, x2, GammadiS, uk2, w2, sat):
 
             if i != j:
                 myModelThree += pulp.lpSum([x2[(k, ga, i, j)] for ga in GammadiS[sat]]) <= (
-                [uk2[k] * w2[(k, i, j)]]), "C35_k2_%s_i_%s_j_%s" % (k, i, j)
+                    [uk2[k] * w2[(k, i, j)]]), "C35_k2_%s_i_%s_j_%s" % (k, i, j)
                 pass
             pass
         pass
