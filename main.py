@@ -1,6 +1,6 @@
 from lettura import readFile
 from solutionBase import Solution
-from generateVariables import generateVariablesModelThree
+from functions import generateVariablesModelThree
 
 class Prob3:
 

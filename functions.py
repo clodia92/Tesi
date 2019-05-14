@@ -37,6 +37,8 @@ def generateVariablesModelThree(x2, w2, K2diS, GammadiS, A2, sat):
 def assignx2w2(x2, w2, trasportoPalletDiGamma, rotte):
     for k in rotte:
         for posArc, (arcI, arcJ) in enumerate(rotte[k]):
-            for posGP, (gamma, pallet) in enumerate(trasportoPalletDiGamma[k]):
-                if (posGP >= 0 and posGP <= len(trasportoPalletDiGamma[k] - posArc)):
-                    x2[k, gamma, arcI, arcJ] =  pallet
+            for (gamma, pallet) in trasportoPalletDiGamma[k][len(trasportoPalletDiGamma[k]) - posArc -1:]:
+                #if (posGP >= 0 and posGP <= len(trasportoPalletDiGamma[k] - posArc)):
+                x2[k, gamma, arcI, arcJ] =  pallet
+                print("x2[{}, {}, {}, {}]: {}".format(k, gamma, arcI, arcJ, pallet))
+                w2[k, arcI, arcJ] = 1

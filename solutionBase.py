@@ -1,3 +1,5 @@
+from functions import assignx2w2
+
 class Solution:
 
     # struttura che contiene tutte le mosse con relativi costi
@@ -135,6 +137,9 @@ class Solution:
 
         print("trasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
         print("rotte : {}".format(rotte))
+
+        assignx2w2(x2TMP, w2TMP, trasportoPalletDiGamma, rotte)
+        #print("x2TMP: ", x2TMP)
 
         ### VERIFICA AMMISSIBILITA' DELLA SOLUZIONE
         # if ammissibile:
