@@ -1,4 +1,4 @@
-from functions import assignx2w2
+from functions import *
 
 
 class Solution:
@@ -128,12 +128,12 @@ class Solution:
         # aggiornare x2 e w2 in base a rotte[k]
         arcoI = s
 
-        for k in K2:
-            for (g, p) in trasportoPalletDiGamma[k]:
-                x2[(k, g, arcoI, g)] = p
-                w2[(k, arcoI, g)] = 1
-
-                arcoI = g
+        # for k in K2:
+        #     for (g, p) in trasportoPalletDiGamma[k]:
+        #         x2TMP[(k, g, arcoI, g)] = p
+        #         w2TMP[(k, arcoI, g)] = 1
+        #
+        #         arcoI = g
 
         print("trasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
         print("rotte : {}".format(rotte))
@@ -142,9 +142,9 @@ class Solution:
         # print("x2TMP: ", x2TMP)
 
         ### VERIFICA AMMISSIBILITA' DELLA SOLUZIONE
-        # if ammissibile:
-        x2 = x2TMP.copy()
-        w2 = w2TMP.copy()
+        if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS)):
+            x2 = x2TMP.copy()
+            w2 = w2TMP.copy()
 
         return True
         # else:
