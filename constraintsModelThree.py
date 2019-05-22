@@ -66,7 +66,6 @@ def buildOFThree(K2diS, GammadiS, w2, aks, A2, nik2ij, x2, ak2ij, sat):
             pass
         pass
 
-
     return myObjFunction
 
 
@@ -74,7 +73,7 @@ def buildOFThree(K2diS, GammadiS, w2, aks, A2, nik2ij, x2, ak2ij, sat):
 def BuildConstr29(GammadiS, x2, K2diS, PsGa, sat):
     print("BuildConstr29")
 
-    vincolo29= True
+    vincolo29 = True
 
     # for all customers
     for ga in GammadiS[sat]:
@@ -95,8 +94,9 @@ def BuildConstr30(GammadiS, x2, K2diS, Pgac, CdiS, sat):
 
     # for all customers
     for ga in GammadiS[sat]:
-        vincolo30 = (([[x2[(k, ga, i, ga)] for k in K2diS[sat] if x2.has_key((k, ga, i, ga))] for i in parcheggio + GammadiS[sat]
-            if i != ga]) == ([Pgac[(c, ga)] for c in CdiS[sat] if Pgac.has_key((c, ga))]))
+        vincolo30 = (([[x2[(k, ga, i, ga)] for k in K2diS[sat] if ((k, ga, i, ga) in x2)] for i in
+                       parcheggio + GammadiS[sat] if i != ga]) ==
+                     ([Pgac[(c, ga)] for c in CdiS[sat] if ((c, ga) in Pgac)]))
         if (not vincolo30):
             return vincolo30
 
@@ -121,13 +121,14 @@ def BuildConstr31(GammadiS, K2diS, x2, sat):
                 # for all vehicles in the "s" satellite
                 for k in K2diS[sat]:
                     vincolo31 = ([x2[(k, ga_1, i, ga_2)] for i in parcheggio + GammadiS[sat] if
-                                                i != ga_2 and x2.has_key((k, ga_1, i, ga_2))]) == (
-                                        [x2[(k, ga_1, ga_2, i)] for i in GammadiS[sat] if
-                                         ga_2 != i and x2.has_key((k, ga_1, ga_2, i))])
+                                  i != ga_2 and (k, ga_1, i, ga_2) in x2]) == (
+                                    [x2[(k, ga_1, ga_2, i)] for i in GammadiS[sat] if
+                                     ga_2 != i and (k, ga_1, ga_2, i) in x2])
                     if (not vincolo31):
                         return vincolo31
 
     return vincolo31
+
 
 # generate Constraint 32
 def BuildConstr32(K2diS, w2, GammadiS, sat):
@@ -137,7 +138,7 @@ def BuildConstr32(K2diS, w2, GammadiS, sat):
 
     # for all vehicles in the "s" satellite
     for k in K2diS[sat]:
-        vincolo32 = ([w2[(k, sat, j)] for j in GammadiS[sat]]) <= 1
+        vincolo32 = (len([w2[(k, sat, j)] for j in GammadiS[sat]]) <= 1)
         if (not vincolo32):
             return vincolo32
 
@@ -156,9 +157,9 @@ def BuildConstr34(K2diS, GammadiS, w2, sat):
     for k in K2diS[sat]:
         # for all customers in the "s" satellite
         for j in GammadiS[sat]:
-            vincolo34 = ([w2[(k, i, j)] for i in parcheggio + GammadiS[sat] if i != j and w2.has_key((k, i, j))]) >= (
-                                [w2[(k, j, l)] for l in GammadiS[sat] if
-                                 j != l and w2.has_key((k, j, l))])
+            vincolo34 = ([w2[(k, i, j)] for i in parcheggio + GammadiS[sat] if i != j and (k, i, j) in w2]) >= (
+                [w2[(k, j, l)] for l in GammadiS[sat] if
+                 j != l and (k, j, l) in w2])
             if (not vincolo34):
                 return vincolo34
 
@@ -195,7 +196,7 @@ def BuildConstr36(K2diS, GammadiS, w2, sat):
         for i in GammadiS[sat]:
             for j in GammadiS[sat]:
                 if i != j:
-                    vincolo36 = ([w2[(k, i, j)] + w2[(k, j, i)]]) <= 1
+                    vincolo36 = len([w2[(k, i, j)] + w2[(k, j, i)]]) <= 1
                     if (not vincolo36):
                         return vincolo36
 

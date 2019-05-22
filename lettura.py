@@ -451,3 +451,7 @@ class readFile:
     # dictionary of Pgac[c,ga]
     def get_Pgac (self):
         return self.Pgac
+
+    # dictionary of CdiS[s]
+    def get_CdiS(self):
+        return self.CdiS

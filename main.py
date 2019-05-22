@@ -122,7 +122,7 @@ class Prob3:
 
         # dictionary of C[s]
         # set of containers assigned to satellite s
-        self.CdiS = {}     #####  <-------- chiedere a Simone
+        self.CdiS = myRead.get_CdiS()     #####  <-------- chiedere a Simone
 
         # dictionary of Sneg
         # set of selected satellites
