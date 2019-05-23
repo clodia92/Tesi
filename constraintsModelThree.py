@@ -77,8 +77,7 @@ def BuildConstr29(GammadiS, x2, K2diS, PsGa, sat):
 
     # for all customers
     for ga in GammadiS[sat]:
-        pippo = sum([[x2[(k, ga, sat, j)] for k in K2diS[sat]] for j in GammadiS[sat] if sat != j])
-        vincolo29 = (sum([[x2[(k, ga, sat, j)] for k in K2diS[sat]] for j in GammadiS[sat] if sat != j]) == (PsGa[(sat, ga)]))
+        vincolo29 = (sum([x2[(k, ga, sat, j)] for k in K2diS[sat] for j in GammadiS[sat] if sat != j]) == (PsGa[(sat, ga)]))
         if (not vincolo29):
             return vincolo29
 
@@ -95,8 +94,8 @@ def BuildConstr30(GammadiS, x2, K2diS, Pgac, CdiS, sat):
 
     # for all customers
     for ga in GammadiS[sat]:
-        vincolo30 = (sum([[x2[(k, ga, i, ga)] for k in K2diS[sat] if ((k, ga, i, ga) in x2)] for i in
-                       parcheggio + GammadiS[sat] if i != ga]) ==
+        vincolo30 = (sum([x2[(k, ga, i, ga)] for k in K2diS[sat] for i in
+                       parcheggio + GammadiS[sat] if ((k, ga, i, ga) in x2) if i != ga]) ==
                      sum([Pgac[(c, ga)] for c in CdiS[sat] if ((c, ga) in Pgac)]))
         if (not vincolo30):
             return vincolo30
@@ -180,7 +179,7 @@ def BuildConstr35(K2diS, A2, x2, GammadiS, uk2, w2, sat):
 
             if i != j:
                 vincolo35 = sum([x2[(k, ga, i, j)] for ga in GammadiS[sat]]) <= (
-                    [uk2[k] * w2[(k, i, j)]])
+                    uk2[k] * w2[(k, i, j)])
                 if (not vincolo35):
                     return vincolo35
 
@@ -197,7 +196,7 @@ def BuildConstr36(K2diS, GammadiS, w2, sat):
         for i in GammadiS[sat]:
             for j in GammadiS[sat]:
                 if i != j:
-                    vincolo36 = ([w2[(k, i, j)] + w2[(k, j, i)]]) <= 1
+                    vincolo36 = (w2[(k, i, j)] + w2[(k, j, i)]) <= 1
                     if (not vincolo36):
                         return vincolo36
 
