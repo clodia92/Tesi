@@ -162,7 +162,7 @@ if __name__ == "__main__":
 
         # trova una soluzione di base ammissibile
         result, myProb.x2, myProb.w2 = mySolution.findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
-        cost = computeCost(myProb.K2diS, myProb.GammadiS, myProb.w2, myProb.aks, myProb.A2, myProb.nik2ij, myProb.x2, myProb.ak2ij, s)
+        cost = computeCost(myProb.K2diS, myProb.GammadiS, myProb.w2, myProb.A2, myProb.nik2ij, myProb.x2, myProb.ak2ij, s)
 
 
         if result:
