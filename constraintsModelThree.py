@@ -41,7 +41,6 @@
 
 # generate Objective Function for model Three  
 def computeCost(K2diS, GammadiS, w2, aks, A2, nik2ij, x2, ak2ij, sat):
-    print("computeCost")
 
     myObjFunction = 0
 
@@ -71,7 +70,6 @@ def computeCost(K2diS, GammadiS, w2, aks, A2, nik2ij, x2, ak2ij, sat):
 
 # generate Constraint 29
 def BuildConstr29(GammadiS, x2, K2diS, PsGa, sat):
-    print("BuildConstr29")
 
     vincolo29 = True
 
@@ -86,7 +84,6 @@ def BuildConstr29(GammadiS, x2, K2diS, PsGa, sat):
 
 # generate Constraint 30
 def BuildConstr30(GammadiS, x2, K2diS, Pgac, CdiS, sat):
-    print("BuildConstr30")
 
     vincolo30 = True
 
@@ -105,7 +102,6 @@ def BuildConstr30(GammadiS, x2, K2diS, Pgac, CdiS, sat):
 
 # generate Constraint 31
 def BuildConstr31(GammadiS, K2diS, x2, sat):
-    print("BuildConstr31")
 
     vincolo31 = True
 
@@ -132,7 +128,6 @@ def BuildConstr31(GammadiS, K2diS, x2, sat):
 
 # generate Constraint 32
 def BuildConstr32(K2diS, w2, GammadiS, sat):
-    print("BuildConstr32")
 
     vincolo32 = True
 
@@ -147,7 +142,6 @@ def BuildConstr32(K2diS, w2, GammadiS, sat):
 
 # generate Constraint 34
 def BuildConstr34(K2diS, GammadiS, w2, sat):
-    print("BuildConstr34")
 
     vincolo34 = True
 
@@ -168,7 +162,6 @@ def BuildConstr34(K2diS, GammadiS, w2, sat):
 
 # generate Constraint 35
 def BuildConstr35(K2diS, A2, x2, GammadiS, uk2, w2, sat):
-    print("BuildConstr35")
 
     vincolo35 = True
 
@@ -188,7 +181,6 @@ def BuildConstr35(K2diS, A2, x2, GammadiS, uk2, w2, sat):
 
 # generate Constraint 36
 def BuildConstr36(K2diS, GammadiS, w2, sat):
-    print("BuildConstr36")
 
     vincolo36 = True
 

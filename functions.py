@@ -54,4 +54,12 @@ def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2diS, A2, Gammad
     vincolo35 = BuildConstr35(K2diS, A2, x2, GammadiS, uk2, w2, sat)
     vincolo36 = BuildConstr36(K2diS, GammadiS, w2, sat)
 
+    print("BuildConstr29", vincolo29)
+    print("BuildConstr30", vincolo30)
+    print("BuildConstr31", vincolo31)
+    print("BuildConstr32", vincolo32)
+    print("BuildConstr34", vincolo34)
+    print("BuildConstr35", vincolo35)
+    print("BuildConstr36???", vincolo36)
+
     return (vincolo29 and vincolo30 and vincolo31 and vincolo32 and vincolo34 and vincolo35 and vincolo36)
