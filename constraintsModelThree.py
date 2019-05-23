@@ -40,8 +40,8 @@
 #     return myObjFunction
 
 # generate Objective Function for model Three  
-def buildOFThree(K2diS, GammadiS, w2, aks, A2, nik2ij, x2, ak2ij, sat):
-    print("BuildOF Three")
+def computeCost(K2diS, GammadiS, w2, aks, A2, nik2ij, x2, ak2ij, sat):
+    print("computeCost")
 
     myObjFunction = 0
 

@@ -142,14 +142,18 @@ class Solution:
             x2 = x2TMP.copy()
             w2 = w2TMP.copy()
 
-            return True
+
+            return True, x2, w2
         else:
             # trova altra soluzione di base
-            return False
+            return False, x2, w2
 
     def localSearch(self):
         print("\nSTART LOCAL SEARCH")
 
         # struttura che contiene tutte le mosse con relativi costi
         # dizionari di smd con chiave move point
-        smd = {}
+        smd10 = {}
+        # smd11 = {}
+        # smd2opt = {}
+

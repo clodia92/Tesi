@@ -1,6 +1,7 @@
 from lettura import readFile
 from solution import Solution
 from functions import generateVariablesModelThree
+from constraintsModelThree import computeCost
 
 class Prob3:
 
@@ -159,12 +160,17 @@ if __name__ == "__main__":
         generateVariablesModelThree(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, s)
         mySolution = Solution()
 
-
         # trova una soluzione di base ammissibile
-        if mySolution.findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS):
-            # procedi con local search
-            print("soluzione di base trovata")
+        result, myProb.x2, myProb.w2 = mySolution.findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+        cost = computeCost(myProb.K2diS, myProb.GammadiS, myProb.w2, myProb.aks, myProb.A2, myProb.nik2ij, myProb.x2, myProb.ak2ij, s)
+
+
+        if result:
+            print("soluzione di base trovata, costo: ", cost)
+
+            # procedere con local search
         else:
-            # trova un'altra soluzione
+            # trovare un'altra soluzione
             print("trova un'altra soluzione")
 
+        mySolution.localSearch()
