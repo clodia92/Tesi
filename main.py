@@ -166,11 +166,11 @@ if __name__ == "__main__":
 
 
         if result:
-            print("soluzione di base trovata, costo: ", cost)
+            print("Soluzione di base trovata, costo: {}.".format(cost))
 
             # procedere con local search
         else:
             # trovare un'altra soluzione
-            print("trova un'altra soluzione")
+            print("Trova un'altra soluzione.")
 
-        mySolution.localSearch()
+        mySolution.localSearch(myProb.nik2ij, myProb.ak2ij, myProb.x2, myProb.w2, s, myProb.K2diS[s], myProb.GammadiS[s])
