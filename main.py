@@ -1,5 +1,5 @@
 from lettura import readFile
-from solutionBase import Solution
+from solution import Solution
 from functions import generateVariablesModelThree
 
 class Prob3:

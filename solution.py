@@ -3,10 +3,6 @@ from functions import *
 
 class Solution:
 
-    # struttura che contiene tutte le mosse con relativi costi
-    # dizionari di smd
-    # smd = {}
-
     def findSolutionBase(self, s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
         print("\nSTART findSolutionBase(), satellite: ", s)
 
@@ -146,7 +142,14 @@ class Solution:
             x2 = x2TMP.copy()
             w2 = w2TMP.copy()
 
-        return True
-        # else:
+            return True
+        else:
             # trova altra soluzione di base
-            # return False
+            return False
+
+    def localSearch(self):
+        print("\nSTART LOCAL SEARCH")
+
+        # struttura che contiene tutte le mosse con relativi costi
+        # dizionari di smd con chiave move point
+        smd = {}
