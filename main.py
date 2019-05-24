@@ -1,7 +1,9 @@
 from lettura import readFile
 from solution import Solution
 from functions import generateVariablesModelThree
+from functions import inizializzaSMD10
 from constraintsModelThree import computeCost
+
 
 class Prob3:
 
@@ -161,7 +163,7 @@ if __name__ == "__main__":
         mySolution = Solution()
 
         # trova una soluzione di base ammissibile
-        result, myProb.x2, myProb.w2 = mySolution.findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+        result, myProb.x2, myProb.w2, rotte = mySolution.findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
         cost = computeCost(myProb.K2diS, myProb.GammadiS, myProb.w2, myProb.A2, myProb.nik2ij, myProb.x2, myProb.ak2ij, s)
 
 
@@ -173,4 +175,11 @@ if __name__ == "__main__":
             # trovare un'altra soluzione
             print("Trova un'altra soluzione.")
 
-        mySolution.localSearch(myProb.nik2ij, myProb.ak2ij, myProb.x2, myProb.w2, s, myProb.K2diS[s], myProb.GammadiS[s])
+        # struttura che contiene tutte le mosse con relativi costi
+        # dizionari di smd con chiave move point
+        # serve anche il numero di veicolo perché chiave (1, 3) può riferirsi a qualsiasi rotta
+        smd10 = {}  # dimensione: n*(n+k-1) (n: nodi, k: veicoli)
+        # smd11 = {}
+        # smd2opt = {}
+        inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, myProb.w2, s, myProb.K2diS[s], myProb.GammadiS[s])
+        mySolution.localSearch()

@@ -143,25 +143,12 @@ class Solution:
             w2 = w2TMP.copy()
 
 
-            return True, x2, w2
+            return True, x2, w2, rotte
         else:
             # trova altra soluzione di base
-            return False, x2, w2
+            return False, x2, w2, rotte
 
-    def localSearch(self, nik2ij, ak2ij, x2, w2, s, K2, Gamma):
+    def localSearch(self):
         print("START localSearch()")
 
-        # struttura che contiene tutte le mosse con relativi costi
-        # dizionari di smd con chiave move point
-        # serve anche il numero di veicolo perché chiave (1, 3) può riferirsi a qualsiasi rotta
-        smd10 = {} # dimensione: n*(n+k-1) (n: nodi, k: veicoli)
-        # smd11 = {}
-        # smd2opt = {}
 
-        for k in K2:
-            for n1 in Gamma:
-                for n2 in [s]+Gamma:
-                    # DA CORREGGERE
-                    smd10[k, n1, n2] = nik2ij[(k, n2, n1)] + ak2ij[(k, n2, n1)]
-        print("")
-        # smd10[k, n1, n2] for k in K2 for n1 in Gamma for n2 in s + Gamma
