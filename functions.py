@@ -65,12 +65,22 @@ def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2diS, A2, Gammad
     return (vincolo29 and vincolo30 and vincolo31 and vincolo32 and vincolo34 and vincolo35 and vincolo36)
 
 def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, w2, s, K2, Gamma):
+    veicoliDiCliente = {}
+    for k in rotte:
+        for c in rotte[k]:
+            if c[1] in veicoliDiCliente:
+                veicoliDiCliente[c[1]] += [k]
+            else:
+                veicoliDiCliente[c[1]] = [k]
+
     x = 0
     for k in rotte:
         listCustomer = [s]+[c2 for c1,c2 in rotte[k]]
         for n1 in listCustomer:
             for n2 in Gamma:
-                #print(list(rotte.keys())[list(rotte.values()).index()])
+                #print(list(w2.keys())[list(w2.values()).index(1)])
+
+                #any(j == n2 for (kappa, i, j) in w2)
                 if n2!=n1:
                     # DA CORREGGERE
                     # smd10[k, n1, n2] = nik2ij[(k, n2, n1)] + ak2ij[(k, n2, n1)]
