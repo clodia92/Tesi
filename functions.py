@@ -66,8 +66,11 @@ def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2diS, A2, Gammad
 
 def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, w2, s, K2, Gamma):
     veicoliDiCliente = {}
+    # lista di clienti (con duplicati a causa dello split)
+    Gmm = []
     for k in rotte:
         for c in rotte[k]:
+            Gmm += [c[1]]
             if c[1] in veicoliDiCliente:
                 veicoliDiCliente[c[1]] += [k]
             else:
@@ -77,17 +80,19 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, w2, s, K2, Gamma):
     for k in rotte:
         listCustomer = [s]+[c2 for c1,c2 in rotte[k]]
         for n1 in listCustomer:
-            for n2 in Gamma:
+            for n2 in Gmm:
                 if n2!=n1:
                     # DA CORREGGERE
                     # smd10[k, n1, n2] = nik2ij[(k, n2, n1)] + ak2ij[(k, n2, n1)]
+                    smd10[k, n1, n2] = None
                     x += 1
-                else:
-                    if len(veicoliDiCliente[n2])>1:
-                        other=list(veicoliDiCliente[n2])
-                        other.remove(k)
-                        for k2 in other:
-                            if k2!=k:
-                               print("doppio")
+                # else:
+                #     if len(veicoliDiCliente[n2])>1:
+                #         other=list(veicoliDiCliente[n2])
+                #         other.remove(k)
+                #         for k2 in other:
+                #             if k2!=k:
+                #                 print("doppio")
+                #                 smd10[k, n1, n2] = None
+                #                 x += 1
     print("x: ", x)
-    # smd10[k, n1, n2] for k in K2 for n1 in Gamma for n2 in s + Gamma
