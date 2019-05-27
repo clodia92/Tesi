@@ -101,24 +101,18 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, w2, s, K2, Gamma):
                 # un veicolo non puo' essere spostato dietro se stesso
                 if n2!=n1:
                     lenSMD10 += 1
+                    # viene creata la chiave
+                    smd10[v1, v2, n1, n2] = None
 
-                    # sono da sommare: ERRORE
-                    # - v2, n2-1, n2
-                    # + v2, n2-1, n2+1
-                    # - v2, n2, n2+1
-                    # - v1, n1, n1+1
-                    # + v1, n1, n2
-                    # + v1, n2, n1+1
-                    # SONO DA MODIFICARE ENTRAMBE LE ROTTE CHE VENGONO MODIFICATE
+                    # SONO DA MODIFICARE I COSTI DI ENTRAMBE LE ROTTE CHE VENGONO MODIFICATE
 
-                    # smd10[v1, v2, n1, n2] = -(nik2ij[(v2, n2, n1)] + ak2ij[(v2, n2, n1)])
-                    # smd10[v1, v2, n1, n2] += (nik2ij[(v2, n2, n1)] + ak2ij[(v2, n2, n1)])
-                    # smd10[v1, v2, n1, n2] -= (nik2ij[(v2, n2, n1)] + ak2ij[(v2, n2, n1)])
-                    # smd10[v1, v2, n1, n2] -= (nik2ij[(v1, n2, n1)] + ak2ij[(v1, n2, n1)])
-                    # smd10[v1, v2, n1, n2] += (nik2ij[(v1, n2, n1)] + ak2ij[(v1, n2, n1)])
-                    # smd10[v1, v2, n1, n2] += (nik2ij[(v1, n2, n1)] + ak2ij[(v1, n2, n1)])
+                    # modifica dei costi di v1
+                    for arc1 in rotte[v1]:
+                        pass
 
-                    # smd10[v1, n1, n2] = nik2ij[(v1, n2, n1)] + ak2ij[(v1, n2, n1)]
+                    # modifica dei costi di v2
+                    for arc2 in rotte[v2]:
+                        pass
 
                 # else:
                 #     if len(veicoliDiCliente[n2])>1:
@@ -133,4 +127,4 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, w2, s, K2, Gamma):
     # for smd in smd10:
     #     print(smd)
     print("smd10: {}\n# elementi: {}".format(smd10, lenSMD10))
-    print("lenSMD10: {}\nlen(SMD10): {}".format(lenSMD10, len(smd10)))
+    print("lenSMD10: {}; len(SMD10): {}".format(lenSMD10, len(smd10)))
