@@ -65,9 +65,11 @@ def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2diS, A2, Gammad
     return (vincolo29 and vincolo30 and vincolo31 and vincolo32 and vincolo34 and vincolo35 and vincolo36)
 
 def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, w2, s, K2, Gamma):
+    # dizionario dei veicoli per ogni cliente
     veicoliDiCliente = {}
-    # lista di clienti (con duplicati a causa dello split)
+    # lista di clienti (con eventuali duplicati a causa dello split)
     Gmm = []
+
     for k in rotte:
         for c in rotte[k]:
             Gmm += [c[1]]
@@ -76,16 +78,41 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, w2, s, K2, Gamma):
             else:
                 veicoliDiCliente[c[1]] = [k]
 
-    x = 0
+    lenSMD10 = 0
     for k in rotte:
-        listCustomer = [s]+[c2 for c1,c2 in rotte[k]]
-        for n1 in listCustomer:
+        # lista dei nodi del veicolo k (satellite + clienti)
+        listNodes = [s]+[c2 for c1,c2 in rotte[k]]
+        for n1 in listNodes:
             for n2 in Gmm:
+                # k = veicolo di destinazione
+                # (indico con v il veicolo di partenza di n2)
+                # n1 = nodo dietro al quale viene spostato n2
+                # n2 = nodo da spostare dietro n1
+
+
+                # TMP: tengo anche l'attuale posizione tra le mosse (dovrebbero avere variazione costo=0)
+                # perche' altrimenti tale chiave sarebbe da eliminare.
+                # Includendo la seguente if risultano due mosse in meno
+                # perche' per esempio in sat=2 la mossa 8, 4, 7 risulta essere un arco dell'attuale soluzione.
+                # Conviene tenere le mosse dell'attuale soluzione e impostare costo=0???
+                # if (n1, n2) not in rotte[k]:
+                #     print("k: {}, n1: {}, n2: {}".format(k, n1, n2))
+
+                # un veicolo non puo' essere spostato dietro se stesso
                 if n2!=n1:
                     # DA CORREGGERE
-                    # smd10[k, n1, n2] = nik2ij[(k, n2, n1)] + ak2ij[(k, n2, n1)]
                     smd10[k, n1, n2] = None
-                    x += 1
+                    # sono da sommare:
+                    # - v, n2-1, n2
+                    # + v, n2-1, n2+1
+                    # - v, n2, n2+1
+                    # - k, n1, n1+1
+                    # + k, n1, n2
+                    # + k, n2, n1+1
+
+                    # smd10[k, n1, n2] = nik2ij[(k, n2, n1)] + ak2ij[(k, n2, n1)]
+
+                    lenSMD10 += 1
                 # else:
                 #     if len(veicoliDiCliente[n2])>1:
                 #         other=list(veicoliDiCliente[n2])
@@ -95,4 +122,5 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, w2, s, K2, Gamma):
                 #                 print("doppio")
                 #                 smd10[k, n1, n2] = None
                 #                 x += 1
-    print("x: ", x)
+
+    print("smd10: {}\n# elementi: {}".format(smd10, lenSMD10))

@@ -177,7 +177,7 @@ if __name__ == "__main__":
 
         # struttura che contiene tutte le mosse con relativi costi
         # dizionari di smd con chiave move point
-        # serve anche il numero di veicolo perché chiave (1, 3) può riferirsi a qualsiasi rotta
+        # serve anche il numero di veicoli perche' chiave (1, 3) puo' riferirsi a qualsiasi rotta
         smd10 = {}  # dimensione: n*(n+k-1) (n: nodi, k: veicoli)
         # smd11 = {}
         # smd2opt = {}
