@@ -184,11 +184,14 @@ if __name__ == "__main__":
         # viene inizializzato l'SMD
         inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, myProb.w2, s, myProb.K2diS[s], myProb.GammadiS[s])
         # crea la lista in cui verrà salvato l'heap
+        # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
         heapSMD10 = list(smd10.values())
         # crea l'heap di smd10
+
         heapq.heapify(heapSMD10)
         # salva la chiave del valore minore
         minCostKey = list(smd10.keys())[list(smd10.values()).index(heapSMD10[0])]
+        print("SMD10 con costo minore: {}, chiave: {}".format(smd10[minCostKey], minCostKey))
 
         ########################### FUNZIONI UTILI DELL'HEAP ###########################
         # restituisce la chiave del valore minore
