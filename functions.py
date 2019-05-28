@@ -168,8 +168,6 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, w2, s, K2, Gamma):
                     #                 smd10[v1, n1, n2] = None
                     #                 x += 1
 
-    # for smd in smd10:
-    #     print(smd)
     print("smd10: {}\n# elementi: {}".format(smd10, len(smd10)))
 
 def trovaPrecSucc(rotta, nodo):
