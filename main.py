@@ -156,6 +156,7 @@ if __name__ == "__main__":
 
     # ogni rotta viene calcolata per ogni satellite separatamente
     for s in myProb.Sneg:
+        print("\nSTART satellite: {}".format(s))
         # generate variables for Model Three
         generateVariablesModelThree(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, s)
 
@@ -163,42 +164,36 @@ if __name__ == "__main__":
         result, myProb.x2, myProb.w2, rotte = findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
         cost = computeCost(myProb.K2diS, myProb.GammadiS, myProb.w2, myProb.A2, myProb.nik2ij, myProb.x2, myProb.ak2ij, s)
 
-
-        if result:
-            print("Soluzione di base trovata, costo: {}.".format(cost))
-
-            # procedere con local search
-        else:
-            # trovare un'altra soluzione
-            print("Trova un'altra soluzione.")
-
         # struttura che contiene tutte le mosse con relativi costi
         # dizionari di smd con chiave move point
         smd10 = {}  # dimensione: n*(n+k-1) (n: nodi, k: veicoli)
         # smd11 = {}
         # smd2opt = {}
 
-        # viene inizializzato l'SMD
-        inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
-        # crea la lista in cui verrà salvato l'heap
-        # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
-        heapSMD10 = list(smd10.values())
-        # crea l'heap di smd10
+        if result:
+            print("Soluzione di base trovata, costo: {}.".format(cost))
 
-        heapq.heapify(heapSMD10)
-        # salva la chiave del valore minore
-        minCostKey = list(smd10.keys())[list(smd10.values()).index(heapSMD10[0])]
-        print("SMD10 con costo minore: {}, chiave: {}".format(smd10[minCostKey], minCostKey))
+            # viene inizializzato l'SMD
+            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+            # crea la lista in cui verrà salvato l'heap
+            # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
+            heapSMD10 = list(smd10.values())
+            # crea l'heap di smd10
+            heapq.heapify(heapSMD10)
 
-        ########################### FUNZIONI UTILI DELL'HEAP ###########################
-        # restituisce la chiave del valore minore
-        # list(smd10.keys())[list(smd10.values()).index(heapSMD10[0])]
-        # restituisce il valore minore dell'heap senza eliminarlo
-        # heapSMD10[0]
-        # restituisce ed elimina il valore minore dall'heap (primo elemento)
-        # heapq.heappop(heapSMD10)
-        # aggiunge elemento all'heap
-        # heapq.heappush(heapSMD10, -100)
-        ########################### FUNZIONI UTILI DELL'HEAP ###########################
+            localSearch(heapSMD10, smd10, myProb.x2, myProb.w2)
 
-        localSearch(myProb.x2.copy(), myProb.w2.copy(), minCostKey)
+        else:
+            # trovare un'altra soluzione
+            print("Trova un'altra soluzione.")
+
+########################### FUNZIONI UTILI DELL'HEAP ###########################
+# restituisce la chiave del valore minore (primo elemento)
+# list(smd10.keys())[list(smd10.values()).index(heapSMD10[0])]
+# restituisce il valore minore dell'heap senza eliminarlo
+# heapSMD10[0]
+# restituisce ed elimina il valore minore dall'heap (primo elemento)
+# heapq.heappop(heapSMD10)
+# aggiunge elemento all'heap
+# heapq.heappush(heapSMD10, -100)
+########################### FUNZIONI UTILI DELL'HEAP ###########################

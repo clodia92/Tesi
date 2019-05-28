@@ -186,7 +186,7 @@ def trovaPrecSucc(rotta, nodo):
                 return prec[0], succ[0]
 
 def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
-    print("\nSTART findSolutionBase(), satellite: ", s)
+    print("START findSolutionBase()")
 
     x2TMP = x2.copy()
     w2TMP = w2.copy()
@@ -317,23 +317,37 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
     print("rotte : {}".format(rotte))
 
     assignx2w2(x2TMP, w2TMP, trasportoPalletDiGamma, rotte)
-    # print("x2TMP: ", x2TMP)
 
-    ### VERIFICA AMMISSIBILITA' DELLA SOLUZIONE
+    # verifica dell'ammissibilità della soluzione
     if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS)):
+        # soluzione ammissibile trovata
         x2 = x2TMP.copy()
         w2 = w2TMP.copy()
 
-
         return True, x2, w2, rotte
     else:
-        # trova altra soluzione di base
+        # soluzione non ammissibile
         return False, x2, w2, rotte
 
-def localSearch(x2TMP, w2TMP, minCostKey):
+def localSearch(heapSMD10, smd10, x2, w2):
     print("START localSearch()")
 
-    v1 = minCostKey[0]
-    v2 = minCostKey[1]
-    n1 = minCostKey[2]
-    n2 = minCostKey[3]
+    while heapSMD10[0] < 0:
+        # salva la chiave del valore minore
+        minCostKey = list(smd10.keys())[list(smd10.values()).index(heapSMD10[0])]
+        print("SMD10 con differenza di costo migliore: {}, chiave: {}".format(smd10[minCostKey], minCostKey))
+
+        v1 = minCostKey[0]
+        v2 = minCostKey[1]
+        n1 = minCostKey[2]
+        n2 = minCostKey[3]
+
+        x2TMP = x2.copy()
+        w2TMP = w2.copy()
+
+        # assegnare x2TMP e w2TMP
+        # verificare ammissibilità
+        # if True:
+            # assegnare x2 e w2
+        # else:
+            # pop
