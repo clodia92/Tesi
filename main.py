@@ -3,7 +3,7 @@ from solution import Solution
 from functions import generateVariablesModelThree
 from functions import inizializzaSMD10
 from constraintsModelThree import computeCost
-
+import heapq
 
 class Prob3:
 
@@ -177,9 +177,28 @@ if __name__ == "__main__":
 
         # struttura che contiene tutte le mosse con relativi costi
         # dizionari di smd con chiave move point
-        # serve anche il numero di veicoli perche' chiave (1, 3) puo' riferirsi a qualsiasi rotta
         smd10 = {}  # dimensione: n*(n+k-1) (n: nodi, k: veicoli)
         # smd11 = {}
         # smd2opt = {}
+
+        # viene inizializzato l'SMD
         inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, myProb.w2, s, myProb.K2diS[s], myProb.GammadiS[s])
+        # crea la lista in cui verrà salvato l'heap
+        heapSMD10 = list(smd10.values())
+        # crea l'heap di smd10
+        heapq.heapify(heapSMD10)
+        # salva la chiave del valore minore
+        minCostKey = list(smd10.keys())[list(smd10.values()).index(heapSMD10[0])]
+
+        ########################### FUNZIONI UTILI DELL'HEAP ###########################
+        # restituisce la chiave del valore minore
+        # list(smd10.keys())[list(smd10.values()).index(heapSMD10[0])]
+        # restituisce il valore minore dell'heap senza eliminarlo
+        # heapSMD10[0]
+        # restituisce ed elimina il valore minore dall'heap (primo elemento)
+        # heapq.heappop(heapSMD10)
+        # aggiunge elemento all'heap
+        # heapq.heappush(heapSMD10, -100)
+        ########################### FUNZIONI UTILI DELL'HEAP ###########################
+
         mySolution.localSearch()
