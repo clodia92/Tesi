@@ -89,6 +89,9 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, w2, s, K2, Gamma):
                 # n1 = nodo dietro al quale viene spostato n2
                 # n2 = nodo da spostare dietro n1
 
+                precN1, succN1 = trovaPrecSucc(rotte[v1], n1)
+                precN2, succN2 = trovaPrecSucc(rotte[v2], n2)
+
 
                 # TMP: tengo anche l'attuale posizione tra le mosse (dovrebbero avere variazione costo=0)
                 # perche' altrimenti tale chiave sarebbe da eliminare.
@@ -102,17 +105,42 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, w2, s, K2, Gamma):
                     if n2!=n1:
                         lenSMD10 += 1
                         # viene creata la chiave
-                        smd10[v1, v2, n1, n2] = None
+                        smd10[v1, v2, n1, n2] = 0
 
                         # SONO DA MODIFICARE I COSTI DI ENTRAMBE LE ROTTE CHE VENGONO MODIFICATE
 
                         # modifica dei costi di v1
+                        # nik2ij
+                        if not (succN1 == -1):
+                            smd10[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1]
+                            smd10[v1, v2, n1, n2] += nik2ij[v1, n2, succN1]
+                        smd10[v1, v2, n1, n2] += nik2ij[v1, n1, n2]
+
+                        # ak2ij
+                        smd10[v1, v2, n1, n2] -= ak2ij[v1, n1, succN1]
+                        smd10[v1, v2, n1, n2] += ak2ij[v1, n1, n2]
+                        smd10[v1, v2, n1, n2] += ak2ij[v1, n2, succN1]
                         for arc1 in rotte[v1]:
-                            pass
+                            # scorrere fino all'arco interessato
+                            if arc1 == (n1, succN1):
+                                break
+
+                            smd10[v1, v2, n1, n2] += ak2ij[v1, arc1[0], arc1[1]]
 
                         # modifica dei costi di v2
+                        # nik2ij
+                        smd10[v1, v2, n1, n2] -= nik2ij[v2, precN2, n2]
+                        smd10[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2]
+                        smd10[v1, v2, n1, n2] += nik2ij[v2, precN2, succN2]
+
+                        # ak2ij
+                        smd10[v1, v2, n1, n2] += ak2ij[v2, precN2, succN2]
                         for arc2 in rotte[v2]:
-                            pass
+                            smd10[v1, v2, n1, n2] -= ak2ij[v2, arc2[0], arc2[1]]
+
+                            # scorrere fino all'arco interessato
+                            if arc2 == (n2, succN2):
+                                break
 
                     # else:
                     #     if len(veicoliDiCliente[n2])>1:
@@ -128,3 +156,19 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, w2, s, K2, Gamma):
     #     print(smd)
     print("smd10: {}\n# elementi: {}".format(smd10, lenSMD10))
     print("lenSMD10: {}; len(SMD10): {}".format(lenSMD10, len(smd10)))
+
+def trovaPrecSucc(rotta, nodo):
+    prec = [item[0] for item in rotta if item[1]==nodo]
+
+    succ = [item[1] for item in rotta if item[0]==nodo]
+
+    if len(prec) == 0 and len(succ) == 0:
+        return -1, -1
+    else:
+        if len(prec) == 0:
+            return -1, succ[0]
+        else:
+            if len(succ) == 0:
+                return prec[0], -1
+            else:
+                return prec[0], succ[0]
