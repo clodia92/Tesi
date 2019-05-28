@@ -157,12 +157,16 @@ if __name__ == "__main__":
     # ogni rotta viene calcolata per ogni satellite separatamente
     for s in myProb.Sneg:
         print("\nSTART satellite: {}".format(s))
+        # lista delle soluzioni trovate: (x2, w2, cost)
+        solutions = []
+
         # generate variables for Model Three
         generateVariablesModelThree(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, s)
 
         # trova una soluzione di base ammissibile
         result, myProb.x2, myProb.w2, rotte = findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
-        cost = computeCost(myProb.K2diS, myProb.GammadiS, myProb.w2, myProb.A2, myProb.nik2ij, myProb.x2, myProb.ak2ij, s)
+        cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
+
 
         # struttura che contiene tutte le mosse con relativi costi
         # dizionari di smd con chiave move point
@@ -172,6 +176,8 @@ if __name__ == "__main__":
 
         if result:
             print("Soluzione di base trovata, costo: {}.".format(cost))
+            # aggiungo la soluzione alle soluzioni
+            solutions.append((myProb.x2, myProb.w2, cost))
 
             # viene inizializzato l'SMD
             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)

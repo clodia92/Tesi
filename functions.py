@@ -353,5 +353,7 @@ def localSearch(heapSMD10, smd10, x2, w2):
         # verificare ammissibilità
         # if True:
             # assegnare x2 e w2
+            # pop
+            # solutions.append(x2, w2, cost)
         # else:
             # pop

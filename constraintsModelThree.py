@@ -40,7 +40,7 @@
 #     return myObjFunction
 
 # generate Objective Function for model Three  
-def computeCost(K2diS, GammadiS, w2, A2, nik2ij, x2, ak2ij, sat):
+def computeCost(x2, w2, K2diS, GammadiS, A2, nik2ij, ak2ij, sat):
 
     myObjFunction = 0
 
