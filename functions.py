@@ -95,34 +95,34 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, w2, s, K2, Gamma):
                 # Includendo la seguente if risultano due mosse in meno
                 # perche' per esempio in sat=2 la mossa 8, 4, 7 risulta essere un arco dell'attuale soluzione.
                 # Conviene tenere le mosse dell'attuale soluzione e impostare costo=0???
-                # if (n1, n2) not in rotte[k]:
-                #     print("v1: {}, n1: {}, n2: {}".format(v1, n1, n2))
+                if not(v1==v2 and (n1, n2) in rotte[v1]):
+                    #     print("v1: {}, n1: {}, n2: {}".format(v1, n1, n2))
 
-                # un veicolo non puo' essere spostato dietro se stesso
-                if n2!=n1:
-                    lenSMD10 += 1
-                    # viene creata la chiave
-                    smd10[v1, v2, n1, n2] = None
+                    # un veicolo non puo' essere spostato dietro se stesso
+                    if n2!=n1:
+                        lenSMD10 += 1
+                        # viene creata la chiave
+                        smd10[v1, v2, n1, n2] = None
 
-                    # SONO DA MODIFICARE I COSTI DI ENTRAMBE LE ROTTE CHE VENGONO MODIFICATE
+                        # SONO DA MODIFICARE I COSTI DI ENTRAMBE LE ROTTE CHE VENGONO MODIFICATE
 
-                    # modifica dei costi di v1
-                    for arc1 in rotte[v1]:
-                        pass
+                        # modifica dei costi di v1
+                        for arc1 in rotte[v1]:
+                            pass
 
-                    # modifica dei costi di v2
-                    for arc2 in rotte[v2]:
-                        pass
+                        # modifica dei costi di v2
+                        for arc2 in rotte[v2]:
+                            pass
 
-                # else:
-                #     if len(veicoliDiCliente[n2])>1:
-                #         other=list(veicoliDiCliente[n2])
-                #         other.remove(v1)
-                #         for k2 in other:
-                #             if k2!=v1:
-                #                 print("doppio")
-                #                 smd10[v1, n1, n2] = None
-                #                 x += 1
+                    # else:
+                    #     if len(veicoliDiCliente[n2])>1:
+                    #         other=list(veicoliDiCliente[n2])
+                    #         other.remove(v1)
+                    #         for k2 in other:
+                    #             if k2!=v1:
+                    #                 print("doppio")
+                    #                 smd10[v1, n1, n2] = None
+                    #                 x += 1
 
     # for smd in smd10:
     #     print(smd)
