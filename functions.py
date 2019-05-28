@@ -331,8 +331,12 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
 
 def localSearch(heapSMD10, smd10, x2, w2):
     print("START localSearch()")
+    itMAX=10
+    it=0
 
-    while heapSMD10[0] < 0:
+    while heapSMD10[0] < 0 and it<itMAX:
+        it += 1
+
         # salva la chiave del valore minore
         minCostKey = list(smd10.keys())[list(smd10.values()).index(heapSMD10[0])]
         print("SMD10 con differenza di costo migliore: {}, chiave: {}".format(smd10[minCostKey], minCostKey))
