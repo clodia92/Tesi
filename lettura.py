@@ -1,6 +1,5 @@
 import csv
 
-
 class readFile:
 
     def __init__(self, nomeFile):

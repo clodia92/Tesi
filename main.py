@@ -1,7 +1,5 @@
 from lettura import readFile
-from solution import Solution
-from functions import generateVariablesModelThree
-from functions import inizializzaSMD10
+from functions import *
 from constraintsModelThree import computeCost
 import heapq
 
@@ -160,10 +158,9 @@ if __name__ == "__main__":
     for s in myProb.Sneg:
         # generate variables for Model Three
         generateVariablesModelThree(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, s)
-        mySolution = Solution()
 
         # trova una soluzione di base ammissibile
-        result, myProb.x2, myProb.w2, rotte = mySolution.findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+        result, myProb.x2, myProb.w2, rotte = findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
         cost = computeCost(myProb.K2diS, myProb.GammadiS, myProb.w2, myProb.A2, myProb.nik2ij, myProb.x2, myProb.ak2ij, s)
 
 
@@ -182,7 +179,7 @@ if __name__ == "__main__":
         # smd2opt = {}
 
         # viene inizializzato l'SMD
-        inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, myProb.w2, s, myProb.K2diS[s], myProb.GammadiS[s])
+        inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
         # crea la lista in cui verrà salvato l'heap
         # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
         heapSMD10 = list(smd10.values())
@@ -204,4 +201,4 @@ if __name__ == "__main__":
         # heapq.heappush(heapSMD10, -100)
         ########################### FUNZIONI UTILI DELL'HEAP ###########################
 
-        mySolution.localSearch()
+        localSearch(myProb.x2.copy(), myProb.w2.copy(), minCostKey)
