@@ -199,7 +199,7 @@ def trovaPrecSuccList(rotta, nodo):
     for item in rotta:
         if item[0] == nodo:
             break
-        precList.append(item[0])
+        precList = [item[0]] + precList
 
     flag = False
     for item in rotta:
