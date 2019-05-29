@@ -187,7 +187,7 @@ if __name__ == "__main__":
             # crea l'heap di smd10
             heapq.heapify(heapSMD10)
 
-            localSearch(heapSMD10, smd10, myProb.x2, myProb.w2)
+            localSearch(heapSMD10, smd10, myProb.x2, myProb.w2, rotte)
 
         else:
             # trovare un'altra soluzione

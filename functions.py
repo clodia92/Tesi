@@ -1,4 +1,6 @@
 from constraintsModelThree import *
+import heapq
+
 
 # generate variables for Model Three
 def generateVariablesModelThree(x2, w2, K2diS, GammadiS, A2, sat):
@@ -40,7 +42,6 @@ def assignx2w2(x2, w2, trasportoPalletDiGamma, rotte):
         for posArc, (arcI, arcJ) in enumerate(rotte[k]):
             for (gamma, pallet) in trasportoPalletDiGamma[k][posArc:]:
                 x2[k, gamma, arcI, arcJ] = pallet
-                # print("x2[{}, {}, {}, {}]: {}".format(k, gamma, arcI, arcJ, pallet))
                 w2[k, arcI, arcJ] = 1
 
 # verifica se la soluzione è ammissibile restituendo True o False
@@ -157,17 +158,6 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                                 if arc2 == (n2, succN2):
                                     break
 
-                    # else:
-                    #     if len(veicoliDiCliente[n2])>1:
-                    #         other=list(veicoliDiCliente[n2])
-                    #         other.remove(v1)
-                    #         for k2 in other:
-                    #             if k2!=v1:
-                    #                 print("doppio")
-                    #                 smd10[v1, n1, n2] = None
-                    #                 x += 1
-
-    # print("smd10: {}\n# elementi: {}".format(smd10, len(smd10)))
 
 def trovaPrecSucc(rotta, nodo):
     prec = [item[0] for item in rotta if item[1]==nodo]
@@ -191,24 +181,8 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
     x2TMP = x2.copy()
     w2TMP = w2.copy()
 
-    # x2[(k, gamma, i, j)]
-    # w2[(k, i, j)]
-    # - uk2
-    # Pgac
-    # - PsGa
-    # - K2diS[s]
-    # - A2
-    # - GammadiS
-    # CdiS
-
     # dizionatio che contiene i pallet richiesti dai clienti di s
     PGa = {}
-
-    # lista dei veicoli assegnati ad s nel Prob2
-    K2 = []
-
-    # pallet trasportati da ogni k2 che serve s
-    palletTrasportatiDiK2 = []
 
     # numero massimo di pallet trasportabili dal veicolo k che serve s
     uk2diS = {}
@@ -238,14 +212,6 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
     # print("K2diS[{}]: {}".format(s, K2diS[s]))
 
     K2 = K2diS[s]
-
-    # print("A2: ")
-    # for arc in A2:
-    #     if ((s == arc[0]) and arc[1] in GammadiS[s]) or ((arc[0] in GammadiS[s]) and (arc[1] in GammadiS[s])):
-    #         print(arc)
-    #
-    # print("GammadiS[{}]: {}".format(s, GammadiS[s]))
-    # print("CdiS: {}".format(CdiS))
 
     # iterazione per scorrere i veicoli e i clienti di gamma
     posV = 0
@@ -303,16 +269,6 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
         # passo al cliente sucessivo
         posG = (posG + 1) % len(Gamma)
 
-    # aggiornare x2 e w2 in base a rotte[k]
-    arcoI = s
-
-    # for k in K2:
-    #     for (g, p) in trasportoPalletDiGamma[k]:
-    #         x2TMP[(k, g, arcoI, g)] = p
-    #         w2TMP[(k, arcoI, g)] = 1
-    #
-    #         arcoI = g
-
     print("trasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
     print("rotte : {}".format(rotte))
 
@@ -329,7 +285,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
         # soluzione non ammissibile
         return False, x2, w2, rotte
 
-def localSearch(heapSMD10, smd10, x2, w2):
+def localSearch(heapSMD10, smd10, x2, w2, rotte):
     print("START localSearch()")
     itMAX=10
     it=0
@@ -338,7 +294,7 @@ def localSearch(heapSMD10, smd10, x2, w2):
         it += 1
 
         # salva la chiave del valore minore
-        minCostKey = list(smd10.keys())[list(smd10.values()).index(heapSMD10[0])]
+        minCostKey = list(smd10.keys())[list(smd10.values()).index(heapq.heappop(heapSMD10))]
         print("SMD10 con differenza di costo migliore: {}, chiave: {}".format(smd10[minCostKey], minCostKey))
 
         v1 = minCostKey[0]
@@ -349,11 +305,44 @@ def localSearch(heapSMD10, smd10, x2, w2):
         x2TMP = x2.copy()
         w2TMP = w2.copy()
 
-        # assegnare x2TMP e w2TMP
+        # modificare x2TMP e w2TMP
+        precN1, succN1 = trovaPrecSucc(rotte[v1], n1)
+        precN2, succN2 = trovaPrecSucc(rotte[v2], n2)
+
+        # v1 +
+        x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2, n2]
+        x2TMP[v1, succN1, n1, n2] = x2TMP[v1, succN1, n1, succN1]
+        w2TMP[v1, n1, n2] = 1
+        w2TMP[v1, n1, n2] = 1
+
+        for arc1 in rotte[v1]:
+            if arc1[0] == n1:
+                break
+            x2TMP[v1, n2, arc1[0], arc1[1]] = x2TMP[v2, n2, precN2, n2]
+
+        x2TMP[v1, succN1, n2, succN1] = x2TMP[v1, succN1, n1, succN1]
+        w2[v1, n2, succN1] = 1
+
+        # v2 +
+        x2TMP[v2, succN2, precN2, succN2] = x2TMP[v2, succN2, n2, succN2]
+        w2TMP[v2, precN2, succN2] = 1
+
+        # v2 -
+        for arc2 in rotte[v2]:
+            if arc2[0]==n2:
+                break
+            x2TMP[v2, n2, arc2[0], arc2[1]] = 0
+
+        x2TMP[v2, succN2, n2, succN2] = 0
+        w2TMP[v2, precN2, n2] = 0
+        w2TMP[v2, n2, succN2] = 0
+
+        # v1 -
+        x2TMP[v1, succN1, n1, succN1] = 0
+        w2TMP[v1, n1, succN1] = 0
+
         # verificare ammissibilità
         # if True:
             # assegnare x2 e w2
-            # pop
             # solutions.append(x2, w2, cost)
-        # else:
-            # pop
+
