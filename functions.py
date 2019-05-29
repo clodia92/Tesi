@@ -105,18 +105,13 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                     # viene creata la chiave
                     smd10[v1, v2, n1, n2] = 0
 
-                    # SONO DA MODIFICARE I COSTI DI ENTRAMBE LE ROTTE CHE VENGONO MODIFICATE
-
                     # modifica dei costi di v1
                     if succN1[0]==-1:
                         # nik2ij
                         smd10[v1, v2, n1, n2] += nik2ij[v1, n1, n2]
-                        # # ak2ij
-                        # for arc1 in rotte[v1]:
-                        #     # scorrere fino all'arco interessato
-                        #     if arc1 == (n1, succN1[0]):
-                        #         break
-                        #     smd10[v1, v2, n1, n2] += ak2ij[v1, arc1[0], arc1[1]] * x2[v1, n2, arc1[0], arc1[1]]
+                        # ak2ij
+                        for arc1 in rotte[v1]:
+                            smd10[v1, v2, n1, n2] += ak2ij[v1, arc1[0], arc1[1]] * x2[v1, n2, arc1[0], arc1[1]]
 
                     else:
                         # nik2ij
@@ -125,15 +120,12 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         smd10[v1, v2, n1, n2] += nik2ij[v1, n1, n2]
 
                         # ak2ij
-
-
-                        # ak2ij
                         smd10[v1, v2, n1, n2] -= ak2ij[v1, n1, succN1[0]]*x2[v1, succN1[0], n1, succN1[0]]
                         smd10[v1, v2, n1, n2] += ak2ij[v1, n1, n2]*(x2[v1, n2, precN2[0], n2]+x2[v1, succN1[0], n1, succN1[0]])
                         smd10[v1, v2, n1, n2] += ak2ij[v1, n2, succN1[0]]*x2[v1, succN1[0], n1, succN1[0]]
                         for arc1 in rotte[v1]:
                             # scorrere fino all'arco interessato
-                            if arc1 == (n1, succN1):
+                            if arc1 == (n1, succN1[0]):
                                 break
 
                             smd10[v1, v2, n1, n2] += ak2ij[v1, arc1[0], arc1[1]]*x2[v1, n2, arc1[0], arc1[1]]
@@ -192,7 +184,6 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 
 # restituisce due liste dei clienti precedenti e successivi al nodo
 def trovaPrecSuccList(rotta, nodo):
-    # prec = [item[0] for item in rotta if item[1]==nodo]
     precList = []
     succList = []
 
