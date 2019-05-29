@@ -285,12 +285,12 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
         # soluzione non ammissibile
         return False, x2, w2, rotte
 
-def localSearch(heapSMD10, smd10, x2, w2, rotte):
+def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
     print("START localSearch()")
-    itMAX=3
+    itMAX=len(heapSMD10)
     it=0
 
-    while heapSMD10[0] < 0 and it<itMAX:
+    while it<itMAX:
         it += 1
 
         # salva la chiave del valore minore
@@ -361,7 +361,15 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte):
             w2TMP[v2, n2, succN2] = 0
 
         # verificare ammissibilità
+        if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS)):
+            print("localSearch TRUE, it: ", it)
+            # soluzione ammissibile trovata
+            x2 = x2TMP.copy()
+            w2 = w2TMP.copy()
+            #cost = computeCost(x2, w2, K2diS, GammadiS, A2, nik2ij, myProb.ak2ij, s)
+
+            return x2, w2
         # if True:
             # assegnare x2 e w2
             # solutions.append(x2, w2, cost)
-
+    return  x2, w2

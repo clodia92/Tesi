@@ -187,7 +187,11 @@ if __name__ == "__main__":
             # crea l'heap di smd10
             heapq.heapify(heapSMD10)
 
-            localSearch(heapSMD10, smd10, myProb.x2, myProb.w2, rotte)
+            while heapSMD10[0]<0:
+                myProb.x2, myProb.w2 = localSearch(heapSMD10, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+                cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
+
+                solutions.append([myProb.x2, myProb.w2, cost])
 
         else:
             # trovare un'altra soluzione
