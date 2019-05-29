@@ -129,6 +129,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                                 break
 
                             smd10[v1, v2, n1, n2] += ak2ij[v1, arc1[0], arc1[1]]*x2[v1, n2, arc1[0], arc1[1]]
+                            # x2[v1, n2, arc1[0], arc1[1]] è uguale a 0, quindi dobbiamo prendere i pallet che riceve 6 da v2
 
                     # modifica dei costi di v2
 
