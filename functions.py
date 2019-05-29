@@ -287,7 +287,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
 
 def localSearch(heapSMD10, smd10, x2, w2, rotte):
     print("START localSearch()")
-    itMAX=10
+    itMAX=3
     it=0
 
     while heapSMD10[0] < 0 and it<itMAX:
@@ -310,36 +310,55 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte):
         precN2, succN2 = trovaPrecSucc(rotte[v2], n2)
 
         # v1 +
-        x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2, n2]
-        x2TMP[v1, succN1, n1, n2] = x2TMP[v1, succN1, n1, succN1]
-        w2TMP[v1, n1, n2] = 1
-        w2TMP[v1, n1, n2] = 1
+        if succN1==-1:
+            x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2, n2]
+            w2TMP[v1, n1, n2] = 1
+            w2TMP[v1, n1, n2] = 1
 
-        for arc1 in rotte[v1]:
-            if arc1[0] == n1:
-                break
-            x2TMP[v1, n2, arc1[0], arc1[1]] = x2TMP[v2, n2, precN2, n2]
+            for arc1 in rotte[v1]:
+                if arc1[0] == n1:
+                    break
+                x2TMP[v1, n2, arc1[0], arc1[1]] = x2TMP[v2, n2, precN2, n2]
+        else:
+            x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2, n2]
+            x2TMP[v1, succN1, n1, n2] = x2TMP[v1, succN1, n1, succN1]
+            w2TMP[v1, n1, n2] = 1
+            w2TMP[v1, n1, n2] = 1
 
-        x2TMP[v1, succN1, n2, succN1] = x2TMP[v1, succN1, n1, succN1]
-        w2[v1, n2, succN1] = 1
+            for arc1 in rotte[v1]:
+                if arc1[0] == n1:
+                    break
+                x2TMP[v1, n2, arc1[0], arc1[1]] = x2TMP[v2, n2, precN2, n2]
 
-        # v2 +
-        x2TMP[v2, succN2, precN2, succN2] = x2TMP[v2, succN2, n2, succN2]
-        w2TMP[v2, precN2, succN2] = 1
-
-        # v2 -
-        for arc2 in rotte[v2]:
-            if arc2[0]==n2:
-                break
-            x2TMP[v2, n2, arc2[0], arc2[1]] = 0
-
-        x2TMP[v2, succN2, n2, succN2] = 0
-        w2TMP[v2, precN2, n2] = 0
-        w2TMP[v2, n2, succN2] = 0
+            x2TMP[v1, succN1, n2, succN1] = x2TMP[v1, succN1, n1, succN1]
+            w2TMP[v1, n2, succN1] = 1
 
         # v1 -
-        x2TMP[v1, succN1, n1, succN1] = 0
-        w2TMP[v1, n1, succN1] = 0
+        if succN1!=-1:
+            x2TMP[v1, succN1, n1, succN1] = 0
+            w2TMP[v1, n1, succN1] = 0
+
+        # v2 +
+        if succN2!=-1:
+            x2TMP[v2, succN2, precN2, succN2] = x2TMP[v2, succN2, n2, succN2]
+            w2TMP[v2, precN2, succN2] = 1
+
+        # v2 -
+        if succN2==-1:
+            for arc2 in rotte[v2]:
+                if arc2[0]==n2:
+                    break
+                x2TMP[v2, n2, arc2[0], arc2[1]] = 0
+            w2TMP[v2, precN2, n2] = 0
+        else:
+            for arc2 in rotte[v2]:
+                if arc2[0]==n2:
+                    break
+                x2TMP[v2, n2, arc2[0], arc2[1]] = 0
+
+            x2TMP[v2, succN2, n2, succN2] = 0
+            w2TMP[v2, precN2, n2] = 0
+            w2TMP[v2, n2, succN2] = 0
 
         # verificare ammissibilità
         # if True:
