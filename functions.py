@@ -368,8 +368,8 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, 
             w2 = w2TMP.copy()
             #cost = computeCost(x2, w2, K2diS, GammadiS, A2, nik2ij, myProb.ak2ij, s)
 
-            return x2, w2
+            return x2, w2, minCostKey
         # if True:
             # assegnare x2 e w2
             # solutions.append(x2, w2, cost)
-    return  x2, w2
+    return  x2, w2, -1

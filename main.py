@@ -164,7 +164,7 @@ if __name__ == "__main__":
         generateVariablesModelThree(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, s)
 
         # trova una soluzione di base ammissibile
-        result, myProb.x2, myProb.w2, rotte = findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+        resultSolutionBase, myProb.x2, myProb.w2, rotte = findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
         cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
 
 
@@ -174,7 +174,7 @@ if __name__ == "__main__":
         # smd11 = {}
         # smd2opt = {}
 
-        if result:
+        if resultSolutionBase:
             print("Soluzione di base trovata, costo: {}.".format(cost))
             # aggiungo la soluzione alle soluzioni
             solutions.append((myProb.x2, myProb.w2, cost))
@@ -188,10 +188,18 @@ if __name__ == "__main__":
             heapq.heapify(heapSMD10)
 
             while heapSMD10[0]<0:
-                myProb.x2, myProb.w2 = localSearch(heapSMD10, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+                myProb.x2, myProb.w2, resultLocalSearch = localSearch(heapSMD10, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
                 cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
 
                 solutions.append([myProb.x2, myProb.w2, cost])
+
+                if resultLocalSearch == -1:
+                    break
+                else:
+                    pass
+                    # aggiornare SMD
+
+
 
         else:
             # trovare un'altra soluzione
