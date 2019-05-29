@@ -198,7 +198,7 @@ if __name__ == "__main__":
                 else:
                     pass
                     # aggiornare SMD
-
+                    updateSMD10(smd10, resultLocalSearch, myProb.x2, myProb.w2)
 
 
         else:
