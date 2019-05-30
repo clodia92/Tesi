@@ -188,17 +188,20 @@ if __name__ == "__main__":
             heapq.heapify(heapSMD10)
 
             while heapSMD10[0]<0:
-                myProb.x2, myProb.w2, resultLocalSearch = localSearch(heapSMD10, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+                myProb.x2, myProb.w2, keyLocalSearch = localSearch(heapSMD10, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+
                 cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
 
                 solutions.append([myProb.x2, myProb.w2, cost])
 
-                if resultLocalSearch == -1:
+                if keyLocalSearch == -1:
                     break
                 else:
                     pass
-                    # aggiornare SMD
-                    updateSMD10(smd10, resultLocalSearch, myProb.x2, myProb.w2)
+                    # aggiornare rotte dopo una mossa ammissibile
+                    updateRotte(rotte, keyLocalSearch)
+                    # aggiornare SMD dopo una mossa ammissibile
+                    updateSMD10(smd10, keyLocalSearch, myProb.x2, myProb.w2)
 
 
         else:

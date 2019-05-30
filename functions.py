@@ -389,13 +389,46 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, 
             #cost = computeCost(x2, w2, K2diS, GammadiS, A2, nik2ij, myProb.ak2ij, s)
 
             return x2, w2, minCostKey
-        # if True:
-            # assegnare x2 e w2
-            # solutions.append(x2, w2, cost)
+
     return  x2, w2, -1
 
-def updateSMD10(smd, resultLocalSearch, x2, w2):
-    v1 = resultLocalSearch[0]
-    v2 = resultLocalSearch[1]
-    n1 = resultLocalSearch[2]
-    n2 = resultLocalSearch[3]
+# aggiorna le rotte
+def updateRotte(rotte, keyLocalSearch):
+    v1 = keyLocalSearch[0]
+    v2 = keyLocalSearch[1]
+    n1 = keyLocalSearch[2]
+    n2 = keyLocalSearch[3]
+    precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
+    precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
+
+    # print(rotte)
+    # print("v1: {}, v2: {}, n1: {}, n2: {}".format(v1, v2, n1, n2))
+    # print((precN2[0], n2))
+    # print((n2, succN2[0]))
+
+    # modifica della rotta del veicolo v1
+    if succN1[0]!=-1:
+        index = rotte[v1].index((n1, succN1[0]))
+        rotte[v1][index] = (n1, n2)
+        rotte[v1].insert(index+1, (n2, succN1[0]))
+
+    else:
+        rotte[v1].append((n1, n2))
+
+    # modifica della rotta del veicolo v2
+    if succN2[0]!=-1:
+        index = rotte[v2].index((precN2[0], n2))
+        rotte[v2][index] = (precN2[0], succN2[0])
+        rotte[v2].remove((n2, succN2[0]))
+    else:
+        rotte[v2].remove((precN2[0], n2))
+
+    # print(rotte)
+
+# aggiorna l'smd10
+def updateSMD10(smd, keyLocalSearch, x2, w2):
+    v1 = keyLocalSearch[0]
+    v2 = keyLocalSearch[1]
+    n1 = keyLocalSearch[2]
+    n2 = keyLocalSearch[3]
+
