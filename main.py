@@ -187,21 +187,27 @@ if __name__ == "__main__":
             # crea l'heap di smd10
             heapq.heapify(heapSMD10)
 
-            while heapSMD10[0]<0:
+            while heapSMD10[0]<-7:
                 myProb.x2, myProb.w2, keyLocalSearch = localSearch(heapSMD10, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
-
-                cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
-
-                solutions.append([myProb.x2, myProb.w2, cost])
 
                 if keyLocalSearch == -1:
                     break
                 else:
-                    pass
+                    cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
+                    print("Soluzione migliore trovata, costo: {}.".format(cost))
+                    solutions.append([myProb.x2, myProb.w2, cost])
+
                     # aggiornare rotte dopo una mossa ammissibile
                     updateRotte(rotte, keyLocalSearch)
                     # aggiornare SMD dopo una mossa ammissibile
-                    updateSMD10(smd10, keyLocalSearch, myProb.x2, myProb.w2)
+                    #updateSMD10(smd10, keyLocalSearch, myProb.x2, myProb.w2, getClienteVeicolo(rotte))
+                    smd10.clear()
+
+                    inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+                    heapSMD10 = list(smd10.values())
+                    # crea l'heap di smd10
+                    heapq.heapify(heapSMD10)
+                    pass
 
 
         else:

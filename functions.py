@@ -54,35 +54,31 @@ def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2diS, A2, Gammad
     vincolo35 = BuildConstr35(K2diS, A2, x2, GammadiS, uk2, w2, sat)
     vincolo36 = BuildConstr36(K2diS, GammadiS, w2, sat)
 
-    print("BuildConstr29", vincolo29)
-    print("BuildConstr30", vincolo30)
-    print("BuildConstr31", vincolo31)
-    print("BuildConstr32", vincolo32)
-    print("BuildConstr34", vincolo34)
-    print("BuildConstr35", vincolo35)
-    print("BuildConstr36???", vincolo36)
+    # print("BuildConstr29", vincolo29)
+    # print("BuildConstr30", vincolo30)
+    # print("BuildConstr31", vincolo31)
+    # print("BuildConstr32", vincolo32)
+    # print("BuildConstr34", vincolo34)
+    # print("BuildConstr35", vincolo35)
+    # print("BuildConstr36???", vincolo36)
 
-    return (vincolo29 and vincolo30 and vincolo31 and vincolo32 and vincolo34 and vincolo35 and vincolo36)
+    if (vincolo29 and vincolo30 and vincolo31 and vincolo32 and vincolo34 and vincolo35 and vincolo36):
+        print(True)
+        return True
+    else:
+        return False
 
 def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
     # dizionario dei veicoli per ogni cliente
     veicoliDiCliente = {}
     # lista di tuple: (cliente, veicolo)
-    Gmm = []
-
-    for k in rotte:
-        for c in rotte[k]:
-            Gmm += [(c[1], k)]
-            if c[1] in veicoliDiCliente:
-                veicoliDiCliente[c[1]] += [k]
-            else:
-                veicoliDiCliente[c[1]] = [k]
+    clienteVeicolo = getClienteVeicolo(rotte)
 
     for v1 in rotte:
         # lista dei nodi del veicolo k (satellite + clienti)
         listNodes = [s]+[c2 for c1,c2 in rotte[v1]]
         for n1 in listNodes:
-            for n2, v2 in Gmm:
+            for n2, v2 in clienteVeicolo:
                 # v1 = veicolo di destinazione di n1
                 # v2 = veicolo di partenza di n2
                 # n1 = nodo dietro al quale viene spostato n2
@@ -166,6 +162,19 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             smd10[v1, v2, n1, n2] += ak2ij[v2, precN2[0], succN2[0]] * x2[v2, gamma, n2, succN2[0]]
 
                 pass
+
+def getClienteVeicolo(rotte):
+    veicoliDiCliente = {}
+    clienteVeicolo = []
+    for k in rotte:
+        for c in rotte[k]:
+            clienteVeicolo += [(c[1], k)]
+            if c[1] in veicoliDiCliente:
+                veicoliDiCliente[c[1]] += [k]
+            else:
+                veicoliDiCliente[c[1]] = [k]
+
+    return clienteVeicolo
 
 # restituisce due liste dei clienti precedenti e successivi al nodo
 def trovaPrecSuccList(rotta, nodo):
@@ -426,9 +435,14 @@ def updateRotte(rotte, keyLocalSearch):
     # print(rotte)
 
 # aggiorna l'smd10
-def updateSMD10(smd, keyLocalSearch, x2, w2):
+def updateSMD10(smd10, keyLocalSearch, x2, w2, clienteVeicolo):
     v1 = keyLocalSearch[0]
     v2 = keyLocalSearch[1]
     n1 = keyLocalSearch[2]
     n2 = keyLocalSearch[3]
 
+    for cliente1, veicolo1 in clienteVeicolo:
+        pass
+
+    for cliente2, veicolo2 in clienteVeicolo:
+        pass
