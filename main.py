@@ -212,7 +212,7 @@ if __name__ == "__main__":
 
         else:
             # trovare un'altra soluzione
-            print("Trova un'altra soluzione.")
+            print("Trova un'altra soluzione di base.")
 
 ########################### FUNZIONI UTILI DELL'HEAP ###########################
 # restituisce la chiave del valore minore (primo elemento)
