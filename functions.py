@@ -94,11 +94,6 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 
                 # TMP: tengo anche l'attuale posizione tra le mosse (dovrebbero avere variazione costo=0)
                 # perche' altrimenti tale chiave sarebbe da eliminare.
-                # Includendo la seguente if risultano due mosse in meno
-                # perche' per esempio in sat=2 la mossa 8, 4, 7 risulta essere un arco dell'attuale soluzione.
-                # Conviene tenere le mosse dell'attuale soluzione e impostare costo=0???
-                #if not(v1==v2 and (n1, n2) in rotte[v1]):
-                    #     print("v1: {}, n1: {}, n2: {}".format(v1, n1, n2))
 
                 # un veicolo non puo' essere spostato dietro se stesso
                 if n2!=n1:
@@ -111,7 +106,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         smd10[v1, v2, n1, n2] += nik2ij[v1, n1, n2]
                         # ak2ij
                         for arc1 in rotte[v1]:
-                            smd10[v1, v2, n1, n2] += ak2ij[v1, arc1[0], arc1[1]] * x2[v1, n2, arc1[0], arc1[1]]
+                            smd10[v1, v2, n1, n2] += ak2ij[v1, arc1[0], arc1[1]] * x2[v2, n2, precN2[0], n2]
 
                     else:
                         # nik2ij
@@ -120,16 +115,19 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         smd10[v1, v2, n1, n2] += nik2ij[v1, n1, n2]
 
                         # ak2ij
-                        smd10[v1, v2, n1, n2] -= ak2ij[v1, n1, succN1[0]]*x2[v1, succN1[0], n1, succN1[0]]
-                        smd10[v1, v2, n1, n2] += ak2ij[v1, n1, n2]*(x2[v1, n2, precN2[0], n2]+x2[v1, succN1[0], n1, succN1[0]])
-                        smd10[v1, v2, n1, n2] += ak2ij[v1, n2, succN1[0]]*x2[v1, succN1[0], n1, succN1[0]]
+                        # aggiunge il costo legato ai pallet di n2
                         for arc1 in rotte[v1]:
                             # scorrere fino all'arco interessato
                             if arc1 == (n1, succN1[0]):
                                 break
 
-                            smd10[v1, v2, n1, n2] += ak2ij[v1, arc1[0], arc1[1]]*x2[v1, n2, arc1[0], arc1[1]]
-                            # x2[v1, n2, arc1[0], arc1[1]] è uguale a 0, quindi dobbiamo prendere i pallet che riceve 6 da v2
+                            smd10[v1, v2, n1, n2] += ak2ij[v1, arc1[0], arc1[1]]*x2[v2, n2, precN2[0], n2]
+
+                        # costi aggiuntivi dei pallet consegnati ai clienti che seguiranno n2
+                        for gamma in succN1:
+                            smd10[v1, v2, n1, n2] += ak2ij[v1, n1, n2] * x2[v1, gamma, n1, succN1[0]]
+                            smd10[v1, v2, n1, n2] += ak2ij[v1, n2, succN1[0]] * x2[v1, gamma, n1, succN1[0]]
+                            smd10[v1, v2, n1, n2] -= ak2ij[v1, n1, succN1[0]] * x2[v1, gamma, n1, succN1[0]]
 
                     # modifica dei costi di v2
 
@@ -137,6 +135,8 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         # nik2ij
                         smd10[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
                         # ak2ij
+
+                        # elimina il costo legato ai pallet di n2 sulla rotta di v1
                         for arc2 in rotte[v2]:
                             # scorrere fino all'arco interessato
                             if arc2 == (precN2[0], n2):
@@ -151,37 +151,21 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         smd10[v1, v2, n1, n2] += nik2ij[v2, precN2[0], succN2[0]]
 
                         # ak2ij
-                        smd10[v1, v2, n1, n2] += ak2ij[v2, precN2[0], succN2[0]]*x2[v2, succN2[0], n2, succN2[0]]
-                        flag = True
+                        # elimina il costo legato ai pallet di n2 sulla rotta di v1
                         for arc2 in rotte[v2]:
-                            if flag:
-                                smd10[v1, v2, n1, n2] -= ak2ij[v2, arc2[0], arc2[1]]*x2[v2, n2, arc2[0], arc2[1]]
+                            smd10[v1, v2, n1, n2] -= ak2ij[v2, arc2[0], arc2[1]]*x2[v2, n2, arc2[0], arc2[1]]
 
                             # scorrere fino all'arco interessato
-                            if arc2 == (n2, succN2[0]):
-                                flag = False
+                            if arc2 == (precN2[0], n2):
+                                break
 
-                            if not flag:
-                                # DA COMPLETARE
-                                pass
+                        # eliminazione dei costi sull'arco da eliminare legato ai clienti sucessivi ad n2
+                        for gamma in succN2:
+                            smd10[v1, v2, n1, n2] -= ak2ij[v2, precN2[0], n2] * x2[v2, gamma, precN2[0], n2]
+                            smd10[v1, v2, n1, n2] -= ak2ij[v2, n2, succN2[0]] * x2[v2, gamma, n2, succN2[0]]
+                            smd10[v1, v2, n1, n2] += ak2ij[v2, precN2[0], succN2[0]] * x2[v2, gamma, n2, succN2[0]]
+
                 pass
-
-
-# def trovaPrecSucc(rotta, nodo):
-#     prec = [item[0] for item in rotta if item[1]==nodo]
-#
-#     succ = [item[1] for item in rotta if item[0]==nodo]
-#
-#     if len(prec) == 0 and len(succ) == 0:
-#         return -1, -1
-#     else:
-#         if len(prec) == 0:
-#             return -1, succ[0]
-#         else:
-#             if len(succ) == 0:
-#                 return prec[0], -1
-#             else:
-#                 return prec[0], succ[0]
 
 # restituisce due liste dei clienti precedenti e successivi al nodo
 def trovaPrecSuccList(rotta, nodo):
