@@ -156,7 +156,7 @@ if __name__ == "__main__":
 
     # ogni rotta viene calcolata per ogni satellite separatamente
     for s in myProb.Sneg:
-        print("\nSTART satellite: {}".format(s))
+        print("\n\n\nSTART satellite: {}".format(s))
         # lista delle soluzioni trovate: (x2, w2, cost)
         solutions = []
 
@@ -165,8 +165,8 @@ if __name__ == "__main__":
 
         # trova una soluzione di base ammissibile
         resultSolutionBase, myProb.x2, myProb.w2, rotte = findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
-        newCost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
-        oldCost = newCost+1
+        cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
+        costTMP = cost + 1
 
 
         # struttura che contiene tutte le mosse con relativi costi
@@ -176,9 +176,9 @@ if __name__ == "__main__":
         # smd2opt = {}
 
         if resultSolutionBase:
-            print("Soluzione di base trovata, costo: {}.".format(newCost))
+            print("Soluzione di base trovata, costo: {}.".format(cost))
             # aggiungo la soluzione alle soluzioni
-            solutions.append((myProb.x2, myProb.w2, newCost))
+            solutions.append((myProb.x2, myProb.w2, cost))
 
             # viene inizializzato l'SMD
             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
@@ -188,41 +188,33 @@ if __name__ == "__main__":
             # crea l'heap di smd10
             heapq.heapify(heapSMD10)
 
+            itMosse = 0
 
             while True:
                 x2TMP, w2TMP, keyLocalSearch = localSearch(heapSMD10, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+                costTMP = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
 
-
-                if keyLocalSearch==-1:
-                    break
-
-                oldCost = newCost
-                newCost = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
-
-                if oldCost<newCost:
-                    print("1Soluzione migliore trovata, costo: {}.".format(oldCost))
+                if keyLocalSearch==-1 or costTMP>cost:
+                    print("Soluzione finale trovata, itMosse: {}, costo: {}".format(itMosse, cost))
                     break
                 else:
-                    x2 = x2TMP.copy()
-                    w2 = w2TMP.copy()
+                    itMosse += 1
+                    cost = costTMP
+                    myProb.x2 = x2TMP.copy()
+                    myProb.w2 = w2TMP.copy()
 
-                    print("2Soluzione migliore trovata, costo: {}.".format(newCost))
-                    solutions.append([myProb.x2, myProb.w2, newCost])
+                    print("Soluzione migliore trovata, costo: {}.".format(cost))
+                    solutions.append([myProb.x2, myProb.w2, cost])
 
                     # aggiornare rotte dopo una mossa ammissibile
                     updateRotte(rotte, keyLocalSearch)
                     # aggiornare SMD dopo una mossa ammissibile
-                    #updateSMD10(smd10, keyLocalSearch, myProb.x2, myProb.w2, getClienteVeicolo(rotte))
                     smd10.clear()
-
                     inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
                     heapSMD10 = list(smd10.values())
                     # crea l'heap di smd10
                     heapq.heapify(heapSMD10)
-                    heap0 = heapSMD10[0]
                     pass
-
-
         else:
             # trovare un'altra soluzione
             print("Trova un'altra soluzione di base.")

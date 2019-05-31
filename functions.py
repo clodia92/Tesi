@@ -86,7 +86,6 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                 # TMP: tengo anche l'attuale posizione tra le mosse (dovrebbero avere variazione costo=0)
                 # perche' altrimenti tale chiave sarebbe da eliminare.
                 if ((v1==v2) and ((n1,n2) not in rotte[v1])) or (v1!=v2):
-
                     # un veicolo non puo' essere spostato dietro se stesso
                     if n2!=n1:
                         precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
@@ -176,73 +175,6 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                                 for gamma in succN2:
                                     smd10[v1, v2, n1, n2] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
                             # dopo succN2[0] -> non vengono modificati
-
-
-                    # # modifica dei costi di v1
-                    # if succN1[0]==-1:
-                    #     # nik2ij
-                    #     smd10[v1, v2, n1, n2] += nik2ij[v1, n1, n2]
-                    #     # ak2ij
-                    #     for arc1 in rotte[v1]:
-                    #         smd10[v1, v2, n1, n2] += ak2ij[v1, arc1[0], arc1[1]] * x2[v2, n2, precN2[0], n2]
-                    #
-                    # else:
-                    #     # nik2ij
-                    #     smd10[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
-                    #     smd10[v1, v2, n1, n2] += nik2ij[v1, n2, succN1[0]]
-                    #     smd10[v1, v2, n1, n2] += nik2ij[v1, n1, n2]
-                    #
-                    #     # ak2ij
-                    #     # aggiunge il costo legato ai pallet di n2
-                    #     for arc1 in rotte[v1]:
-                    #         # scorrere fino all'arco interessato
-                    #         if arc1 == (n1, succN1[0]):
-                    #             break
-                    #
-                    #         smd10[v1, v2, n1, n2] += ak2ij[v1, arc1[0], arc1[1]]*x2[v2, n2, precN2[0], n2]
-                    #
-                    #     # costi aggiuntivi dei pallet consegnati ai clienti che seguiranno n2
-                    #     for gamma in succN1:
-                    #         smd10[v1, v2, n1, n2] += ak2ij[v1, n1, n2] * x2[v1, gamma, n1, succN1[0]]
-                    #         smd10[v1, v2, n1, n2] += ak2ij[v1, n2, succN1[0]] * x2[v1, gamma, n1, succN1[0]]
-                    #         smd10[v1, v2, n1, n2] -= ak2ij[v1, n1, succN1[0]] * x2[v1, gamma, n1, succN1[0]]
-                    #
-                    # # modifica dei costi di v2
-                    #
-                    # if succN2[0]==-1:
-                    #     # nik2ij
-                    #     smd10[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
-                    #     # ak2ij
-                    #
-                    #     # elimina il costo legato ai pallet di n2 sulla rotta di v1
-                    #     for arc2 in rotte[v2]:
-                    #         # scorrere fino all'arco interessato
-                    #         if arc2 == (precN2[0], n2):
-                    #             break
-                    #
-                    #         smd10[v1, v2, n1, n2] -= ak2ij[v2, arc2[0], arc2[1]] * x2[v2, n2, arc2[0], arc2[1]]
-                    #
-                    # else:
-                    #     # nik2ij
-                    #     smd10[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
-                    #     smd10[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
-                    #     smd10[v1, v2, n1, n2] += nik2ij[v2, precN2[0], succN2[0]]
-                    #
-                    #     # ak2ij
-                    #     # elimina il costo legato ai pallet di n2 sulla rotta di v1
-                    #     for arc2 in rotte[v2]:
-                    #         smd10[v1, v2, n1, n2] -= ak2ij[v2, arc2[0], arc2[1]]*x2[v2, n2, arc2[0], arc2[1]]
-                    #
-                    #         # scorrere fino all'arco interessato
-                    #         if arc2 == (precN2[0], n2):
-                    #             break
-                    #
-                    #     # eliminazione dei costi sull'arco da eliminare legato ai clienti sucessivi ad n2
-                    #     for gamma in succN2:
-                    #         smd10[v1, v2, n1, n2] -= ak2ij[v2, precN2[0], n2] * x2[v2, gamma, precN2[0], n2]
-                    #         smd10[v1, v2, n1, n2] -= ak2ij[v2, n2, succN2[0]] * x2[v2, gamma, n2, succN2[0]]
-                    #         smd10[v1, v2, n1, n2] += ak2ij[v2, precN2[0], succN2[0]] * x2[v2, gamma, n2, succN2[0]]
-
                 pass
 
 def getClienteVeicolo(rotte):
@@ -401,13 +333,13 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, 
     itMAX=len(heapSMD10)
     itNonAmmissibili=0
 
-    while heapSMD10[0]<0 or itNonAmmissibili<itMAX:
+    while heapSMD10[0]<0 and itNonAmmissibili<itMAX:
+
         itNonAmmissibili += 1
 
         # salva la chiave del valore minore
         valoreHeap=heapq.heappop(heapSMD10)
         minCostKey = [key for key, value in smd10.items() if value==valoreHeap][0]
-        print("SMD10 con differenza di costo migliore: {}, chiave: {}".format(smd10[minCostKey], minCostKey))
 
         v1 = minCostKey[0]
         v2 = minCostKey[1]
@@ -474,13 +406,10 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, 
 
         # verificare ammissibilità
         if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS)):
-            print("localSearch TRUE, it: ", itNonAmmissibili)
+            print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}".format(itNonAmmissibili, minCostKey, smd10[minCostKey]))
             # soluzione ammissibile trovata
 
-
-
             return x2TMP, w2TMP, minCostKey
-
     return  x2TMP, w2TMP, -1
 
 # aggiorna le rotte
@@ -513,18 +442,3 @@ def updateRotte(rotte, keyLocalSearch):
         rotte[v2].remove((n2, succN2[0]))
     else:
         rotte[v2].remove((precN2[0], n2))
-
-    # print(rotte)
-
-# aggiorna l'smd10
-def updateSMD10(smd10, keyLocalSearch, x2, w2, clienteVeicolo):
-    v1 = keyLocalSearch[0]
-    v2 = keyLocalSearch[1]
-    n1 = keyLocalSearch[2]
-    n2 = keyLocalSearch[3]
-
-    for cliente1, veicolo1 in clienteVeicolo:
-        pass
-
-    for cliente2, veicolo2 in clienteVeicolo:
-        pass
