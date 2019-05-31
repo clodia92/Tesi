@@ -63,7 +63,6 @@ def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2diS, A2, Gammad
     # print("BuildConstr36???", vincolo36)
 
     if (vincolo29 and vincolo30 and vincolo31 and vincolo32 and vincolo34 and vincolo35 and vincolo36):
-        print(True)
         return True
     else:
         return False
@@ -113,6 +112,8 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         # ak2ij
                         # prima di n1
                         flag = 0
+                        if succN1[0]==-1:
+                            smd10[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
                         for arc1 in rotte[v1]:
                             # n1, n2
                             if arc1[0]==n1:
@@ -396,12 +397,12 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
         return False, x2, w2, rotte
 
 def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
-    print("START localSearch()")
+    print("\nSTART localSearch()")
     itMAX=len(heapSMD10)
-    it=0
+    itNonAmmissibili=0
 
-    while it<itMAX:
-        it += 1
+    while heapSMD10[0]<0 or itNonAmmissibili<itMAX:
+        itNonAmmissibili += 1
 
         # salva la chiave del valore minore
         valoreHeap=heapq.heappop(heapSMD10)
@@ -473,15 +474,14 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, 
 
         # verificare ammissibilità
         if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS)):
-            print("localSearch TRUE, it: ", it)
+            print("localSearch TRUE, it: ", itNonAmmissibili)
             # soluzione ammissibile trovata
-            x2 = x2TMP.copy()
-            w2 = w2TMP.copy()
-            #cost = computeCost(x2, w2, K2diS, GammadiS, A2, nik2ij, myProb.ak2ij, s)
 
-            return x2, w2, minCostKey
 
-    return  x2, w2, -1
+
+            return x2TMP, w2TMP, minCostKey
+
+    return  x2TMP, w2TMP, -1
 
 # aggiorna le rotte
 def updateRotte(rotte, keyLocalSearch):
