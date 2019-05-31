@@ -119,8 +119,9 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         if arc1[0]==n1:
                             flag=1
                         # dopo n2 -> non vengono modificati
-                        if [arc1[0]]==succN1[0]:
-                            flag=2
+                        if arc1[0]==succN1[0]:
+                            # flag=2
+                            break
 
                         # prima di n1
                         if flag==0:
@@ -158,7 +159,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             flag=2
                         # dopo succN2[0] -> non vengono modificati
                         if arc2[0]==succN2[0]:
-                            flag=3
+                            break
 
                         # prima di precN2[0]
                         if flag==0:
@@ -168,16 +169,13 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             smd10[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                             if succN2[0]!=-1:
                                 for gamma in succN2:
-                                    smd10[v1, v2, n1, n2] += (x2[v2, gamma, precN2[0], succN2[0]] * ak2ij[v2, precN2[0], succN2[0]])
+                                    smd10[v1, v2, n1, n2] += (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
                                     smd10[v1, v2, n1, n2] -= (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                         # n2, succN2[0]
                         if flag==2:
-                            if succN2[0] != -1:
-                                for gamma in succN2:
-                                    smd10[v1, v2, n1, n2] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
+                            for gamma in succN2:
+                                smd10[v1, v2, n1, n2] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
                         # dopo succN2[0] -> non vengono modificati
-
-
 
 
                     # # modifica dei costi di v1
