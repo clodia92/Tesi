@@ -188,7 +188,7 @@ if __name__ == "__main__":
             # crea l'heap di smd10
             heapq.heapify(heapSMD10)
 
-            itMosse = 0
+            itMosse = 1
 
             while True:
                 x2TMP, w2TMP, keyLocalSearch = localSearch(heapSMD10, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
