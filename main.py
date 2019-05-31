@@ -200,12 +200,13 @@ if __name__ == "__main__":
                 newCost = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
 
                 if oldCost<newCost:
+                    print("1Soluzione migliore trovata, costo: {}.".format(oldCost))
                     break
                 else:
                     x2 = x2TMP.copy()
                     w2 = w2TMP.copy()
 
-                    print("Soluzione migliore trovata, costo: {}.".format(newCost))
+                    print("2Soluzione migliore trovata, costo: {}.".format(newCost))
                     solutions.append([myProb.x2, myProb.w2, newCost])
 
                     # aggiornare rotte dopo una mossa ammissibile
