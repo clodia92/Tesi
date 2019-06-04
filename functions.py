@@ -68,8 +68,6 @@ def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2diS, A2, Gammad
         return False
 
 def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
-    # dizionario dei veicoli per ogni cliente
-    veicoliDiCliente = {}
     # lista di tuple: (cliente, veicolo)
     clienteVeicolo = getClienteVeicolo(rotte)
 
@@ -83,99 +81,97 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                 # n1 = nodo dietro al quale viene spostato n2
                 # n2 = nodo da spostare dietro n1
 
-                # TMP: tengo anche l'attuale posizione tra le mosse (dovrebbero avere variazione costo=0)
-                # perche' altrimenti tale chiave sarebbe da eliminare.
-                if ((v1==v2) and ((n1,n2) not in rotte[v1])) or (v1!=v2):
-                    # un veicolo non puo' essere spostato dietro se stesso
-                    if n2!=n1:
-                        precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
-                        precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
-                        # viene creata la chiave
-                        smd10[v1, v2, n1, n2] = 0
+                # l'arco non deve esistere nella soluzione attuale
+                # un veicolo non puo' essere spostato dietro se stesso
+                if (((v1==v2) and ((n1, n2) not in rotte[v1])) or (v1!=v2)) and n2!=n1:
+                    precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
+                    precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
+                    # viene creata la chiave
+                    smd10[v1, v2, n1, n2] = 0
 
-                        # viene effettuata una modifica soltanto se è una mossa non facente parte della soluzione attuale
-                        #if v1==v2 and (n1, n2) not in rotte[v1]:
+                    # calcolo dei costi
+                    # v1
+                    # nik2ij
+                    # se n1 non è l'ultimo nodo della sua rotta
+                    if succN1[0] != -1:
+                        # aggiunta del nuovo arco out n2
+                        smd10[v1, v2, n1, n2] += nik2ij[v1, n2, succN1[0]]
+                        # rimozione del vecchio arco da sostituire con n2
+                        smd10[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
+                    # aggiunta del nuovo arco in n2
+                    smd10[v1, v2, n1, n2] += nik2ij[v1, n1, n2]
 
-                        # calcolo dei costi
-                        # v1
-                        # nik2ij
-                        # se n1 non è l'ultimo nodo della sua rotta
-                        if succN1[0] != -1:
-                            # aggiunta del nuovo arco out n2
-                            smd10[v1, v2, n1, n2] += nik2ij[v1, n2, succN1[0]]
-                            # rimozione del vecchio arco da sostituire con n2
-                            smd10[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
-                        # aggiunta del nuovo arco in n2
-                        smd10[v1, v2, n1, n2] += nik2ij[v1, n1, n2]
+                    # ak2ij
+                    # prima di n1
+                    flag = 0
+                    if succN1[0]==-1:
+                        smd10[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
+                    for arc1 in rotte[v1]:
+                        # n1, n2
+                        if arc1[0]==n1:
+                            flag=1
+                        # dopo n2 -> non vengono modificati
+                        if arc1[0]==succN1[0]:
+                            # flag=2
+                            break
 
-                        # ak2ij
                         # prima di n1
-                        flag = 0
-                        if succN1[0]==-1:
+                        if flag==0:
+                            smd10[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]])
+                        # n1, n2
+                        if flag==1:
                             smd10[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
-                        for arc1 in rotte[v1]:
-                            # n1, n2
-                            if arc1[0]==n1:
-                                flag=1
-                            # dopo n2 -> non vengono modificati
-                            if arc1[0]==succN1[0]:
-                                # flag=2
-                                break
+                            if succN1[0]!=-1:
+                                for gamma in succN1:
+                                    smd10[v1, v2, n1, n2] += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2])
+                                    smd10[v1, v2, n1, n2] += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
+                                    smd10[v1, v2, n1, n2] -= (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
+                        # dopo n2 -> non vengono modificati
 
-                            # prima di n1
-                            if flag==0:
-                                smd10[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]])
-                            # n1, n2
-                            if flag==1:
-                                smd10[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
-                                if succN1[0]!=-1:
-                                    for gamma in succN1:
-                                        smd10[v1, v2, n1, n2] += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2])
-                                        smd10[v1, v2, n1, n2] += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
-                                        smd10[v1, v2, n1, n2] -= (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
-                            # dopo n2 -> non vengono modificati
+                    # v2
+                    # nik2ij
+                    # se n2 non è l'ultimo nodo della sua rotta
+                    if succN2[0]!=-1:
+                        # rimozione del vecchio arco out n2
+                        smd10[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
+                        # aggiunta del nuovo arco in sostituzione di n2
+                        smd10[v1, v2, n1, n2] += nik2ij[v2, precN2[0], succN2[0]]
+                    # rimozione del vecchio arco in n2
+                    smd10[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
 
-                        # v2
-                        # nik2ij
-                        # se n2 non è l'ultimo nodo della sua rotta
-                        if succN2[0]!=-1:
-                            # rimozione del vecchio arco out n2
-                            smd10[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
-                            # aggiunta del nuovo arco in sostituzione di n2
-                            smd10[v1, v2, n1, n2] += nik2ij[v2, precN2[0], succN2[0]]
-                        # rimozione del vecchio arco in n2
-                        smd10[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
+                    # ak2ijsuccN2
+                    # prima di precN2[0]
+                    flag=0
+                    for arc2 in rotte[v2]:
+                        # precN2[0], n2
+                        if arc2[0]==precN2[0]:
+                            flag=1
+                        # n2, succN2[0]
+                        if arc2[0]==n2:
+                            flag=2
+                        # dopo succN2[0] -> non vengono modificati
+                        if arc2[0]==succN2[0]:
+                            break
 
-                        # ak2ijsuccN2
                         # prima di precN2[0]
-                        flag=0
-                        for arc2 in rotte[v2]:
-                            # precN2[0], n2
-                            if arc2[0]==precN2[0]:
-                                flag=1
-                            # n2, succN2[0]
-                            if arc2[0]==n2:
-                                flag=2
-                            # dopo succN2[0] -> non vengono modificati
-                            if arc2[0]==succN2[0]:
-                                break
-
-                            # prima di precN2[0]
-                            if flag==0:
-                                smd10[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc2[0], arc2[1]])
-                            # precN2[0], n2
-                            if flag==1:
-                                smd10[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
-                                if succN2[0]!=-1:
-                                    for gamma in succN2:
-                                        smd10[v1, v2, n1, n2] += (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
-                                        smd10[v1, v2, n1, n2] -= (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
-                            # n2, succN2[0]
-                            if flag==2:
+                        if flag==0:
+                            smd10[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc2[0], arc2[1]])
+                        # precN2[0], n2
+                        if flag==1:
+                            smd10[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+                            if succN2[0]!=-1:
                                 for gamma in succN2:
-                                    smd10[v1, v2, n1, n2] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
-                            # dopo succN2[0] -> non vengono modificati
+                                    smd10[v1, v2, n1, n2] += (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
+                                    smd10[v1, v2, n1, n2] -= (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+                        # n2, succN2[0]
+                        if flag==2:
+                            for gamma in succN2:
+                                smd10[v1, v2, n1, n2] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
+                        # dopo succN2[0] -> non vengono modificati
                 pass
+
+def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2, s):
+    pass
 
 def getClienteVeicolo(rotte):
     veicoliDiCliente = {}
@@ -224,7 +220,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
     x2TMP = x2.copy()
     w2TMP = w2.copy()
 
-    # dizionatio che contiene i pallet richiesti dai clienti di s
+    # dizionario che contiene i pallet richiesti dai clienti di s
     PGa = {}
 
     # numero massimo di pallet trasportabili dal veicolo k che serve s

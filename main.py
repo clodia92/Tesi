@@ -141,7 +141,7 @@ if __name__ == "__main__":
         # struttura che contiene tutte le mosse con relativi costi
         # dizionari di smd con chiave move point
         smd10 = {}  # dimensione: n*(n+k-1) (n: nodi, k: veicoli)
-        # smd11 = {}
+        smd11 = {}
         # smd2opt = {}
 
         if resultSolutionBase:
@@ -151,16 +151,17 @@ if __name__ == "__main__":
 
             # viene inizializzato l'SMD
             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
             # crea la lista in cui verrà salvato l'heap
             # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
-            heapSMD10 = list(smd10.values())
+            heapSMD = list(smd10.values()) + list(smd11.values())
             # crea l'heap di smd10
-            heapq.heapify(heapSMD10)
+            heapq.heapify(heapSMD)
 
             itMosse = 1
 
             while True:
-                x2TMP, w2TMP, keyLocalSearch = localSearch(heapSMD10, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
+                x2TMP, w2TMP, keyLocalSearch = localSearch(heapSMD, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
                 costTMP = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
 
                 if keyLocalSearch==-1 or costTMP>cost:
@@ -182,9 +183,9 @@ if __name__ == "__main__":
                     # aggiornare SMD dopo una mossa ammissibile
                     smd10.clear()
                     inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
-                    heapSMD10 = list(smd10.values())
+                    heapSMD = list(smd10.values())
                     # crea l'heap di smd10
-                    heapq.heapify(heapSMD10)
+                    heapq.heapify(heapSMD)
                     pass
         else:
             # trovare un'altra soluzione
