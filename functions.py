@@ -306,6 +306,11 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
     # lista dei clienti di s
     Gamma = GammadiS[s]
 
+    # lista dei veicoli di s
+    K2 = K2diS[s]
+    # soluzione alternativa
+    # K2.reverse()
+
     # dizionario delle rotte per ogni veicolo con relativi pallet:
     # trasportoPalletDiGamma [ k ] = ( gamma1, pallet1) , ( gamma2, pallet2) , ( gamma3, pallet3) ....
     trasportoPalletDiGamma = {}
@@ -315,7 +320,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
     # pallet totali che partono da s
     palletDaConsegnare = 0
 
-    for v in K2diS[s]:
+    for v in K2:
         # print("uk2[{}]: {}".format(v, uk2[v]))
         uk2diS[v] = uk2[v]
 
@@ -326,9 +331,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
         PGa[gamma] = PsGa[(s, gamma)]
         palletDaConsegnare += PGa[gamma]
 
-    # print("K2diS[{}]: {}".format(s, K2diS[s]))
 
-    K2 = K2diS[s]
 
     # iterazione per scorrere i veicoli e i clienti di gamma
     posV = 0
@@ -529,7 +532,7 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, 
 
         # verificare ammissibilità
         if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS)):
-            print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}".format(itNonAmmissibili,
+            print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
                                                                                                    minCostKey,
                                                                                                    smd10[minCostKey]))
             # soluzione ammissibile trovata

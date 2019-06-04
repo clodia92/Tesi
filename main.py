@@ -174,7 +174,8 @@ if __name__ == "__main__":
                 if keyLocalSearch == -1 or costTMP > cost:
                     # if keyLocalSearch == -1:
 
-                    print("Soluzione finale trovata, itMosse: {}, costo: {}".format(itMosse, cost))
+                    print("Soluzione finale trovata, itMosse: {}, costo: {}.".format(itMosse, cost))
+                    print("rotte: {}".format(rotte))
                     break
                 else:
                     itMosse += 1
