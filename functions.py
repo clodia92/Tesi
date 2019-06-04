@@ -68,7 +68,7 @@ def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2diS, A2, Gammad
         return False
 
 def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
-    # lista di tuple: (cliente, veicolo)
+    # lista di tuple: [(cliente, veicolo), ...]
     clienteVeicolo = getClienteVeicolo(rotte)
 
     for v1 in rotte:
@@ -141,7 +141,6 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             for gamma in succN2:
                                 smd10[v1, v2, n1, n2] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
                         # dopo succN2[0] -> non vengono modificati
-                    print("c")
                     pass
                 # l'arco non deve esistere nella soluzione attuale
                 # un veicolo non puo' essere spostato dietro se stesso
@@ -402,6 +401,9 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, 
     itMAX=len(heapSMD10)
     itNonAmmissibili=0
 
+    # lista di tuple: [(cliente, veicolo), ...]
+    clienteVeicolo = getClienteVeicolo(rotte)
+
     while heapSMD10[0]<0 and itNonAmmissibili<itMAX:
 
         itNonAmmissibili += 1
@@ -422,6 +424,10 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, 
         precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
         precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
+        # se viene trattato un cliente splitato sulle rotte v1 e v2
+        #
+        if n2 in [c for c, k in clienteVeicolo if k==v1] and v1!=v2:
+            print("")
         # v1 +
         if succN1[0]==-1:
             x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2[0], n2]
