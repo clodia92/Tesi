@@ -357,7 +357,6 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, 
         if succN1[0]==-1:
             x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2[0], n2]
             w2TMP[v1, n1, n2] = 1
-            w2TMP[v1, n1, n2] = 1
 
             for arc1 in rotte[v1]:
                 if arc1[0] == n1:
@@ -366,7 +365,6 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, 
         else:
             x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2[0], n2]
             x2TMP[v1, succN1[0], n1, n2] = x2TMP[v1, succN1[0], n1, succN1[0]]
-            w2TMP[v1, n1, n2] = 1
             w2TMP[v1, n1, n2] = 1
 
             for arc1 in rotte[v1]:
@@ -413,7 +411,7 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, 
     return  x2TMP, w2TMP, -1
 
 # aggiorna le rotte
-def updateRotte(rotte, keyLocalSearch):
+def updateRotteSmd10(rotte, keyLocalSearch):
     v1 = keyLocalSearch[0]
     v2 = keyLocalSearch[1]
     n1 = keyLocalSearch[2]

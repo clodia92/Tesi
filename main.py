@@ -11,37 +11,6 @@ class Prob3:
         print("Nome file input", nomeFileInput)
         myRead = readFile(self.nomeFile)
 
-        # print("Numero di satelliti -->", myRead.get_numberOfSatellites())
-        # print("Numero di containers -->", myRead.get_numberOfContainers())
-        # print("Numero di veicoli in K1 -->", myRead.get_numberOfVehicles1st())
-        # print("Numero di veicoli in K2 -->", myRead.get_numberOfVehicles2nd())
-        # print("Numero di clienti -->", myRead.get_numberOfCustomers())
-        #
-        # print("Set dei satelliti -->", myRead.get_setOfSatellites())
-        # print("Set dei containers -->", myRead.get_setOfContainers())
-        # print("Set dei veicoli in K1 -->", myRead.get_setOfVehicles1st())
-        # print("Set dei veicoli in K2 -->", myRead.get_setOfVehicles2nd())
-        # print("Set dei clienti -->", myRead.get_setOfCustomers())
-        # print("Set degli archi in A1 -->", myRead.get_setOfArcA1())
-        # print("Set degli archi in A2 -->", myRead.get_setOfArcA2())
-        #
-        # print("Dizionario di fs --> ", myRead.get_dictionaryOfFs())
-        # print("Dizionario di nik2ij -->", myRead.get_dictionaryOfNik2ij())
-        # print("Dizionario di ak2ij -->", myRead.get_dictionaryOfAk2ij())
-        # print("Dizionario di betas -->", myRead.get_dictionaryOfBetaS())
-        # print("Dizionario di aks -->", myRead.get_dictionaryOfAks())
-        # print("Dizionario di ak1s -->", myRead.get_dictionaryOfAk1s())
-        # print("Dizionario di uk2 -->", myRead.get_dictionaryOfUk2())
-        # print("Dizionario di us -->", myRead.get_dictionaryOfUs())
-        # print("Dizionario di vs -->", myRead.get_dictionaryOfVs())
-        # print("Dizionario di PalletInContainer -->", myRead.get_dictionaryOfPalletInContainer())
-        # print("Dizionario di pis -->", myRead.get_dictionaryOfPis())
-        # print("Lunghezza A2 --> ", len(myRead.get_setOfArcA2()))
-        # print("Mezzi Prob2 -->", myRead.get_K2diS())
-        # print("Domande -->", myRead.get_PsGa())
-        # print("Sneg -->", myRead.get_Sneg())
-        # print("Pgac -->", myRead.get_Pgac())
-
         # fixed cost of selection of satellite s in S
         self.fs = myRead.get_dictionaryOfFs()
 
@@ -195,6 +164,8 @@ if __name__ == "__main__":
                 costTMP = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
 
                 if keyLocalSearch==-1 or costTMP>cost:
+                #if keyLocalSearch == -1:
+
                     print("Soluzione finale trovata, itMosse: {}, costo: {}".format(itMosse, cost))
                     break
                 else:
@@ -207,7 +178,7 @@ if __name__ == "__main__":
                     solutions.append([myProb.x2, myProb.w2, cost])
 
                     # aggiornare rotte dopo una mossa ammissibile
-                    updateRotte(rotte, keyLocalSearch)
+                    updateRotteSmd10(rotte, keyLocalSearch)
                     # aggiornare SMD dopo una mossa ammissibile
                     smd10.clear()
                     inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
