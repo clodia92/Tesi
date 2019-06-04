@@ -377,12 +377,14 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, 
 
         # v1 -
         if succN1[0]!=-1:
-            x2TMP[v1, succN1[0], n1, succN1[0]] = 0
+            for gamma in succN1:
+                x2TMP[v1, gamma, n1, succN1[0]] = 0
             w2TMP[v1, n1, succN1[0]] = 0
 
         # v2 +
         if succN2[0]!=-1:
-            x2TMP[v2, succN2[0], precN2[0], succN2[0]] = x2TMP[v2, succN2[0], n2, succN2[0]]
+            for gamma in succN2:
+                x2TMP[v2, gamma, precN2[0], succN2[0]] = x2TMP[v2, gamma, n2, succN2[0]]
             w2TMP[v2, precN2[0], succN2[0]] = 1
 
         # v2 -
@@ -393,6 +395,9 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, 
                 x2TMP[v2, n2, arc2[0], arc2[1]] = 0
             w2TMP[v2, precN2[0], n2] = 0
         else:
+            for gamma in succN2:
+                x2TMP[v2, gamma, precN2[0], n2] = 0
+                x2TMP[v2, gamma, n2, succN2[0]] = 0
             for arc2 in rotte[v2]:
                 if arc2[0]==n2:
                     break
