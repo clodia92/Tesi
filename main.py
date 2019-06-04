@@ -3,6 +3,7 @@ from functions import *
 from constraintsModelThree import computeCost
 import heapq
 
+
 class Prob3:
 
     def __init__(self, nomeFileInput):
@@ -92,7 +93,7 @@ class Prob3:
 
         # dictionary of C[s]
         # set of containers assigned to satellite s
-        self.CdiS = myRead.get_CdiS()     #####  <-------- chiedere a Simone
+        self.CdiS = myRead.get_CdiS()  #####  <-------- chiedere a Simone
 
         # dictionary of Sneg
         # set of selected satellites
@@ -114,9 +115,10 @@ class Prob3:
         # number of pallets unpacked from container c in C
         # moved from satellite s in Sneg to customer ga in GammadiS
         # by vehicle k in K2diS according to the solution of P2
-        self.PcGaKs = {}   #     <------------------------------------- controllare se è la soluzione finale
+        self.PcGaKs = {}  # <------------------------------------- controllare se è la soluzione finale
 
         pass
+
 
 if __name__ == "__main__":
 
@@ -133,10 +135,12 @@ if __name__ == "__main__":
         generateVariablesModelThree(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, s)
 
         # trova una soluzione di base ammissibile
-        resultSolutionBase, myProb.x2, myProb.w2, rotte = findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
-        cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
+        resultSolutionBase, myProb.x2, myProb.w2, rotte = findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2,
+                                                                           myProb.Pgac, myProb.PsGa, myProb.K2diS,
+                                                                           myProb.A2, myProb.GammadiS, myProb.CdiS)
+        cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij,
+                           s)
         costTMP = cost + 1
-
 
         # struttura che contiene tutte le mosse con relativi costi
         # dizionari di smd con chiave move point
@@ -147,7 +151,7 @@ if __name__ == "__main__":
         if resultSolutionBase:
             print("Soluzione di base trovata, costo: {}.".format(cost))
             # aggiungo la soluzione alle soluzioni
-            solutions.append((myProb.x2, myProb.w2, cost))
+            solutions.append((cost, myProb.x2, myProb.w2))
 
             # viene inizializzato l'SMD
             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
@@ -161,11 +165,14 @@ if __name__ == "__main__":
             itMosse = 1
 
             while True:
-                x2TMP, w2TMP, keyLocalSearch = localSearch(heapSMD, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2, myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2, myProb.GammadiS, myProb.CdiS)
-                costTMP = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
+                x2TMP, w2TMP, keyLocalSearch = localSearch(heapSMD, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2,
+                                                           myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2,
+                                                           myProb.GammadiS, myProb.CdiS)
+                costTMP = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
+                                      myProb.ak2ij, s)
 
-                if keyLocalSearch==-1 or costTMP>cost:
-                #if keyLocalSearch == -1:
+                if keyLocalSearch == -1 or costTMP > cost:
+                    # if keyLocalSearch == -1:
 
                     print("Soluzione finale trovata, itMosse: {}, costo: {}".format(itMosse, cost))
                     break
@@ -176,7 +183,7 @@ if __name__ == "__main__":
                     myProb.w2 = w2TMP.copy()
 
                     print("Soluzione migliore trovata, costo: {}.".format(cost))
-                    solutions.append([myProb.x2, myProb.w2, cost])
+                    solutions.append([cost, myProb.x2, myProb.w2])
 
                     # aggiornare rotte dopo una mossa ammissibile
                     updateRotteSmd10(rotte, keyLocalSearch)

@@ -41,7 +41,6 @@
 
 # generate Objective Function for model Three  
 def computeCost(x2, w2, K2diS, GammadiS, A2, nik2ij, ak2ij, sat):
-
     myObjFunction = 0
 
     # for all vehicles in the "s" satellite
@@ -70,12 +69,12 @@ def computeCost(x2, w2, K2diS, GammadiS, A2, nik2ij, ak2ij, sat):
 
 # generate Constraint 29
 def BuildConstr29(GammadiS, x2, K2diS, PsGa, sat):
-
     vincolo29 = True
 
     # for all customers
     for ga in GammadiS[sat]:
-        vincolo29 = (sum([x2[(k, ga, sat, j)] for k in K2diS[sat] for j in GammadiS[sat] if sat != j]) == (PsGa[(sat, ga)]))
+        vincolo29 = (sum([x2[(k, ga, sat, j)] for k in K2diS[sat] for j in GammadiS[sat] if sat != j]) == (
+        PsGa[(sat, ga)]))
         if (not vincolo29):
             return vincolo29
 
@@ -84,7 +83,6 @@ def BuildConstr29(GammadiS, x2, K2diS, PsGa, sat):
 
 # generate Constraint 30
 def BuildConstr30(GammadiS, x2, K2diS, Pgac, CdiS, sat):
-
     vincolo30 = True
 
     parcheggio = [sat]  # mi serve per poter sommare 2 liste
@@ -92,7 +90,7 @@ def BuildConstr30(GammadiS, x2, K2diS, Pgac, CdiS, sat):
     # for all customers
     for ga in GammadiS[sat]:
         vincolo30 = (sum([x2[(k, ga, i, ga)] for k in K2diS[sat] for i in
-                       parcheggio + GammadiS[sat] if ((k, ga, i, ga) in x2) if i != ga]) ==
+                          parcheggio + GammadiS[sat] if ((k, ga, i, ga) in x2) if i != ga]) ==
                      sum([Pgac[(c, ga)] for c in CdiS[sat] if ((c, ga) in Pgac)]))
         if (not vincolo30):
             return vincolo30
@@ -102,7 +100,6 @@ def BuildConstr30(GammadiS, x2, K2diS, Pgac, CdiS, sat):
 
 # generate Constraint 31
 def BuildConstr31(GammadiS, K2diS, x2, sat):
-
     vincolo31 = True
 
     parcheggio = [sat]  # mi serve per poter sommare 2 liste
@@ -117,9 +114,9 @@ def BuildConstr31(GammadiS, K2diS, x2, sat):
                 # for all vehicles in the "s" satellite
                 for k in K2diS[sat]:
                     vincolo31 = sum([x2[(k, ga_1, i, ga_2)] for i in parcheggio + GammadiS[sat] if
-                                  i != ga_2 and (k, ga_1, i, ga_2) in x2]) == sum(
-                                    [x2[(k, ga_1, ga_2, i)] for i in GammadiS[sat] if
-                                     ga_2 != i and (k, ga_1, ga_2, i) in x2])
+                                     i != ga_2 and (k, ga_1, i, ga_2) in x2]) == sum(
+                        [x2[(k, ga_1, ga_2, i)] for i in GammadiS[sat] if
+                         ga_2 != i and (k, ga_1, ga_2, i) in x2])
                     if (not vincolo31):
                         return vincolo31
 
@@ -128,7 +125,6 @@ def BuildConstr31(GammadiS, K2diS, x2, sat):
 
 # generate Constraint 32
 def BuildConstr32(K2diS, w2, GammadiS, sat):
-
     vincolo32 = True
 
     # for all vehicles in the "s" satellite
@@ -142,7 +138,6 @@ def BuildConstr32(K2diS, w2, GammadiS, sat):
 
 # generate Constraint 34
 def BuildConstr34(K2diS, GammadiS, w2, sat):
-
     vincolo34 = True
 
     parcheggio = [sat]  # mi serve per poter sommare 2 liste
@@ -162,7 +157,6 @@ def BuildConstr34(K2diS, GammadiS, w2, sat):
 
 # generate Constraint 35
 def BuildConstr35(K2diS, A2, x2, GammadiS, uk2, w2, sat):
-
     vincolo35 = True
 
     # for all vehicles in the "s" satellite
@@ -172,7 +166,7 @@ def BuildConstr35(K2diS, A2, x2, GammadiS, uk2, w2, sat):
 
             if i != j:
                 vincolo35 = sum([x2[(k, ga, i, j)] for ga in GammadiS[sat]]) <= (
-                    uk2[k] * w2[(k, i, j)])
+                        uk2[k] * w2[(k, i, j)])
                 if (not vincolo35):
                     return vincolo35
 
@@ -181,7 +175,6 @@ def BuildConstr35(K2diS, A2, x2, GammadiS, uk2, w2, sat):
 
 # generate Constraint 36
 def BuildConstr36(K2diS, GammadiS, w2, sat):
-
     vincolo36 = True
 
     for k in K2diS[sat]:

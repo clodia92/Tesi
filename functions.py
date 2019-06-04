@@ -11,7 +11,6 @@ def generateVariablesModelThree(x2, w2, K2diS, GammadiS, A2, sat):
         for ga in GammadiS[sat]:
             # for all arcs in A2
             for i, j in A2:
-
                 if i != j:
                     myx2Index = (k, ga, i, j)
 
@@ -26,7 +25,6 @@ def generateVariablesModelThree(x2, w2, K2diS, GammadiS, A2, sat):
     for k in K2diS[sat]:
         # for all arcs in A2
         for i, j in A2:
-
             if i != j:
                 myw2Index = (k, i, j)
 
@@ -34,8 +32,8 @@ def generateVariablesModelThree(x2, w2, K2diS, GammadiS, A2, sat):
                 pass
             pass
         pass
-
     pass  # end of generateVariablesModelThree
+
 
 def assignx2w2(x2, w2, trasportoPalletDiGamma, rotte):
     for k in rotte:
@@ -43,6 +41,7 @@ def assignx2w2(x2, w2, trasportoPalletDiGamma, rotte):
             for (gamma, pallet) in trasportoPalletDiGamma[k][posArc:]:
                 x2[k, gamma, arcI, arcJ] = pallet
                 w2[k, arcI, arcJ] = 1
+
 
 # verifica se la soluzione è ammissibile restituendo True o False
 def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
@@ -67,13 +66,14 @@ def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2diS, A2, Gammad
     else:
         return False
 
+
 def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
     # lista di tuple: [(cliente, veicolo), ...]
     clienteVeicolo = getClienteVeicolo(rotte)
 
     for v1 in rotte:
         # lista dei nodi del veicolo k (satellite + clienti)
-        listNodes = [s]+[c2 for c1,c2 in rotte[v1]]
+        listNodes = [s] + [c2 for c1, c2 in rotte[v1]]
         for n1 in listNodes:
             for n2, v2 in clienteVeicolo:
                 # v1 = veicolo di destinazione di n1
@@ -84,9 +84,9 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                 precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
                 precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
-                # se viene trattato un cliente splitato sulle rotte v1 e v2
+                # se viene trattato un cliente splittato sulle rotte v1 e v2
                 #
-                if n2 in [c for c, k in clienteVeicolo if k==v1] and v1!=v2:
+                if n2 in [c for c, k in clienteVeicolo if k == v1] and v1 != v2:
                     smd10[v1, v2, n1, n2] = 0
                     # calcolo dei costi
                     # v1
@@ -134,7 +134,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             if succN2[0] != -1:
                                 for gamma in succN2:
                                     smd10[v1, v2, n1, n2] += (
-                                                x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
+                                            x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
                                     smd10[v1, v2, n1, n2] -= (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                         # n2, succN2[0]
                         if flag == 2:
@@ -144,7 +144,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                     pass
                 # l'arco non deve esistere nella soluzione attuale
                 # un veicolo non puo' essere spostato dietro se stesso
-                elif (((v1==v2) and ((n1, n2) not in rotte[v1])) or (v1!=v2)) and n2!=n1:
+                elif (((v1 == v2) and ((n1, n2) not in rotte[v1])) or (v1 != v2)) and n2 != n1:
                     # viene creata la chiave
                     smd10[v1, v2, n1, n2] = 0
 
@@ -163,24 +163,24 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                     # ak2ij
                     # prima di n1
                     flag = 0
-                    if succN1[0]==-1:
+                    if succN1[0] == -1:
                         smd10[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
                     for arc1 in rotte[v1]:
                         # n1, n2
-                        if arc1[0]==n1:
-                            flag=1
+                        if arc1[0] == n1:
+                            flag = 1
                         # dopo n2 -> non vengono modificati
-                        if arc1[0]==succN1[0]:
+                        if arc1[0] == succN1[0]:
                             # flag=2
                             break
 
                         # prima di n1
-                        if flag==0:
+                        if flag == 0:
                             smd10[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]])
                         # n1, n2
-                        if flag==1:
+                        if flag == 1:
                             smd10[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
-                            if succN1[0]!=-1:
+                            if succN1[0] != -1:
                                 for gamma in succN1:
                                     smd10[v1, v2, n1, n2] += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2])
                                     smd10[v1, v2, n1, n2] += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
@@ -190,7 +190,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                     # v2
                     # nik2ij
                     # se n2 non è l'ultimo nodo della sua rotta
-                    if succN2[0]!=-1:
+                    if succN2[0] != -1:
                         # rimozione del vecchio arco out n2
                         smd10[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
                         # aggiunta del nuovo arco in sostituzione di n2
@@ -200,34 +200,36 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 
                     # ak2ijsuccN2
                     # prima di precN2[0]
-                    flag=0
+                    flag = 0
                     for arc2 in rotte[v2]:
                         # precN2[0], n2
-                        if arc2[0]==precN2[0]:
-                            flag=1
+                        if arc2[0] == precN2[0]:
+                            flag = 1
                         # n2, succN2[0]
-                        if arc2[0]==n2:
-                            flag=2
+                        if arc2[0] == n2:
+                            flag = 2
                         # dopo succN2[0] -> non vengono modificati
-                        if arc2[0]==succN2[0]:
+                        if arc2[0] == succN2[0]:
                             break
 
                         # prima di precN2[0]
-                        if flag==0:
+                        if flag == 0:
                             smd10[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc2[0], arc2[1]])
                         # precN2[0], n2
-                        if flag==1:
+                        if flag == 1:
                             smd10[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
-                            if succN2[0]!=-1:
+                            if succN2[0] != -1:
                                 for gamma in succN2:
-                                    smd10[v1, v2, n1, n2] += (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
+                                    smd10[v1, v2, n1, n2] += (
+                                            x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
                                     smd10[v1, v2, n1, n2] -= (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                         # n2, succN2[0]
-                        if flag==2:
+                        if flag == 2:
                             for gamma in succN2:
                                 smd10[v1, v2, n1, n2] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
                         # dopo succN2[0] -> non vengono modificati
                 pass
+
 
 def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2, s):
     # lista di tuple: (cliente, veicolo)
@@ -244,6 +246,7 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2, s):
                 # n2 = nodo da spostare dietro n1
                 pass
 
+
 # restituisce una lista di tuple [(cliente, veicolo), ...]
 def getClienteVeicolo(rotte):
     veicoliDiCliente = {}
@@ -257,6 +260,7 @@ def getClienteVeicolo(rotte):
                 veicoliDiCliente[c[1]] = [k]
 
     return clienteVeicolo
+
 
 # restituisce due liste dei clienti precedenti e successivi al nodo
 def trovaPrecSuccList(rotta, nodo):
@@ -286,6 +290,7 @@ def trovaPrecSuccList(rotta, nodo):
             else:
                 return precList, succList
 
+
 def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
     print("START findSolutionBase()")
 
@@ -301,7 +306,8 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
     # lista dei clienti di s
     Gamma = GammadiS[s]
 
-    # dizionario delle rotte per ogni veicolo con relativi pallet: trasportoPalletDiGamma [ k ] = ( gamma1, pallet1) , ( gamma2, pallet2) , ( gamma3, pallet3) ....
+    # dizionario delle rotte per ogni veicolo con relativi pallet:
+    # trasportoPalletDiGamma [ k ] = ( gamma1, pallet1) , ( gamma2, pallet2) , ( gamma3, pallet3) ....
     trasportoPalletDiGamma = {}
     # dizionario della lista ordinata di archi per ogni veicolo: rotte[k]: [(s,i), (i,j), (j,...)]
     rotte = {}
@@ -396,99 +402,141 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
         # soluzione non ammissibile
         return False, x2, w2, rotte
 
+
 def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
     print("\nSTART localSearch()")
-    itMAX=len(heapSMD10)
-    itNonAmmissibili=0
+    itMAX = len(heapSMD10)
+    itNonAmmissibili = 0
 
     # lista di tuple: [(cliente, veicolo), ...]
     clienteVeicolo = getClienteVeicolo(rotte)
 
-    while heapSMD10[0]<0 and itNonAmmissibili<itMAX:
+    while heapSMD10[0] < 0 and itNonAmmissibili < itMAX:
 
         itNonAmmissibili += 1
 
         # salva la chiave del valore minore
-        valoreHeap=heapq.heappop(heapSMD10)
-        minCostKey = [key for key, value in smd10.items() if value==valoreHeap][0]
+        valoreHeap = heapq.heappop(heapSMD10)
+        minCostKey = [key for key, value in smd10.items() if value == valoreHeap][0]
 
         v1 = minCostKey[0]
         v2 = minCostKey[1]
         n1 = minCostKey[2]
         n2 = minCostKey[3]
 
+        precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
+        precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
+
         x2TMP = x2.copy()
         w2TMP = w2.copy()
 
         # modificare x2TMP e w2TMP
-        precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
-        precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
-        # se viene trattato un cliente splitato sulle rotte v1 e v2
+        # se viene trattato un cliente splittato sulle rotte v1 e v2
         #
-        if n2 in [c for c, k in clienteVeicolo if k==v1] and v1!=v2:
-            print("")
-        # v1 +
-        if succN1[0]==-1:
-            x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2[0], n2]
-            w2TMP[v1, n1, n2] = 1
-
+        if n2 in [c for c, k in clienteVeicolo if k == v1] and v1 != v2:
+            # v1
             for arc1 in rotte[v1]:
                 if arc1[0] == n1:
                     break
-                x2TMP[v1, n2, arc1[0], arc1[1]] = x2TMP[v2, n2, precN2[0], n2]
-        else:
-            x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2[0], n2]
-            x2TMP[v1, succN1[0], n1, n2] = x2TMP[v1, succN1[0], n1, succN1[0]]
-            w2TMP[v1, n1, n2] = 1
+                x2TMP[v1, n2, arc1[0], arc1[1]] += x2TMP[v2, n2, precN2[0], n2]
 
-            for arc1 in rotte[v1]:
-                if arc1[0] == n1:
-                    break
-                x2TMP[v1, n2, arc1[0], arc1[1]] = x2TMP[v2, n2, precN2[0], n2]
-
-            x2TMP[v1, succN1[0], n2, succN1[0]] = x2TMP[v1, succN1[0], n1, succN1[0]]
-            w2TMP[v1, n2, succN1[0]] = 1
-
-        # v1 -
-        if succN1[0]!=-1:
-            for gamma in succN1:
-                x2TMP[v1, gamma, n1, succN1[0]] = 0
-            w2TMP[v1, n1, succN1[0]] = 0
-
-        # v2 +
-        if succN2[0]!=-1:
-            for gamma in succN2:
-                x2TMP[v2, gamma, precN2[0], succN2[0]] = x2TMP[v2, gamma, n2, succN2[0]]
-            w2TMP[v2, precN2[0], succN2[0]] = 1
-
-        # v2 -
-        if succN2[0]==-1:
-            for arc2 in rotte[v2]:
-                if arc2[0]==n2:
-                    break
-                x2TMP[v2, n2, arc2[0], arc2[1]] = 0
+            # v2
             w2TMP[v2, precN2[0], n2] = 0
-        else:
-            for gamma in succN2:
-                x2TMP[v2, gamma, precN2[0], n2] = 0
-                x2TMP[v2, gamma, n2, succN2[0]] = 0
+            # prima di precN2[0]
+            flag = 0
             for arc2 in rotte[v2]:
-                if arc2[0]==n2:
+                # precN2[0] - n2
+                if arc2[1] == n2:
+                    flag = 1
+                # n2 - succN2[0]
+                if arc2[0] == n2:
+                    flag = 2
+                # dopo succN2[0]
+                if arc2[0] == succN2[0]:
                     break
-                x2TMP[v2, n2, arc2[0], arc2[1]] = 0
 
-            x2TMP[v2, succN2[0], n2, succN2[0]] = 0
-            w2TMP[v2, precN2[0], n2] = 0
-            w2TMP[v2, n2, succN2[0]] = 0
+                # prima di precN2[0]
+                if flag == 0:
+                    x2TMP[v2, n2, arc2[0], arc2[1]] -= x2TMP[v2, n2, precN2[0], n2]
+                # precN2[0] - n2
+                if flag == 1:
+                    x2TMP[v2, n2, arc2[0], arc2[1]] -= x2TMP[v2, n2, precN2[0], n2]
+                    w2TMP[v2, precN2[0], n2] = 0
+                # n2 - succN2[0]
+                if flag == 2:
+                    w2TMP[v2, n2, succN2[0]] = 0
+                    w2TMP[v2, precN2[0], succN2[0]] = 1
+                    for gamma in succN2:
+                        x2TMP[v2, gamma, precN2[0], succN2[0]] += x2TMP[v2, gamma, precN2[0], n2]
+                        x2TMP[v2, gamma, precN2[0], n2] -= x2TMP[v2, gamma, precN2[0], n2]
+                        x2TMP[v2, gamma, n2, succN2[0]] -= x2TMP[v2, gamma, n2, succN2[0]]
+
+        else:
+            # v1 +
+            if succN1[0] == -1:
+                x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2[0], n2]
+                w2TMP[v1, n1, n2] = 1
+
+                for arc1 in rotte[v1]:
+                    if arc1[0] == n1:
+                        break
+                    x2TMP[v1, n2, arc1[0], arc1[1]] = x2TMP[v2, n2, precN2[0], n2]
+            else:
+                x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2[0], n2]
+                x2TMP[v1, succN1[0], n1, n2] = x2TMP[v1, succN1[0], n1, succN1[0]]
+                w2TMP[v1, n1, n2] = 1
+
+                for arc1 in rotte[v1]:
+                    if arc1[0] == n1:
+                        break
+                    x2TMP[v1, n2, arc1[0], arc1[1]] = x2TMP[v2, n2, precN2[0], n2]
+
+                x2TMP[v1, succN1[0], n2, succN1[0]] = x2TMP[v1, succN1[0], n1, succN1[0]]
+                w2TMP[v1, n2, succN1[0]] = 1
+
+            # v1 -
+            if succN1[0] != -1:
+                for gamma in succN1:
+                    x2TMP[v1, gamma, n1, succN1[0]] = 0
+                w2TMP[v1, n1, succN1[0]] = 0
+
+            # v2 +
+            if succN2[0] != -1:
+                for gamma in succN2:
+                    x2TMP[v2, gamma, precN2[0], succN2[0]] = x2TMP[v2, gamma, n2, succN2[0]]
+                w2TMP[v2, precN2[0], succN2[0]] = 1
+
+            # v2 -
+            if succN2[0] == -1:
+                for arc2 in rotte[v2]:
+                    if arc2[0] == n2:
+                        break
+                    x2TMP[v2, n2, arc2[0], arc2[1]] = 0
+                w2TMP[v2, precN2[0], n2] = 0
+            else:
+                for gamma in succN2:
+                    x2TMP[v2, gamma, precN2[0], n2] = 0
+                    x2TMP[v2, gamma, n2, succN2[0]] = 0
+                for arc2 in rotte[v2]:
+                    if arc2[0] == n2:
+                        break
+                    x2TMP[v2, n2, arc2[0], arc2[1]] = 0
+
+                x2TMP[v2, succN2[0], n2, succN2[0]] = 0
+                w2TMP[v2, precN2[0], n2] = 0
+                w2TMP[v2, n2, succN2[0]] = 0
 
         # verificare ammissibilità
         if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS)):
-            print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}".format(itNonAmmissibili, minCostKey, smd10[minCostKey]))
+            print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}".format(itNonAmmissibili,
+                                                                                                   minCostKey,
+                                                                                                   smd10[minCostKey]))
             # soluzione ammissibile trovata
 
             return x2TMP, w2TMP, minCostKey
-    return  x2TMP, w2TMP, -1
+    return x2TMP, w2TMP, -1
+
 
 # aggiorna le rotte
 def updateRotteSmd10(rotte, keyLocalSearch):
@@ -505,16 +553,16 @@ def updateRotteSmd10(rotte, keyLocalSearch):
     # print((n2, succN2[0]))
 
     # modifica della rotta del veicolo v1
-    if succN1[0]!=-1:
+    if succN1[0] != -1:
         index = rotte[v1].index((n1, succN1[0]))
         rotte[v1][index] = (n1, n2)
-        rotte[v1].insert(index+1, (n2, succN1[0]))
+        rotte[v1].insert(index + 1, (n2, succN1[0]))
 
     else:
         rotte[v1].append((n1, n2))
 
     # modifica della rotta del veicolo v2
-    if succN2[0]!=-1:
+    if succN2[0] != -1:
         index = rotte[v2].index((precN2[0], n2))
         rotte[v2][index] = (precN2[0], succN2[0])
         rotte[v2].remove((n2, succN2[0]))

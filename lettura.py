@@ -1,5 +1,6 @@
 import csv
 
+
 class readFile:
 
     def __init__(self, nomeFile):
@@ -65,7 +66,7 @@ class readFile:
         # dictionary of GammadiS[s]
         self.GammadiS = {}
 
-        #dictionary of CdiS[s]
+        # dictionary of CdiS[s]
         self.CdiS = {}
 
         # lista container satellite s
@@ -76,7 +77,6 @@ class readFile:
         self.K2diS = {}
         # conta il numero di occorrenza di K2diS
         self.conta_K2diS = 0
-
 
         # dictionary of PsGa[(s,ga)]
         # number of pallets in satellite s in S with destination gamma according to the solution of P1
@@ -132,7 +132,7 @@ class readFile:
 
                     # number of vehicles in the second echelon K2
                     self.NumberOfVehiclesEchelon2Park = int(row[4])
-                    
+
                     for i in range(self.NumberOfVehiclesEchelon2Park):
                         self.vehiclesK2SetPark.append(i + self.NumberOfVehiclesEchelon1Park + 1)
                         pass
@@ -267,7 +267,7 @@ class readFile:
                     row.pop(0)
                     self.listCustomers = []
                     for i in range(len(row)):
-                        self.cliente=int(row[i])
+                        self.cliente = int(row[i])
                         myKey = (self.conta_Pc, self.cliente)
                         self.listCustomers.append(self.cliente)
                         if myKey in self.Pgac:
@@ -308,7 +308,7 @@ class readFile:
                         pass
 
                     self.conta_K2diS += 1
-                    self.K2diS [self.conta_K2diS] = self.listaMezzi
+                    self.K2diS[self.conta_K2diS] = self.listaMezzi
                     pass
 
                 # lettura dei clienti assegnati al relativo satellite
@@ -436,11 +436,11 @@ class readFile:
         return self.K2diS
 
     # dictionary of parameter PsGa
-    def get_PsGa (self):
+    def get_PsGa(self):
         return self.PsGa
 
     # set of Sneg
-    def get_Sneg (self):
+    def get_Sneg(self):
         return self.Sneg
 
     # dictionary of GammadiS[s]
@@ -448,7 +448,7 @@ class readFile:
         return self.GammadiS
 
     # dictionary of Pgac[c,ga]
-    def get_Pgac (self):
+    def get_Pgac(self):
         return self.Pgac
 
     # dictionary of CdiS[s]
