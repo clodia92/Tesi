@@ -305,11 +305,12 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
 
     # lista dei clienti di s
     Gamma = GammadiS[s]
+    #Gamma.reverse()
 
     # lista dei veicoli di s
     K2 = K2diS[s]
     # soluzione alternativa
-    # K2.reverse()
+    #K2.reverse()
 
     # dizionario delle rotte per ogni veicolo con relativi pallet:
     # trasportoPalletDiGamma [ k ] = ( gamma1, pallet1) , ( gamma2, pallet2) , ( gamma3, pallet3) ....
