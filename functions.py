@@ -433,111 +433,117 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, 
         x2TMP = x2.copy()
         w2TMP = w2.copy()
 
-        # modificare x2TMP e w2TMP
+        # evita che i veicoli non servano nessun cliente
+        if len(rotte[v2])>1:
 
-        # se viene trattato un cliente splittato sulle rotte v1 e v2
-        #
-        if n2 in [c for c, k in clienteVeicolo if k == v1] and v1 != v2:
-            # v1
-            for arc1 in rotte[v1]:
-                if arc1[0] == n1:
-                    break
-                x2TMP[v1, n2, arc1[0], arc1[1]] += x2TMP[v2, n2, precN2[0], n2]
 
-            # v2
-            w2TMP[v2, precN2[0], n2] = 0
-            # prima di precN2[0]
-            flag = 0
-            for arc2 in rotte[v2]:
-                # precN2[0] - n2
-                if arc2[1] == n2:
-                    flag = 1
-                # n2 - succN2[0]
-                if arc2[0] == n2:
-                    flag = 2
-                # dopo succN2[0]
-                if arc2[0] == succN2[0]:
-                    break
+            # modificare x2TMP e w2TMP
 
+            # se viene trattato un cliente splittato sulle rotte v1 e v2
+            #
+            if n2 in [c for c, k in clienteVeicolo if k == v1] and v1 != v2:
+                # v1
+                for arc1 in rotte[v1]:
+                    if arc1[0] == n1:
+                        break
+                    x2TMP[v1, n2, arc1[0], arc1[1]] += x2TMP[v2, n2, precN2[0], n2]
+
+                # v2
+                w2TMP[v2, precN2[0], n2] = 0
                 # prima di precN2[0]
-                if flag == 0:
-                    x2TMP[v2, n2, arc2[0], arc2[1]] -= x2TMP[v2, n2, precN2[0], n2]
-                # precN2[0] - n2
-                if flag == 1:
-                    x2TMP[v2, n2, arc2[0], arc2[1]] -= x2TMP[v2, n2, precN2[0], n2]
-                    w2TMP[v2, precN2[0], n2] = 0
-                # n2 - succN2[0]
-                if flag == 2:
-                    w2TMP[v2, n2, succN2[0]] = 0
-                    w2TMP[v2, precN2[0], succN2[0]] = 1
+                flag = 0
+                for arc2 in rotte[v2]:
+                    # precN2[0] - n2
+                    if arc2[1] == n2:
+                        flag = 1
+                    # n2 - succN2[0]
+                    if arc2[0] == n2:
+                        flag = 2
+                    # dopo succN2[0]
+                    if arc2[0] == succN2[0]:
+                        break
+
+                    # prima di precN2[0]
+                    if flag == 0:
+                        x2TMP[v2, n2, arc2[0], arc2[1]] -= x2TMP[v2, n2, precN2[0], n2]
+                    # precN2[0] - n2
+                    if flag == 1:
+                        x2TMP[v2, n2, arc2[0], arc2[1]] -= x2TMP[v2, n2, precN2[0], n2]
+                        w2TMP[v2, precN2[0], n2] = 0
+                    # n2 - succN2[0]
+                    if flag == 2:
+                        w2TMP[v2, n2, succN2[0]] = 0
+                        w2TMP[v2, precN2[0], succN2[0]] = 1
+                        for gamma in succN2:
+                            x2TMP[v2, gamma, precN2[0], succN2[0]] += x2TMP[v2, gamma, precN2[0], n2]
+                            x2TMP[v2, gamma, precN2[0], n2] -= x2TMP[v2, gamma, precN2[0], n2]
+                            x2TMP[v2, gamma, n2, succN2[0]] -= x2TMP[v2, gamma, n2, succN2[0]]
+
+            else:
+                # v1 +
+                if succN1[0] == -1:
+                    x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2[0], n2]
+                    w2TMP[v1, n1, n2] = 1
+
+                    for arc1 in rotte[v1]:
+                        if arc1[0] == n1:
+                            break
+                        x2TMP[v1, n2, arc1[0], arc1[1]] = x2TMP[v2, n2, precN2[0], n2]
+                else:
+                    x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2[0], n2]
+                    x2TMP[v1, succN1[0], n1, n2] = x2TMP[v1, succN1[0], n1, succN1[0]]
+                    w2TMP[v1, n1, n2] = 1
+
+                    for arc1 in rotte[v1]:
+                        if arc1[0] == n1:
+                            break
+                        x2TMP[v1, n2, arc1[0], arc1[1]] = x2TMP[v2, n2, precN2[0], n2]
+
+                    x2TMP[v1, succN1[0], n2, succN1[0]] = x2TMP[v1, succN1[0], n1, succN1[0]]
+                    w2TMP[v1, n2, succN1[0]] = 1
+
+                # v1 -
+                if succN1[0] != -1:
+                    for gamma in succN1:
+                        x2TMP[v1, gamma, n1, succN1[0]] = 0
+                    w2TMP[v1, n1, succN1[0]] = 0
+
+                # v2 +
+                if succN2[0] != -1:
                     for gamma in succN2:
-                        x2TMP[v2, gamma, precN2[0], succN2[0]] += x2TMP[v2, gamma, precN2[0], n2]
-                        x2TMP[v2, gamma, precN2[0], n2] -= x2TMP[v2, gamma, precN2[0], n2]
-                        x2TMP[v2, gamma, n2, succN2[0]] -= x2TMP[v2, gamma, n2, succN2[0]]
+                        x2TMP[v2, gamma, precN2[0], succN2[0]] = x2TMP[v2, gamma, n2, succN2[0]]
+                    w2TMP[v2, precN2[0], succN2[0]] = 1
 
-        else:
-            # v1 +
-            if succN1[0] == -1:
-                x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2[0], n2]
-                w2TMP[v1, n1, n2] = 1
+                # v2 -
+                if succN2[0] == -1:
+                    for arc2 in rotte[v2]:
+                        if arc2[0] == n2:
+                            break
+                        x2TMP[v2, n2, arc2[0], arc2[1]] = 0
+                    w2TMP[v2, precN2[0], n2] = 0
+                else:
+                    for gamma in succN2:
+                        x2TMP[v2, gamma, precN2[0], n2] = 0
+                        x2TMP[v2, gamma, n2, succN2[0]] = 0
+                    for arc2 in rotte[v2]:
+                        if arc2[0] == n2:
+                            break
+                        x2TMP[v2, n2, arc2[0], arc2[1]] = 0
 
-                for arc1 in rotte[v1]:
-                    if arc1[0] == n1:
-                        break
-                    x2TMP[v1, n2, arc1[0], arc1[1]] = x2TMP[v2, n2, precN2[0], n2]
-            else:
-                x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2[0], n2]
-                x2TMP[v1, succN1[0], n1, n2] = x2TMP[v1, succN1[0], n1, succN1[0]]
-                w2TMP[v1, n1, n2] = 1
+                    x2TMP[v2, succN2[0], n2, succN2[0]] = 0
+                    w2TMP[v2, precN2[0], n2] = 0
+                    w2TMP[v2, n2, succN2[0]] = 0
 
-                for arc1 in rotte[v1]:
-                    if arc1[0] == n1:
-                        break
-                    x2TMP[v1, n2, arc1[0], arc1[1]] = x2TMP[v2, n2, precN2[0], n2]
+            # verificare ammissibilità
+            if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS)):
+                print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
+                                                                                                       minCostKey,
+                                                                                                       smd10[minCostKey]))
+                # soluzione ammissibile trovata
 
-                x2TMP[v1, succN1[0], n2, succN1[0]] = x2TMP[v1, succN1[0], n1, succN1[0]]
-                w2TMP[v1, n2, succN1[0]] = 1
+                return x2TMP, w2TMP, minCostKey
 
-            # v1 -
-            if succN1[0] != -1:
-                for gamma in succN1:
-                    x2TMP[v1, gamma, n1, succN1[0]] = 0
-                w2TMP[v1, n1, succN1[0]] = 0
 
-            # v2 +
-            if succN2[0] != -1:
-                for gamma in succN2:
-                    x2TMP[v2, gamma, precN2[0], succN2[0]] = x2TMP[v2, gamma, n2, succN2[0]]
-                w2TMP[v2, precN2[0], succN2[0]] = 1
-
-            # v2 -
-            if succN2[0] == -1:
-                for arc2 in rotte[v2]:
-                    if arc2[0] == n2:
-                        break
-                    x2TMP[v2, n2, arc2[0], arc2[1]] = 0
-                w2TMP[v2, precN2[0], n2] = 0
-            else:
-                for gamma in succN2:
-                    x2TMP[v2, gamma, precN2[0], n2] = 0
-                    x2TMP[v2, gamma, n2, succN2[0]] = 0
-                for arc2 in rotte[v2]:
-                    if arc2[0] == n2:
-                        break
-                    x2TMP[v2, n2, arc2[0], arc2[1]] = 0
-
-                x2TMP[v2, succN2[0], n2, succN2[0]] = 0
-                w2TMP[v2, precN2[0], n2] = 0
-                w2TMP[v2, n2, succN2[0]] = 0
-
-        # verificare ammissibilità
-        if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS)):
-            print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
-                                                                                                   minCostKey,
-                                                                                                   smd10[minCostKey]))
-            # soluzione ammissibile trovata
-
-            return x2TMP, w2TMP, minCostKey
     return x2TMP, w2TMP, -1
 
 
