@@ -44,14 +44,14 @@ def assignx2w2(x2, w2, trasportoPalletDiGamma, rotte):
 
 
 # verifica se la soluzione è ammissibile restituendo True o False
-def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
-    vincolo29 = BuildConstr29(GammadiS, x2, K2diS, PsGa, sat)
-    vincolo30 = BuildConstr30(GammadiS, x2, K2diS, Pgac, CdiS, sat)
-    vincolo31 = BuildConstr31(GammadiS, K2diS, x2, sat)
-    vincolo32 = BuildConstr32(K2diS, w2, GammadiS, sat)
-    vincolo34 = BuildConstr34(K2diS, GammadiS, w2, sat)
-    vincolo35 = BuildConstr35(K2diS, A2, x2, GammadiS, uk2, w2, sat)
-    vincolo36 = BuildConstr36(K2diS, GammadiS, w2, sat)
+def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
+    vincolo29 = BuildConstr29(Gamma, x2, K2, PsGa, sat)
+    vincolo30 = BuildConstr30(Gamma, x2, K2, Pgac, CdiS, sat)
+    vincolo31 = BuildConstr31(Gamma, K2, x2, sat)
+    vincolo32 = BuildConstr32(K2, w2, Gamma, sat)
+    vincolo34 = BuildConstr34(K2, Gamma, w2, sat)
+    vincolo35 = BuildConstr35(K2, A2, x2, Gamma, uk2, w2, sat)
+    vincolo36 = BuildConstr36(K2, Gamma, w2, sat)
 
     # print("BuildConstr29", vincolo29)
     # print("BuildConstr30", vincolo30)
@@ -291,7 +291,7 @@ def trovaPrecSuccList(rotta, nodo):
                 return precList, succList
 
 
-def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
+def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     print("START findSolutionBase()")
 
     x2TMP = x2.copy()
@@ -304,11 +304,11 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
     uk2diS = {}
 
     # lista dei clienti di s
-    Gamma = GammadiS[s]
+    #Gamma = Gamma[s]
     #Gamma.reverse()
 
     # lista dei veicoli di s
-    K2 = K2diS[s]
+    #K2 = K2[s]
     # soluzione alternativa
     #K2.reverse()
 
@@ -327,7 +327,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
 
     # print("Pgac: {}".format(Pgac))
 
-    for gamma in GammadiS[s]:
+    for gamma in Gamma:
         # print("PsGa[({}, {})]: {}".format(s, gamma, PsGa[(s, gamma)]))
         PGa[gamma] = PsGa[(s, gamma)]
         palletDaConsegnare += PGa[gamma]
@@ -396,7 +396,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
     assignx2w2(x2TMP, w2TMP, trasportoPalletDiGamma, rotte)
 
     # verifica dell'ammissibilità della soluzione
-    if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS)):
+    if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)):
         # soluzione ammissibile trovata
         x2 = x2TMP.copy()
         w2 = w2TMP.copy()
@@ -407,7 +407,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
         return False, x2, w2, rotte
 
 
-def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS):
+def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     print("\nSTART localSearch()")
     itMAX = len(heapSMD10)
     itNonAmmissibili = 0
@@ -536,7 +536,7 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2diS, A2, 
                     w2TMP[v2, n2, succN2[0]] = 0
 
             # verificare ammissibilità
-            if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2diS, A2, GammadiS, CdiS)):
+            if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)):
                 print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
                                                                                                        minCostKey,
                                                                                                        smd10[minCostKey]))

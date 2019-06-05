@@ -128,6 +128,7 @@ if __name__ == "__main__":
     # ogni rotta viene calcolata per ogni satellite separatamente
     for s in myProb.Sneg:
         print("\n\n\nSTART satellite: {}".format(s))
+
         # lista delle soluzioni trovate: (x2, w2, cost)
         solutions = []
 
@@ -136,8 +137,8 @@ if __name__ == "__main__":
 
         # trova una soluzione di base ammissibile
         resultSolutionBase, myProb.x2, myProb.w2, rotte = findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2,
-                                                                           myProb.Pgac, myProb.PsGa, myProb.K2diS,
-                                                                           myProb.A2, myProb.GammadiS, myProb.CdiS)
+                                                                           myProb.Pgac, myProb.PsGa, myProb.K2diS[s],
+                                                                           myProb.A2, myProb.GammadiS[s], myProb.CdiS)
         cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij,
                            s)
         costTMP = cost + 1
@@ -166,8 +167,8 @@ if __name__ == "__main__":
 
             while True:
                 x2TMP, w2TMP, keyLocalSearch = localSearch(heapSMD, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2,
-                                                           myProb.Pgac, myProb.PsGa, myProb.K2diS, myProb.A2,
-                                                           myProb.GammadiS, myProb.CdiS)
+                                                           myProb.Pgac, myProb.PsGa, myProb.K2diS[s], myProb.A2,
+                                                           myProb.GammadiS[s], myProb.CdiS)
                 costTMP = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
                                       myProb.ak2ij, s)
 
