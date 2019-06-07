@@ -145,8 +145,8 @@ if __name__ == "__main__":
 
         # struttura che contiene tutte le mosse con relativi costi
         # dizionari di smd con chiave move point
-        smd10 = {}  # dimensione: n*(n+k-1) (n: nodi, k: veicoli)
-        smd11 = {}
+        smd10 = {}  # dimensione: n*(n+k-1) (n: nodi, k: veicoli) <-----  da rivedere
+        # smd11 = {}
         # smd2opt = {}
 
         if resultSolutionBase:
@@ -156,10 +156,10 @@ if __name__ == "__main__":
 
             # viene inizializzato l'SMD
             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
-            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+            #inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
             # crea la lista in cui verrà salvato l'heap
             # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
-            heapSMD = list(smd10.values()) + list(smd11.values())
+            heapSMD = list(smd10.values()) # + list(smd11.values())
             # crea l'heap di smd10
             heapq.heapify(heapSMD)
 

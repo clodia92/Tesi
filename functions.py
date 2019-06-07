@@ -84,8 +84,41 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                 precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
                 precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
+                for numeroPallet in range(1, x2[v2, n2, precN2[0], n2]):
+                    # se viene trattato un cliente splittato sulle rotte v1 e v2
+                    #
+                    if n2 in [c for c, k in clienteVeicolo if k == v1] and v1 != v2:
+                        smd10[v1, v2, n1, n2] = 0
+                        # calcolo dei costi
+                        # v1
+                        # nik2ij
+                        # non viene modificato
+
+                        # ak2ij
+                        for arc1 in rotte[v1]:
+                            #
+                            if arc1[0] == n2:
+                                break
+                            smd10[v1, v2, n1, n2] += (numeroPallet * ak2ij[v1, arc1[0], arc1[1]])
+
+                        # v2
+                        # nik2ij -> non essendo eliminato l'arco in v2, non vi sono ripercussioni sull'smd per nik2ij
+
+                        # ak2ij modifica costi sui precedenti di n2
+                        for arc2 in rotte[v2]:
+                            # n2,succN2[0]
+                            if arc2[0] == n2:
+                                break
+
+                            # prima di precN2[0]
+                            smd10[v1, v2, n1, n2] -= (numeroPallet * ak2ij[v2, arc2[0], arc2[1]])
+
+
+
+
+
                 # se viene trattato un cliente splittato sulle rotte v1 e v2
-                #
+                # Spostamento di tutti i pallet verso un altro veicolo
                 if n2 in [c for c, k in clienteVeicolo if k == v1] and v1 != v2:
                     smd10[v1, v2, n1, n2] = 0
                     # calcolo dei costi
