@@ -2,6 +2,7 @@ from lettura import readFile
 from functions import *
 from constraintsModelThree import computeCost
 import heapq
+import time
 
 
 class Prob3:
@@ -128,6 +129,7 @@ if __name__ == "__main__":
     # ogni rotta viene calcolata per ogni satellite separatamente
     for s in myProb.Sneg:
         print("\n\n\nSTART satellite: {}".format(s))
+        start_time = time.time()
 
         # lista delle soluzioni trovate: (x2, w2, cost)
         solutions = []
@@ -139,8 +141,7 @@ if __name__ == "__main__":
         resultSolutionBase, myProb.x2, myProb.w2, rotte = findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2,
                                                                            myProb.Pgac, myProb.PsGa, myProb.K2diS[s],
                                                                            myProb.A2, myProb.GammadiS[s], myProb.CdiS)
-        cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij,
-                           s)
+        cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
         costTMP = cost + 1
 
         # struttura che contiene tutte le mosse con relativi costi
@@ -156,7 +157,7 @@ if __name__ == "__main__":
 
             # viene inizializzato l'SMD
             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
-            #inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+            # inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
             # crea la lista in cui verrà salvato l'heap
             # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
             heapSMD = list(smd10.values()) # + list(smd11.values())
@@ -173,10 +174,10 @@ if __name__ == "__main__":
                                       myProb.ak2ij, s)
 
                 if keyLocalSearch == -1 or costTMP > cost:
-                    # if keyLocalSearch == -1:
 
                     print("Soluzione finale trovata, itMosse: {}, costo: {}.".format(itMosse, cost))
                     print("rotte: {}".format(rotte))
+                    print("time elapsed: {:.2f}s".format(time.time() - start_time))
                     break
                 else:
                     itMosse += 1

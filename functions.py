@@ -53,14 +53,6 @@ def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, Cd
     vincolo35 = BuildConstr35(K2, A2, x2, Gamma, uk2, w2, sat)
     vincolo36 = BuildConstr36(K2, Gamma, w2, sat)
 
-    # print("BuildConstr29", vincolo29)
-    # print("BuildConstr30", vincolo30)
-    # print("BuildConstr31", vincolo31)
-    # print("BuildConstr32", vincolo32)
-    # print("BuildConstr34", vincolo34)
-    # print("BuildConstr35", vincolo35)
-    # print("BuildConstr36???", vincolo36)
-
     if (vincolo29 and vincolo30 and vincolo31 and vincolo32 and vincolo34 and vincolo35 and vincolo36):
         return True
     else:
@@ -531,7 +523,6 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gam
         # evita che i veicoli non servano nessun cliente
         if len(rotte[v2])>1:
 
-
             # modificare x2TMP e w2TMP
 
             # se viene trattato un cliente splittato sulle rotte v1 e v2
@@ -656,15 +647,9 @@ def updateRotteSmd10(rotte, keyLocalSearch, flagAllPallets):
     v2 = keyLocalSearch[1]
     n1 = keyLocalSearch[2]
     n2 = keyLocalSearch[3]
-    numeroPallet = keyLocalSearch[4]
     
     precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
     precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
-
-    # print(rotte)
-    # print("v1: {}, v2: {}, n1: {}, n2: {}".format(v1, v2, n1, n2))
-    # print((precN2[0], n2))
-    # print((n2, succN2[0]))
 
     # modifica della rotta del veicolo v1
     if succN1[0] != -1:
