@@ -541,10 +541,11 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gam
                 for arc1 in rotte[v1]:
                     if arc1[0] == n1:
                         break
-                    x2TMP[v1, n2, arc1[0], arc1[1]] += x2TMP[v2, n2, precN2[0], n2]
+                    x2TMP[v1, n2, arc1[0], arc1[1]] += numeroPallet
 
                 # v2
-                w2TMP[v2, precN2[0], n2] = 0
+                if numeroPallet == numeroTotPallet:
+                    w2TMP[v2, precN2[0], n2] = 0
                 # prima di precN2[0]
                 flag = 0
                 for arc2 in rotte[v2]:
@@ -560,39 +561,41 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gam
 
                     # prima di precN2[0]
                     if flag == 0:
-                        x2TMP[v2, n2, arc2[0], arc2[1]] -= x2TMP[v2, n2, precN2[0], n2]
+                        x2TMP[v2, n2, arc2[0], arc2[1]] -= numeroPallet
                     # precN2[0] - n2
                     if flag == 1:
-                        x2TMP[v2, n2, arc2[0], arc2[1]] -= x2TMP[v2, n2, precN2[0], n2]
-                        w2TMP[v2, precN2[0], n2] = 0
+                        x2TMP[v2, n2, arc2[0], arc2[1]] -= numeroPallet
+
                     # n2 - succN2[0]
                     if flag == 2:
-                        w2TMP[v2, n2, succN2[0]] = 0
-                        w2TMP[v2, precN2[0], succN2[0]] = 1
+                        if numeroPallet == numeroTotPallet:
+                            w2TMP[v2, n2, succN2[0]] = 0
+                            w2TMP[v2, precN2[0], succN2[0]] = 1
                         for gamma in succN2:
                             x2TMP[v2, gamma, precN2[0], succN2[0]] += x2TMP[v2, gamma, precN2[0], n2]
                             x2TMP[v2, gamma, precN2[0], n2] -= x2TMP[v2, gamma, precN2[0], n2]
                             x2TMP[v2, gamma, n2, succN2[0]] -= x2TMP[v2, gamma, n2, succN2[0]]
 
             else:
+                # n2 non è presente in v1
                 # v1 +
                 if succN1[0] == -1:
-                    x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2[0], n2]
+                    x2TMP[v1, n2, n1, n2] = numeroPallet
                     w2TMP[v1, n1, n2] = 1
 
                     for arc1 in rotte[v1]:
                         if arc1[0] == n1:
                             break
-                        x2TMP[v1, n2, arc1[0], arc1[1]] = x2TMP[v2, n2, precN2[0], n2]
+                        x2TMP[v1, n2, arc1[0], arc1[1]] = numeroPallet
                 else:
-                    x2TMP[v1, n2, n1, n2] = x2TMP[v2, n2, precN2[0], n2]
+                    x2TMP[v1, n2, n1, n2] = numeroPallet
                     x2TMP[v1, succN1[0], n1, n2] = x2TMP[v1, succN1[0], n1, succN1[0]]
                     w2TMP[v1, n1, n2] = 1
 
                     for arc1 in rotte[v1]:
                         if arc1[0] == n1:
                             break
-                        x2TMP[v1, n2, arc1[0], arc1[1]] = x2TMP[v2, n2, precN2[0], n2]
+                        x2TMP[v1, n2, arc1[0], arc1[1]] = numeroPallet
 
                     x2TMP[v1, succN1[0], n2, succN1[0]] = x2TMP[v1, succN1[0], n1, succN1[0]]
                     w2TMP[v1, n2, succN1[0]] = 1
@@ -604,7 +607,7 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gam
                     w2TMP[v1, n1, succN1[0]] = 0
 
                 # v2 +
-                if succN2[0] != -1:
+                if succN2[0] != -1 and numeroPallet == numeroTotPallet:
                     for gamma in succN2:
                         x2TMP[v2, gamma, precN2[0], succN2[0]] = x2TMP[v2, gamma, n2, succN2[0]]
                     w2TMP[v2, precN2[0], succN2[0]] = 1
@@ -614,20 +617,23 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gam
                     for arc2 in rotte[v2]:
                         if arc2[0] == n2:
                             break
-                        x2TMP[v2, n2, arc2[0], arc2[1]] = 0
-                    w2TMP[v2, precN2[0], n2] = 0
+                        x2TMP[v2, n2, arc2[0], arc2[1]] -= numeroPallet
+                    if numeroPallet == numeroTotPallet:
+                        w2TMP[v2, precN2[0], n2] = 0
                 else:
-                    for gamma in succN2:
-                        x2TMP[v2, gamma, precN2[0], n2] = 0
-                        x2TMP[v2, gamma, n2, succN2[0]] = 0
                     for arc2 in rotte[v2]:
                         if arc2[0] == n2:
                             break
-                        x2TMP[v2, n2, arc2[0], arc2[1]] = 0
+                        x2TMP[v2, n2, arc2[0], arc2[1]] -=numeroPallet
 
-                    x2TMP[v2, succN2[0], n2, succN2[0]] = 0
-                    w2TMP[v2, precN2[0], n2] = 0
-                    w2TMP[v2, n2, succN2[0]] = 0
+                    if numeroTotPallet == numeroPallet:
+                        for gamma in succN2:
+                            x2TMP[v2, gamma, precN2[0], n2] = 0
+                            x2TMP[v2, gamma, n2, succN2[0]] = 0
+
+                        x2TMP[v2, succN2[0], n2, succN2[0]] = 0
+                        w2TMP[v2, precN2[0], n2] = 0
+                        w2TMP[v2, n2, succN2[0]] = 0
 
             # verificare ammissibilità
             if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)):
@@ -648,6 +654,8 @@ def updateRotteSmd10(rotte, keyLocalSearch):
     v2 = keyLocalSearch[1]
     n1 = keyLocalSearch[2]
     n2 = keyLocalSearch[3]
+    numeroPallet = keyLocalSearch[4]
+    
     precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
     precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
