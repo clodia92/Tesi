@@ -518,12 +518,15 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gam
         v2 = minCostKey[1]
         n1 = minCostKey[2]
         n2 = minCostKey[3]
+        numeroPallet = minCostKey[4]
 
         precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
         precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
         x2TMP = x2.copy()
         w2TMP = w2.copy()
+
+        numeroTotPallet = x2TMP[v2, n2, precN2[0], n2]
 
         # evita che i veicoli non servano nessun cliente
         if len(rotte[v2])>1:
