@@ -166,7 +166,7 @@ if __name__ == "__main__":
             itMosse = 1
 
             while True:
-                x2TMP, w2TMP, keyLocalSearch = localSearch(heapSMD, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2,
+                x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2,
                                                            myProb.Pgac, myProb.PsGa, myProb.K2diS[s], myProb.A2,
                                                            myProb.GammadiS[s], myProb.CdiS)
                 costTMP = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
@@ -181,14 +181,14 @@ if __name__ == "__main__":
                 else:
                     itMosse += 1
                     cost = costTMP
+                    # aggiornare rotte dopo una mossa ammissibile
+                    updateRotteSmd10(rotte, keyLocalSearch, flagAllPallets)
                     myProb.x2 = x2TMP.copy()
                     myProb.w2 = w2TMP.copy()
 
                     print("Soluzione migliore trovata, costo: {}.".format(cost))
                     solutions.append([cost, myProb.x2, myProb.w2])
 
-                    # aggiornare rotte dopo una mossa ammissibile
-                    updateRotteSmd10(rotte, keyLocalSearch)
                     # aggiornare SMD dopo una mossa ammissibile
                     smd10.clear()
                     inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)

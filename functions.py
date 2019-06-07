@@ -641,15 +641,17 @@ def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gam
                                                                                                        minCostKey,
                                                                                                        smd10[minCostKey]))
                 # soluzione ammissibile trovata
+                if numeroTotPallet == numeroPallet:
+                    return x2TMP, w2TMP, minCostKey, True
+                return x2TMP, w2TMP, minCostKey, False
 
-                return x2TMP, w2TMP, minCostKey
 
 
-    return x2TMP, w2TMP, -1
+    return x2TMP, w2TMP, -1, False
 
 
 # aggiorna le rotte
-def updateRotteSmd10(rotte, keyLocalSearch):
+def updateRotteSmd10(rotte, keyLocalSearch, flagAllPallets):
     v1 = keyLocalSearch[0]
     v2 = keyLocalSearch[1]
     n1 = keyLocalSearch[2]
@@ -673,10 +675,11 @@ def updateRotteSmd10(rotte, keyLocalSearch):
     else:
         rotte[v1].append((n1, n2))
 
-    # modifica della rotta del veicolo v2
-    if succN2[0] != -1:
-        index = rotte[v2].index((precN2[0], n2))
-        rotte[v2][index] = (precN2[0], succN2[0])
-        rotte[v2].remove((n2, succN2[0]))
-    else:
-        rotte[v2].remove((precN2[0], n2))
+    if flagAllPallets:
+        # modifica della rotta del veicolo v2
+        if succN2[0] != -1:
+            index = rotte[v2].index((precN2[0], n2))
+            rotte[v2][index] = (precN2[0], succN2[0])
+            rotte[v2].remove((n2, succN2[0]))
+        else:
+            rotte[v2].remove((precN2[0], n2))
