@@ -73,6 +73,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                 # n1 = nodo dietro al quale viene spostato n2
                 # n2 = nodo da spostare dietro n1
 
+                # lista dei nodi precedenti e dei nodi successivi
                 precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
                 precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
@@ -80,6 +81,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                     # se viene trattato un cliente splittato sulle rotte v1 e v2
                     #
                     if n2 in [c for c, k in clienteVeicolo if k == v1] and v1 != v2:
+                        # viene creata la chiave
                         smd10[v1, v2, n1, n2, numeroPallet] = 0
                         # calcolo dei costi
                         # v1
@@ -163,13 +165,13 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             smd10[v1, v2, n1, n2, numeroPallet] -= (numeroPallet * ak2ij[v2, arc2[0], arc2[1]])
                             # dopo N2 -> non vengono modificati
 
-
-                ####### Senza split
-                numeroPallet=x2[v2, n2, precN2[0], n2]
+                ######### Senza split
+                numeroPallet = x2[v2, n2, precN2[0], n2]
 
                 # se viene trattato un cliente splittato sulle rotte v1 e v2
                 # Spostamento di tutti i pallet verso un altro veicolo
                 if n2 in [c for c, k in clienteVeicolo if k == v1] and v1 != v2:
+                    # viene creata la chiave
                     smd10[v1, v2, n1, n2, numeroPallet] = 0
                     # calcolo dei costi
                     # v1
@@ -318,16 +320,60 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2, s):
     # lista di tuple: (cliente, veicolo)
     clienteVeicolo = getClienteVeicolo(rotte)
 
-    for v1 in rotte:
-        # lista dei nodi del veicolo k (satellite + clienti)
-        listNodes = [s] + [c2 for c1, c2 in rotte[v1]]
-        for n1 in listNodes:
-            for n2, v2 in clienteVeicolo:
-                # v1 = veicolo di destinazione di n1
-                # v2 = veicolo di partenza di n2
-                # n1 = nodo dietro al quale viene spostato n2
-                # n2 = nodo da spostare dietro n1
+    # index2 viene utilizzato in modo da scorrere la seconda volta clienteVeicolo solo dall'attuale coppia (v, n) in poi
+    # evitare duplicati
+    index2 = 0
+
+    for n1, v1 in clienteVeicolo:
+        index2 += 1
+
+        for n2, v2 in clienteVeicolo[index2:]:
+            # lista dei nodi precedenti e dei nodi successivi
+            precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
+            precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
+
+            # viene creata la chiave
+            smd11[v1, v2, n1, n2] = 0
+
+            # v1 se n1 ha successori
+            if succN1[0] != -1:
+                # aggiungere arco (n2, succN1)
+                # eliminare arco (n1, succN1)
+                # eliminare costi pallet dei succN1 da (precN1, n1) e (n1, succN1)
+                # aggiungere costi pallet dei succN1 in (precN1, n1) e (n1, succN1)
                 pass
+            # v2 se n2 ha successori
+            if succN2[0] != -1:
+                # aggiungere arco (n1, succN2)
+                # eliminare arco (n2, succN2)
+                # eliminare costi pallet dei succN2 da (precN2, n2) e (n2, succN2)
+                # aggiungere costi pallet dei succN2 in (precN2, n2) e (n2, succN2)
+                pass
+
+            # v1 sempre
+            # aggiungere arco (precN1, n2)
+            # eliminare arco (precN1, n1)
+            # eliminare costo pallet n1 dai precN1
+            # aggiungere costo pallet n2 ai precN1
+
+            # v2 sempre
+            # aggiungere arco (precN2, n1)
+            # eliminare arco (precN2, n2)
+            # eliminare costo pallet n2 dai precN2
+            # aggiungere costo pallet n1 ai precN2
+
+    pass
+
+    # for v1 in rotte:
+    #     # lista dei nodi del veicolo k (satellite + clienti)
+    #     listNodes = [s] + [c2 for c1, c2 in rotte[v1]]
+    #     for n1 in listNodes:
+    #         for n2, v2 in clienteVeicolo:
+    #             # v1 = veicolo di n1
+    #             # v2 = veicolo di n2
+    #             # n1 = primo nodo di scambio
+    #             # n2 = secondo nodo di scambio
+    #             pass
 
 
 # restituisce una lista di tuple [(cliente, veicolo), ...]
