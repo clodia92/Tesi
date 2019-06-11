@@ -315,7 +315,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                 pass
 
 
-def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2, s):
+def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
     # lista di tuple: (cliente, veicolo)
     clienteVeicolo = getClienteVeicolo(rotte)
 
@@ -336,10 +336,12 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2, s):
 
             # v1 se n1 ha successori
             if succN1[0] != -1:
+                # nik2ij
                 # aggiungere arco (n2, succN1)
                 smd11[v1, v2, n1, n2] += nik2ij[v1, n2, succN1[0]]
                 # eliminare arco (n1, succN1)
                 smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
+                # ak2ij
                 for gamma in succN1:
                     # eliminare costi pallet dei succN1 da (precN1, n1) e (n1, succN1)
                     smd11[v1, v2, n1, n2] -= (x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
@@ -347,15 +349,15 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2, s):
                     # aggiungere costi pallet dei succN1 in (precN1, n2) e (n2, succN1)
                     smd11[v1, v2, n1, n2] += (x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2])
                     smd11[v1, v2, n1, n2] += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
-                pass
 
             # v2 se n2 ha successori
-            # ???
             if succN2[0] != -1:
+                # nik2ij
                 # aggiungere arco (n1, succN2)
                 smd11[v1, v2, n1, n2] += nik2ij[v2, n1, succN2[0]]
                 # eliminare arco (n2, succN2)
                 smd11[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
+                # ak2ij
                 for gamma in succN2:
                     # eliminare costi pallet dei succN2 da (precN2, n2) e (n2, succN2)
                     smd11[v1, v2, n1, n2] -= (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
@@ -363,14 +365,14 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2, s):
                     # aggiungere costi pallet dei succN2 in (precN2, n1) e (n1, succN2)
                     smd11[v1, v2, n1, n2] += (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n1])
                     smd11[v1, v2, n1, n2] += (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n1, succN2[0]])
-                pass
 
             # v1 sempre
-            # ???
+            # nik2ij
             # aggiungere arco (precN1, n2)
             smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], n2]
             # eliminare arco (precN1, n1)
             smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
+            # ak2ij
             for arc1 in rotte[v1]:
                 # (n1, succN1[0])
                 if arc1[1] == n1:
@@ -378,18 +380,17 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2, s):
                 # eliminare costo pallet n1 dai precN1
                 smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc1[0], arc1[1]])
                 # aggiungere costo pallet n2 ai precN1
-                xzwei = x2[v2, n2, precN2[0], n2]
-                aka = ak2ij[v1, arc1[0], arc1[1]]
                 smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]])
             smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
             smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, precN1[0], n2])
 
             # v2 sempre
-            # ???
+            # nik2ij
             # aggiungere arco (precN2, n1)
             smd11[v1, v2, n1, n2] += nik2ij[v2, precN2[0], n1]
             # eliminare arco (precN2, n2)
             smd11[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
+            # ak2ij
             for arc2 in rotte[v2]:
                 # (n2, succN2[0])
                 if arc2[1] == n2:
@@ -397,8 +398,6 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2, s):
                 # eliminare costo pallet n2 dai precN2
                 smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc2[0], arc2[1]])
                 # aggiungere costo pallet n1 ai precN2
-                xzwei = x2[v1, n1, precN1[0], n1]
-                aka = ak2ij[v2, arc2[0], arc2[1]]
                 smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc2[0], arc2[1]])
             smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
             smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, precN2[0], n1])

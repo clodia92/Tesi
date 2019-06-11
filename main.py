@@ -157,7 +157,7 @@ if __name__ == "__main__":
 
             # viene inizializzato l'SMD
             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
-            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
             # crea la lista in cui verrà salvato l'heap
             # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
             heapSMD = list(smd10.values()) # + list(smd11.values())
