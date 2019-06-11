@@ -305,8 +305,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             smd10[v1, v2, n1, n2, numeroPallet] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                             if succN2[0] != -1:
                                 for gamma in succN2:
-                                    smd10[v1, v2, n1, n2, numeroPallet] += (
-                                            x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
+                                    smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
                                     smd10[v1, v2, n1, n2, numeroPallet] -= (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                         # n2, succN2[0]
                         if flag == 2:
@@ -320,8 +319,8 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2, s):
     # lista di tuple: (cliente, veicolo)
     clienteVeicolo = getClienteVeicolo(rotte)
 
-    # index2 viene utilizzato in modo da scorrere la seconda volta clienteVeicolo solo dall'attuale coppia (v, n) in poi
-    # evitare duplicati
+    # index2 viene utilizzato per scorrere la seconda volta clienteVeicolo solo dall'attuale coppia (v, n) in poi
+    # in modo da evitare duplicati: smd11[7, 8, 3, 4] == smd11[8, 7, 4, 3]
     index2 = 0
 
     for n1, v1 in clienteVeicolo:
@@ -338,29 +337,71 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2, s):
             # v1 se n1 ha successori
             if succN1[0] != -1:
                 # aggiungere arco (n2, succN1)
+                smd11[v1, v2, n1, n2] += nik2ij[v1, n2, succN1[0]]
                 # eliminare arco (n1, succN1)
-                # eliminare costi pallet dei succN1 da (precN1, n1) e (n1, succN1)
-                # aggiungere costi pallet dei succN1 in (precN1, n1) e (n1, succN1)
+                smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
+                for gamma in succN1:
+                    # eliminare costi pallet dei succN1 da (precN1, n1) e (n1, succN1)
+                    smd11[v1, v2, n1, n2] -= (x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
+                    smd11[v1, v2, n1, n2] -= (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
+                    # aggiungere costi pallet dei succN1 in (precN1, n2) e (n2, succN1)
+                    smd11[v1, v2, n1, n2] += (x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2])
+                    smd11[v1, v2, n1, n2] += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
                 pass
+
             # v2 se n2 ha successori
+            # ???
             if succN2[0] != -1:
                 # aggiungere arco (n1, succN2)
+                smd11[v1, v2, n1, n2] += nik2ij[v2, n1, succN2[0]]
                 # eliminare arco (n2, succN2)
-                # eliminare costi pallet dei succN2 da (precN2, n2) e (n2, succN2)
-                # aggiungere costi pallet dei succN2 in (precN2, n2) e (n2, succN2)
+                smd11[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
+                for gamma in succN2:
+                    # eliminare costi pallet dei succN2 da (precN2, n2) e (n2, succN2)
+                    smd11[v1, v2, n1, n2] -= (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+                    smd11[v1, v2, n1, n2] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
+                    # aggiungere costi pallet dei succN2 in (precN2, n1) e (n1, succN2)
+                    smd11[v1, v2, n1, n2] += (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n1])
+                    smd11[v1, v2, n1, n2] += (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n1, succN2[0]])
                 pass
 
             # v1 sempre
+            # ???
             # aggiungere arco (precN1, n2)
+            smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], n2]
             # eliminare arco (precN1, n1)
-            # eliminare costo pallet n1 dai precN1
-            # aggiungere costo pallet n2 ai precN1
+            smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
+            for arc1 in rotte[v1]:
+                # (n1, succN1[0])
+                if arc1[1] == n1:
+                    break
+                # eliminare costo pallet n1 dai precN1
+                smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc1[0], arc1[1]])
+                # aggiungere costo pallet n2 ai precN1
+                xzwei = x2[v2, n2, precN2[0], n2]
+                aka = ak2ij[v1, arc1[0], arc1[1]]
+                smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]])
+            smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
+            smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, precN1[0], n2])
 
             # v2 sempre
+            # ???
             # aggiungere arco (precN2, n1)
+            smd11[v1, v2, n1, n2] += nik2ij[v2, precN2[0], n1]
             # eliminare arco (precN2, n2)
-            # eliminare costo pallet n2 dai precN2
-            # aggiungere costo pallet n1 ai precN2
+            smd11[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
+            for arc2 in rotte[v2]:
+                # (n2, succN2[0])
+                if arc2[1] == n2:
+                    break
+                # eliminare costo pallet n2 dai precN2
+                smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc2[0], arc2[1]])
+                # aggiungere costo pallet n1 ai precN2
+                xzwei = x2[v1, n1, precN1[0], n1]
+                aka = ak2ij[v2, arc2[0], arc2[1]]
+                smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc2[0], arc2[1]])
+            smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+            smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, precN2[0], n1])
 
     pass
 
@@ -536,20 +577,20 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
         return False, x2, w2, rotte
 
 
-def localSearch(heapSMD10, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
+def localSearch(heapSMD, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     print("\nSTART localSearch()")
-    itMAX = len(heapSMD10)
+    itMAX = len(heapSMD)
     itNonAmmissibili = 0
 
     # lista di tuple: [(cliente, veicolo), ...]
     clienteVeicolo = getClienteVeicolo(rotte)
 
-    while heapSMD10[0] < 0 and itNonAmmissibili < itMAX:
+    while heapSMD[0] < 0 and itNonAmmissibili < itMAX:
 
         itNonAmmissibili += 1
 
         # salva la chiave del valore minore
-        valoreHeap = heapq.heappop(heapSMD10)
+        valoreHeap = heapq.heappop(heapSMD)
         minCostKey = [key for key, value in smd10.items() if value == valoreHeap][0]
 
         v1 = minCostKey[0]
