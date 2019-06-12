@@ -576,7 +576,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
         return False, x2, w2, rotte
 
 
-def localSearch(heapSMD, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
+def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     print("\nSTART localSearch()")
     itMAX = len(heapSMD)
     itNonAmmissibili = 0
@@ -590,139 +590,149 @@ def localSearch(heapSMD, smd10, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma
 
         # salva la chiave del valore minore
         valoreHeap = heapq.heappop(heapSMD)
-        minCostKey = [key for key, value in smd10.items() if value == valoreHeap][0]
+        minCostKey = [key for key, value in list(smd10.items()) + list(smd11.items()) if value == valoreHeap][0]
 
+        # estraggo la chiave
         v1 = minCostKey[0]
         v2 = minCostKey[1]
         n1 = minCostKey[2]
         n2 = minCostKey[3]
-        numeroPallet = minCostKey[4]
 
+        # lista dei nodi precedenti e dei nodi successivi
         precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
         precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
         x2TMP = x2.copy()
         w2TMP = w2.copy()
 
-        numeroTotPallet = x2TMP[v2, n2, precN2[0], n2]
+        # 1-0 Exchange
+        if len(minCostKey) == 5:
+            # estraggo il resto della chiave
+            numeroPallet = minCostKey[4]
 
-        # evita che i veicoli non servano nessun cliente
-        if len(rotte[v2])>1:
+            # numero totale di pallet che riceve n2 prima di effettuare la mossa
+            numeroTotPallet = x2TMP[v2, n2, precN2[0], n2]
 
-            # modificare x2TMP e w2TMP
+            # evita che i veicoli non servano nessun cliente
+            if len(rotte[v2]) > 1:
 
-            # se viene trattato un cliente splittato sulle rotte v1 e v2
-            #
-            if n2 in [c for c, k in clienteVeicolo if k == v1] and v1 != v2:
-                # v1
-                for arc1 in rotte[v1]:
-                    if arc1[0] == n1:
-                        break
-                    x2TMP[v1, n2, arc1[0], arc1[1]] += numeroPallet
+                # modificare x2TMP e w2TMP
 
-                # v2
-                if numeroPallet == numeroTotPallet:
-                    w2TMP[v2, precN2[0], n2] = 0
-                # prima di precN2[0]
-                flag = 0
-                for arc2 in rotte[v2]:
-                    # precN2[0] - n2
-                    if arc2[1] == n2:
-                        flag = 1
-                    # n2 - succN2[0]
-                    if arc2[0] == n2:
-                        flag = 2
-                    # dopo succN2[0]
-                    if arc2[0] == succN2[0]:
-                        break
-
-                    # prima di precN2[0]
-                    if flag == 0:
-                        x2TMP[v2, n2, arc2[0], arc2[1]] -= numeroPallet
-                    # precN2[0] - n2
-                    if flag == 1:
-                        x2TMP[v2, n2, arc2[0], arc2[1]] -= numeroPallet
-
-                    # n2 - succN2[0]
-                    if flag == 2:
-                        if numeroPallet == numeroTotPallet:
-                            w2TMP[v2, n2, succN2[0]] = 0
-                            w2TMP[v2, precN2[0], succN2[0]] = 1
-                        for gamma in succN2:
-                            x2TMP[v2, gamma, precN2[0], succN2[0]] += x2TMP[v2, gamma, precN2[0], n2]
-                            x2TMP[v2, gamma, precN2[0], n2] -= x2TMP[v2, gamma, precN2[0], n2]
-                            x2TMP[v2, gamma, n2, succN2[0]] -= x2TMP[v2, gamma, n2, succN2[0]]
-
-            else:
-                # n2 non è presente in v1
-                # v1 +
-                if succN1[0] == -1:
-                    x2TMP[v1, n2, n1, n2] = numeroPallet
-                    w2TMP[v1, n1, n2] = 1
-
+                # se viene trattato un cliente splittato sulle rotte v1 e v2
+                #
+                if n2 in [c for c, k in clienteVeicolo if k == v1] and v1 != v2:
+                    # v1
                     for arc1 in rotte[v1]:
                         if arc1[0] == n1:
                             break
-                        x2TMP[v1, n2, arc1[0], arc1[1]] = numeroPallet
-                else:
-                    x2TMP[v1, n2, n1, n2] = numeroPallet
-                    x2TMP[v1, succN1[0], n1, n2] = x2TMP[v1, succN1[0], n1, succN1[0]]
-                    w2TMP[v1, n1, n2] = 1
+                        x2TMP[v1, n2, arc1[0], arc1[1]] += numeroPallet
 
-                    for arc1 in rotte[v1]:
-                        if arc1[0] == n1:
-                            break
-                        x2TMP[v1, n2, arc1[0], arc1[1]] = numeroPallet
-
-                    x2TMP[v1, succN1[0], n2, succN1[0]] = x2TMP[v1, succN1[0], n1, succN1[0]]
-                    w2TMP[v1, n2, succN1[0]] = 1
-
-                # v1 -
-                if succN1[0] != -1:
-                    for gamma in succN1:
-                        x2TMP[v1, gamma, n1, succN1[0]] = 0
-                    w2TMP[v1, n1, succN1[0]] = 0
-
-                # v2 +
-                if succN2[0] != -1 and numeroPallet == numeroTotPallet:
-                    for gamma in succN2:
-                        x2TMP[v2, gamma, precN2[0], succN2[0]] = x2TMP[v2, gamma, n2, succN2[0]]
-                    w2TMP[v2, precN2[0], succN2[0]] = 1
-
-                # v2 -
-                if succN2[0] == -1:
-                    for arc2 in rotte[v2]:
-                        if arc2[0] == n2:
-                            break
-                        x2TMP[v2, n2, arc2[0], arc2[1]] -= numeroPallet
+                    # v2
                     if numeroPallet == numeroTotPallet:
                         w2TMP[v2, precN2[0], n2] = 0
-                else:
+                    # prima di precN2[0]
+                    flag = 0
                     for arc2 in rotte[v2]:
+                        # precN2[0] - n2
+                        if arc2[1] == n2:
+                            flag = 1
+                        # n2 - succN2[0]
                         if arc2[0] == n2:
+                            flag = 2
+                        # dopo succN2[0]
+                        if arc2[0] == succN2[0]:
                             break
-                        x2TMP[v2, n2, arc2[0], arc2[1]] -=numeroPallet
 
-                    if numeroTotPallet == numeroPallet:
+                        # prima di precN2[0]
+                        if flag == 0:
+                            x2TMP[v2, n2, arc2[0], arc2[1]] -= numeroPallet
+                        # precN2[0] - n2
+                        if flag == 1:
+                            x2TMP[v2, n2, arc2[0], arc2[1]] -= numeroPallet
+
+                        # n2 - succN2[0]
+                        if flag == 2:
+                            if numeroPallet == numeroTotPallet:
+                                w2TMP[v2, n2, succN2[0]] = 0
+                                w2TMP[v2, precN2[0], succN2[0]] = 1
+                            for gamma in succN2:
+                                x2TMP[v2, gamma, precN2[0], succN2[0]] += x2TMP[v2, gamma, precN2[0], n2]
+                                x2TMP[v2, gamma, precN2[0], n2] -= x2TMP[v2, gamma, precN2[0], n2]
+                                x2TMP[v2, gamma, n2, succN2[0]] -= x2TMP[v2, gamma, n2, succN2[0]]
+
+                else:
+                    # n2 non è presente in v1
+                    # v1 +
+                    if succN1[0] == -1:
+                        x2TMP[v1, n2, n1, n2] = numeroPallet
+                        w2TMP[v1, n1, n2] = 1
+
+                        for arc1 in rotte[v1]:
+                            if arc1[0] == n1:
+                                break
+                            x2TMP[v1, n2, arc1[0], arc1[1]] = numeroPallet
+                    else:
+                        x2TMP[v1, n2, n1, n2] = numeroPallet
+                        x2TMP[v1, succN1[0], n1, n2] = x2TMP[v1, succN1[0], n1, succN1[0]]
+                        w2TMP[v1, n1, n2] = 1
+
+                        for arc1 in rotte[v1]:
+                            if arc1[0] == n1:
+                                break
+                            x2TMP[v1, n2, arc1[0], arc1[1]] = numeroPallet
+
+                        x2TMP[v1, succN1[0], n2, succN1[0]] = x2TMP[v1, succN1[0], n1, succN1[0]]
+                        w2TMP[v1, n2, succN1[0]] = 1
+
+                    # v1 -
+                    if succN1[0] != -1:
+                        for gamma in succN1:
+                            x2TMP[v1, gamma, n1, succN1[0]] = 0
+                        w2TMP[v1, n1, succN1[0]] = 0
+
+                    # v2 +
+                    if succN2[0] != -1 and numeroPallet == numeroTotPallet:
                         for gamma in succN2:
-                            x2TMP[v2, gamma, precN2[0], n2] = 0
-                            x2TMP[v2, gamma, n2, succN2[0]] = 0
+                            x2TMP[v2, gamma, precN2[0], succN2[0]] = x2TMP[v2, gamma, n2, succN2[0]]
+                        w2TMP[v2, precN2[0], succN2[0]] = 1
 
-                        x2TMP[v2, succN2[0], n2, succN2[0]] = 0
-                        w2TMP[v2, precN2[0], n2] = 0
-                        w2TMP[v2, n2, succN2[0]] = 0
+                    # v2 -
+                    if succN2[0] == -1:
+                        for arc2 in rotte[v2]:
+                            if arc2[0] == n2:
+                                break
+                            x2TMP[v2, n2, arc2[0], arc2[1]] -= numeroPallet
+                        if numeroPallet == numeroTotPallet:
+                            w2TMP[v2, precN2[0], n2] = 0
+                    else:
+                        for arc2 in rotte[v2]:
+                            if arc2[0] == n2:
+                                break
+                            x2TMP[v2, n2, arc2[0], arc2[1]] -= numeroPallet
 
-            # verificare ammissibilità
-            if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)):
-                print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
-                                                                                                       minCostKey,
-                                                                                                       smd10[minCostKey]))
-                # soluzione ammissibile trovata
-                if numeroTotPallet == numeroPallet:
-                    return x2TMP, w2TMP, minCostKey, True
-                return x2TMP, w2TMP, minCostKey, False
+                        if numeroTotPallet == numeroPallet:
+                            for gamma in succN2:
+                                x2TMP[v2, gamma, precN2[0], n2] = 0
+                                x2TMP[v2, gamma, n2, succN2[0]] = 0
 
+                            x2TMP[v2, succN2[0], n2, succN2[0]] = 0
+                            w2TMP[v2, precN2[0], n2] = 0
+                            w2TMP[v2, n2, succN2[0]] = 0
 
+                # verificare ammissibilità
+                if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
+                    print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(
+                        itNonAmmissibili,
+                        minCostKey,
+                        smd10[minCostKey]))
+                    # soluzione ammissibile trovata
+                    if numeroTotPallet == numeroPallet:
+                        return x2TMP, w2TMP, minCostKey, True
+                    return x2TMP, w2TMP, minCostKey, False
+
+        # 1-1 Exchange
+        elif len(minCostKey) == 4:
+            pass
 
     return x2TMP, w2TMP, -1, False
 
@@ -733,7 +743,8 @@ def updateRotteSmd10(rotte, keyLocalSearch, flagAllPallets):
     v2 = keyLocalSearch[1]
     n1 = keyLocalSearch[2]
     n2 = keyLocalSearch[3]
-    
+
+    # lista dei nodi precedenti e dei nodi successivi
     precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
     precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 

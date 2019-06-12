@@ -155,29 +155,28 @@ if __name__ == "__main__":
             # aggiungo la soluzione alle soluzioni
             solutions.append((cost, myProb.x2, myProb.w2))
 
-            # viene inizializzato l'SMD
+            # vengono inizializzati gli SMD
             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
             inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
-            # crea la lista in cui verrà salvato l'heap
+            # crea la lista unica dei costi in cui verrà salvato l'heap
             # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
-            heapSMD = list(smd10.values()) # + list(smd11.values())
+            heapSMD = list(smd10.values()) + list(smd11.values())
             # crea l'heap di smd10
             heapq.heapify(heapSMD)
 
             itMosse = 1
 
             while True:
-                x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, myProb.x2, myProb.w2, rotte, s, myProb.uk2,
-                                                           myProb.Pgac, myProb.PsGa, myProb.K2diS[s], myProb.A2,
-                                                           myProb.GammadiS[s], myProb.CdiS)
-                costTMP = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
-                                      myProb.ak2ij, s)
+                x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, s, myProb.uk2,
+                                                                           myProb.Pgac, myProb.PsGa, myProb.K2diS[s], myProb.A2,
+                                                                           myProb.GammadiS[s], myProb.CdiS)
+                costTMP = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
 
                 if keyLocalSearch == -1 or costTMP > cost:
 
                     print("Soluzione finale trovata, itMosse: {}, costo: {}.".format(itMosse, cost))
                     print("rotte: {}".format(rotte))
-                    print("time elapsed: {:.2f}s".format(time.time() - start_time))
+                    print("time elapsed: {:.2f}s.".format(time.time() - start_time))
                     break
                 else:
                     itMosse += 1
@@ -199,7 +198,7 @@ if __name__ == "__main__":
                     pass
         else:
             # trovare un'altra soluzione
-            print("Trova un'altra soluzione di base.")
+            print("Trova un'altra soluzione iniziale.")
 
 ########################### FUNZIONI UTILI DELL'HEAP ###########################
 # restituisce la chiave del valore minore (primo elemento)
