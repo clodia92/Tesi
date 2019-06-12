@@ -343,12 +343,12 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                 smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
                 # ak2ij
                 for gamma in succN1:
-                    # eliminare costi pallet dei succN1 da (precN1, n1) e (n1, succN1)
-                    smd11[v1, v2, n1, n2] -= (x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
-                    smd11[v1, v2, n1, n2] -= (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
                     # aggiungere costi pallet dei succN1 in (precN1, n2) e (n2, succN1)
                     smd11[v1, v2, n1, n2] += (x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2])
                     smd11[v1, v2, n1, n2] += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
+                    # eliminare costi pallet dei succN1 da (precN1, n1) e (n1, succN1)
+                    smd11[v1, v2, n1, n2] -= (x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
+                    smd11[v1, v2, n1, n2] -= (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
 
             # v2 se n2 ha successori
             if succN2[0] != -1:
@@ -359,12 +359,12 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                 smd11[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
                 # ak2ij
                 for gamma in succN2:
-                    # eliminare costi pallet dei succN2 da (precN2, n2) e (n2, succN2)
-                    smd11[v1, v2, n1, n2] -= (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
-                    smd11[v1, v2, n1, n2] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
                     # aggiungere costi pallet dei succN2 in (precN2, n1) e (n1, succN2)
                     smd11[v1, v2, n1, n2] += (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n1])
                     smd11[v1, v2, n1, n2] += (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n1, succN2[0]])
+                    # eliminare costi pallet dei succN2 da (precN2, n2) e (n2, succN2)
+                    smd11[v1, v2, n1, n2] -= (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+                    smd11[v1, v2, n1, n2] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
 
             # v1 sempre
             # nik2ij
@@ -377,12 +377,12 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                 # (n1, succN1[0])
                 if arc1[1] == n1:
                     break
-                # eliminare costo pallet n1 dai precN1
-                smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc1[0], arc1[1]])
                 # aggiungere costo pallet n2 ai precN1
                 smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]])
-            smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
+                # eliminare costo pallet n1 dai precN1
+                smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc1[0], arc1[1]])
             smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, precN1[0], n2])
+            smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
 
             # v2 sempre
             # nik2ij
@@ -395,25 +395,12 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                 # (n2, succN2[0])
                 if arc2[1] == n2:
                     break
-                # eliminare costo pallet n2 dai precN2
-                smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc2[0], arc2[1]])
                 # aggiungere costo pallet n1 ai precN2
                 smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc2[0], arc2[1]])
-            smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+                # eliminare costo pallet n2 dai precN2
+                smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc2[0], arc2[1]])
             smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, precN2[0], n1])
-
-    pass
-
-    # for v1 in rotte:
-    #     # lista dei nodi del veicolo k (satellite + clienti)
-    #     listNodes = [s] + [c2 for c1, c2 in rotte[v1]]
-    #     for n1 in listNodes:
-    #         for n2, v2 in clienteVeicolo:
-    #             # v1 = veicolo di n1
-    #             # v2 = veicolo di n2
-    #             # n1 = primo nodo di scambio
-    #             # n2 = secondo nodo di scambio
-    #             pass
+            smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
 
 
 # restituisce una lista di tuple [(cliente, veicolo), ...]
@@ -494,14 +481,10 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
         # print("uk2[{}]: {}".format(v, uk2[v]))
         uk2diS[v] = uk2[v]
 
-    # print("Pgac: {}".format(Pgac))
-
     for gamma in Gamma:
         # print("PsGa[({}, {})]: {}".format(s, gamma, PsGa[(s, gamma)]))
         PGa[gamma] = PsGa[(s, gamma)]
         palletDaConsegnare += PGa[gamma]
-
-
 
     # iterazione per scorrere i veicoli e i clienti di gamma
     posV = 0
