@@ -161,7 +161,7 @@ if __name__ == "__main__":
             # crea la lista unica dei costi in cui verrà salvato l'heap
             # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
             heapSMD = list(smd10.values()) + list(smd11.values())
-            # crea l'heap di smd10
+            # crea l'heap di smd10 e smd11
             heapq.heapify(heapSMD)
 
             itMosse = 1
@@ -181,19 +181,32 @@ if __name__ == "__main__":
                 else:
                     itMosse += 1
                     cost = costTMP
+
                     # aggiornare rotte dopo una mossa ammissibile
-                    updateRotteSmd10(rotte, keyLocalSearch, flagAllPallets)
+                    # 1-0 Exchange
+                    if len(keyLocalSearch) == 5:
+                        updateRotteSmd10(rotte, keyLocalSearch, flagAllPallets)
+                    # 1-1 Exchange
+                    elif len(keyLocalSearch) == 4:
+                        updateRotteSmd11(rotte, keyLocalSearch)
+
+                    # aggiornare x2 e w2 dopo una mossa ammissibile
                     myProb.x2 = x2TMP.copy()
                     myProb.w2 = w2TMP.copy()
-
-                    print("Soluzione migliore trovata, costo: {}.".format(cost))
-                    solutions.append([cost, myProb.x2, myProb.w2])
 
                     # aggiornare SMD dopo una mossa ammissibile
                     smd10.clear()
                     inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
-                    heapSMD = list(smd10.values())
-                    # crea l'heap di smd10
+                    smd11.clear()
+                    inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+
+                    print("Soluzione migliore trovata, costo: {}.".format(cost))
+                    print("rotte: {}".format(rotte))
+                    solutions.append([cost, myProb.x2, myProb.w2])
+
+                    # crea la lista unica dei costi in cui verrà salvato l'heap
+                    heapSMD = list(smd10.values()) + list(smd11.values())
+                    # crea l'heap di smd10 e di smd11
                     heapq.heapify(heapSMD)
                     pass
         else:
