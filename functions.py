@@ -77,8 +77,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                 precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
                 precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
-                pippo = range(1, x2[v2, n2, precN2[0], n2])
-                for numeroPallet in pippo:
+                for numeroPallet in range(1, x2[v2, n2, precN2[0], n2]):
                     # se viene trattato un cliente splittato sulle rotte v1 e v2
                     #
                     if (n2 in [c for c, k in clienteVeicolo if k == v1]) and v1 != v2:
@@ -228,6 +227,46 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                                 smd10[v1, v2, n1, n2, numeroPallet] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
                         # dopo succN2[0] -> non vengono modificati
                     pass
+                # esiste l'arco (n2, n1)
+                elif v1==v2 and (n2, n1) in rotte[v1]:
+                    smd10[v1, v2, n1, n2, numeroPallet] = 0
+
+                    # nik2ij
+                    smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, precN2[0], n2]
+                    smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n2, n1]
+
+                    smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, precN2[0], n1]
+                    smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
+
+                    if succN1[0] != -1:
+                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
+                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
+
+                    # ak2ij
+                    flag=0
+                    for arc1 in rotte[v1]:
+                        if arc1[0] == precN2[0]:
+                            flag = 1
+                        if arc1[0] == n2:
+                            flag = 2
+                        if arc1[0] == n1:
+                            flag = 3
+
+                        if flag==1:
+                            for gamma in [n2]+succN2:
+                                smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, precN2[0], n2] * ak2ij[v1, precN2[0], n2]
+                                smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, precN2[0], n2] * ak2ij[v1, precN2[0], n1]
+                        if flag==2:
+                            for gamma in succN2:
+                                smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n2, n1] * ak2ij[v1, n2, n1]
+                        if flag==3:
+                            for gamma in succN1:
+                                smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]]
+                                smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2]
+                                smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]]
+                            break
+                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
+
                 # l'arco non deve esistere nella soluzione attuale
                 # un veicolo non puo' essere spostato dietro se stesso
                 elif (((v1 == v2) and ((n1, n2) not in rotte[v1])) or (v1 != v2)) and n2 != n1:
@@ -746,6 +785,9 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
         # 1-1 Exchange
         elif len(minCostKey) == 4:
+            # se n1 è già presente in v2
+            # se n2 è già presente in v1
+
             # numero di pallet che ricevono n1 e n2
             palletN1 = x2TMP[v1, n1, precN1[0], n1]
             palletN2 = x2TMP[v2, n2, precN2[0], n2]
