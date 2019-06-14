@@ -222,49 +222,107 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                                 smd10[v1, v2, n1, n2, numeroPallet] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
                         # dopo succN2[0] -> non vengono modificati
                     pass
-                # esiste l'arco (n2, n1)
-                elif v1==v2 and (n2, n1) in rotte[v1]:
-                    smd10[v1, v2, n1, n2, numeroPallet] = 0
 
-                    # nik2ij
-                    smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, precN2[0], n2]
-                    smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n2, n1]
+                # se n1 e n2 sono sullo stesso veicolo
+                elif v1 == v2 and ((n1, n2) not in rotte[v1]):
+                    # se esiste l'arco (n2, n1)
+                    if (n2, n1) in rotte[v1]:
+                        smd10[v1, v2, n1, n2, numeroPallet] = 0
 
-                    smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, precN2[0], n1]
-                    smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
+                        # nik2ij
+                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, precN2[0], n2]
+                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n2, n1]
 
-                    if succN1[0] != -1:
+                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, precN2[0], n1]
+                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
+
+                        if succN1[0] != -1:
+                            smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
+                            smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
+
+                        # ak2ij
+                        flag = 0
+                        for arc1 in rotte[v1]:
+                            if arc1[0] == precN2[0]:
+                                flag = 1
+                            if arc1[0] == n2:
+                                flag = 2
+                            if arc1[0] == n1:
+                                flag = 3
+
+                            if flag == 1:
+                                for gamma in [n2] + succN2:
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, precN2[0], n2] * ak2ij[
+                                        v1, precN2[0], n2]
+                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, precN2[0], n2] * ak2ij[
+                                        v1, precN2[0], n1]
+                            if flag == 2:
+                                for gamma in succN2:
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n2, n1] * ak2ij[v1, n2, n1]
+                            if flag == 3:
+                                for gamma in succN1:
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                        v1, n1, succN1[0]]
+                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                        v1, n1, n2]
+                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                        v1, n2, succN1[0]]
+                                break
+                        smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
+                    # se n2 in succN1
+                    elif n2 in succN1 and ((n1, n2) not in rotte[v1]):
+                        # viene creata la chiave
+                        smd10[v1, v2, n1, n2, numeroPallet] = 0
+
+                        # nik2ij
                         smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
+                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, precN2[0], n2]
+
+                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
                         smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
 
-                    # ak2ij
-                    flag=0
-                    for arc1 in rotte[v1]:
-                        if arc1[0] == precN2[0]:
-                            flag = 1
-                        if arc1[0] == n2:
-                            flag = 2
-                        if arc1[0] == n1:
-                            flag = 3
+                        # ak2ij
+                        # prima di n1
+                        flag=0
+                        for arc1 in rotte[v1]:
+                            # (n1, succN1)
+                            if arc1[0]==n1:
+                                flag=1
+                            # (succN1, ...)
+                            if arc1[0]==succN1[0]:
+                                flag=2
+                            # (n2, succN2)
+                            if arc1[0]==n2:
+                                flag=3
+                            # (succN2, ...)
+                            if arc1[0]==succN2[0]:
+                                break
 
-                        if flag==1:
-                            for gamma in [n2]+succN2:
-                                smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, precN2[0], n2] * ak2ij[v1, precN2[0], n2]
-                                smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, precN2[0], n2] * ak2ij[v1, precN2[0], n1]
-                        if flag==2:
-                            for gamma in succN2:
-                                smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n2, n1] * ak2ij[v1, n2, n1]
-                        if flag==3:
-                            for gamma in succN1:
-                                smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]]
-                                smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2]
-                                smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]]
-                            break
-                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
+                            # (n1, succN1)
+                            if flag==1:
+                                for gamma in succN1:
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]]
+                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2]
+                                    if gamma!=n2:
+                                        smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]]
+                            # (succN1, ...)
+                            if flag==2:
+                                smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]]
+                            #
+                            if flag==3:
+                                smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, precN2[0], n2]
+                                smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n2, succN2[0]]
+                                for gamma in succN2:
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n2, succN2[0]]
+                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, precN2[0], succN2[0]]
+
+                    # se n1 in succN2 ma non (n1, n2)
+                    elif n1 in succN2 and ((n1, n2) not in rotte[v1]):
+                        pass
 
                 # l'arco non deve esistere nella soluzione attuale
                 # un veicolo non puo' essere spostato dietro se stesso
-                elif (((v1 == v2) and ((n1, n2) not in rotte[v1])) or (v1 != v2)) and n2 != n1:
+                elif v1 != v2 and n2 != n1:
                     # viene creata la chiave
                     smd10[v1, v2, n1, n2, numeroPallet] = 0
 
@@ -711,44 +769,102 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                                 x2TMP[v2, gamma, precN2[0], n2] -= x2TMP[v2, gamma, precN2[0], n2]
                                 x2TMP[v2, gamma, n2, succN2[0]] -= x2TMP[v2, gamma, n2, succN2[0]]
 
-                # esiste l'arco (n2, n1)
-                elif v1 == v2 and (n2, n1) in rotte[v1]:
+                # se n1 e n2 sono sullo stesso veicolo
+                elif v1 == v2 and ((n1, n2) not in rotte[v1]):
+                    # esiste l'arco (n2, n1)
+                    if (n2, n1) in rotte[v1]:
+                        # nik2ij
+                        w2TMP[v1, precN2[0], n2] = 0
+                        w2TMP[v1, n2, n1] = 0
 
-                    # nik2ij
-                    w2TMP[v1, precN2[0], n2] = 0
-                    w2TMP[v1, n2, n1] = 0
+                        w2TMP[v1, precN2[0], n1] = 1
+                        w2TMP[v1, n1, n2] = 1
 
-                    w2TMP[v1, precN2[0], n1] = 1
-                    w2TMP[v1, n1, n2] = 1
+                        if succN1[0] != -1:
+                            w2TMP[v1, n1, succN1[0]] = 0
+                            w2TMP[v1, n2, succN1[0]] = 1
 
-                    if succN1[0] != -1:
-                        w2TMP[v1, n1, succN1[0]] = 0
-                        w2TMP[v1, n2, succN1[0]] = 1
+                        # ak2ij
+                        flag = 0
+                        for arc1 in rotte[v1]:
+                            if arc1[0] == precN2[0]:
+                                flag = 1
+                            if arc1[0] == n2:
+                                flag = 2
+                            if arc1[0] == n1:
+                                flag = 3
 
-                    # ak2ij
-                    flag = 0
-                    for arc1 in rotte[v1]:
-                        if arc1[0] == precN2[0]:
-                            flag = 1
-                        if arc1[0] == n2:
-                            flag = 2
-                        if arc1[0] == n1:
-                            flag = 3
+                            if flag == 1:
+                                for gamma in [n2] + succN2:
+                                    x2TMP[v1, gamma, precN2[0], n2] = 0
+                                    x2TMP[v1, gamma, precN2[0], n1] = x2[v1, gamma, precN2[0], n2]
+                            if flag == 2:
+                                for gamma in succN2:
+                                    x2TMP[v1, gamma, n2, n1] = 0
+                            if flag == 3:
+                                for gamma in succN1:
+                                    x2TMP[v1, gamma, n1, succN1[0]] = 0
+                                    x2TMP[v1, gamma, n1, n2] = x2[v1, gamma, n1, succN1[0]]
+                                    x2TMP[v1, gamma, n2, succN1[0]] = x2[v1, gamma, n1, succN1[0]]
+                                break
+                        x2TMP[v1, n2, n1, n2] = x2[v1, n2, precN2[0], n2]
 
-                        if flag == 1:
-                            for gamma in [n2] + succN2:
-                                x2TMP[v1, gamma, precN2[0], n2] = 0
-                                x2TMP[v1, gamma, precN2[0], n1] = x2[v1, gamma, precN2[0], n2]
-                        if flag == 2:
-                            for gamma in succN2:
-                                x2TMP[v1, gamma, n2, n1] = 0
-                        if flag == 3:
-                            for gamma in succN1:
-                                x2TMP[v1, gamma, n1, succN1[0]] = 0
-                                x2TMP[v1, gamma, n1, n2] = x2[v1, gamma, n1, succN1[0]]
-                                x2TMP[v1, gamma, n2, succN1[0]] = x2[v1, gamma, n1, succN1[0]]
-                            break
-                    x2TMP[v1, n2, n1, n2] = x2[v1, n2, precN2[0], n2]
+                    # se n2 in succN1
+                    elif n2 in succN1 and ((n1, n2) not in rotte[v1]):
+                        # viene creata la chiave
+                        smd10[v1, v2, n1, n2, numeroPallet] = 0
+
+                        # nik2ij
+                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
+                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, precN2[0], n2]
+
+                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
+                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
+
+                        # ak2ij
+                        # prima di n1
+                        flag = 0
+                        for arc1 in rotte[v1]:
+                            # (n1, succN1)
+                            if arc1[0] == n1:
+                                flag = 1
+                            # (succN1, ...)
+                            if arc1[0] == succN1[0]:
+                                flag = 2
+                            # (n2, succN2)
+                            if arc1[0] == n2:
+                                flag = 3
+                            # (succN2, ...)
+                            if arc1[0] == succN2[0]:
+                                break
+
+                            # (n1, succN1)
+                            if flag == 1:
+                                for gamma in succN1:
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                        v1, n1, succN1[0]]
+                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                        v1, n1, n2]
+                                    if gamma != n2:
+                                        smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                            v1, n2, succN1[0]]
+                            # (succN1, ...)
+                            if flag == 2:
+                                smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, n2, precN2[0], n2] * ak2ij[
+                                    v1, arc1[0], arc1[1]]
+                            #
+                            if flag == 3:
+                                smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, precN2[0], n2]
+                                smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n2, succN2[0]]
+                                for gamma in succN2:
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n2, succN2[0]] * ak2ij[
+                                        v1, n2, succN2[0]]
+                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n2, succN2[0]] * ak2ij[
+                                        v1, precN2[0], succN2[0]]
+
+                    # se n1 in succN2 ma non (n1, n2)
+                    elif n1 in succN2:
+                        pass
 
                 # l'arco non deve esistere nella soluzione attuale
                 # un veicolo non puo' essere spostato dietro se stesso
