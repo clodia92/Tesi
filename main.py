@@ -164,7 +164,7 @@ if __name__ == "__main__":
             # crea l'heap di smd10 e smd11
             heapq.heapify(heapSMD)
 
-            itMosse = 1
+            itMosse = 0
 
             while True:
                 x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, s, myProb.uk2,
