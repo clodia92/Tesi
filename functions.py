@@ -653,11 +653,9 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     palletDaConsegnare = 0
 
     for v in K2:
-        # print("uk2[{}]: {}".format(v, uk2[v]))
         uk2diS[v] = uk2[v]
 
     for gamma in Gamma:
-        # print("PsGa[({}, {})]: {}".format(s, gamma, PsGa[(s, gamma)]))
         PGa[gamma] = PsGa[(s, gamma)]
         palletDaConsegnare += PGa[gamma]
 
@@ -1041,67 +1039,6 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                                 x2TMP[v2, gamma, n2, succN2[0]] = 0
                         # dopo succN2[0] -> non vengono modificati
 
-
-
-                # else:
-                #     # n2 non è presente in v1
-                #     # v1 +
-                #     if succN1[0] == -1:
-                #         x2TMP[v1, n2, n1, n2] = numeroPallet
-                #         w2TMP[v1, n1, n2] = 1
-                #
-                #         for arc1 in rotte[v1]:
-                #             if arc1[0] == n1:
-                #                 break
-                #             x2TMP[v1, n2, arc1[0], arc1[1]] = numeroPallet
-                #     else:
-                #         x2TMP[v1, n2, n1, n2] = numeroPallet
-                #         x2TMP[v1, succN1[0], n1, n2] = x2TMP[v1, succN1[0], n1, succN1[0]]
-                #         w2TMP[v1, n1, n2] = 1
-                #
-                #         for arc1 in rotte[v1]:
-                #             if arc1[0] == n1:
-                #                 break
-                #             x2TMP[v1, n2, arc1[0], arc1[1]] = numeroPallet
-                #
-                #         x2TMP[v1, succN1[0], n2, succN1[0]] = x2TMP[v1, succN1[0], n1, succN1[0]]
-                #         w2TMP[v1, n2, succN1[0]] = 1
-                #
-                #     # v1 -
-                #     if succN1[0] != -1:
-                #         for gamma in succN1:
-                #             x2TMP[v1, gamma, n1, succN1[0]] = 0
-                #         w2TMP[v1, n1, succN1[0]] = 0
-                #
-                #     # v2 +
-                #     if succN2[0] != -1 and numeroPallet == numeroTotPallet:
-                #         for gamma in succN2:
-                #             x2TMP[v2, gamma, precN2[0], succN2[0]] = x2TMP[v2, gamma, n2, succN2[0]]
-                #         w2TMP[v2, precN2[0], succN2[0]] = 1
-                #
-                #     # v2 -
-                #     if succN2[0] == -1:
-                #         for arc2 in rotte[v2]:
-                #             if arc2[0] == n2:
-                #                 break
-                #             x2TMP[v2, n2, arc2[0], arc2[1]] -= numeroPallet
-                #         if numeroPallet == numeroTotPallet:
-                #             w2TMP[v2, precN2[0], n2] = 0
-                #     else:
-                #         for arc2 in rotte[v2]:
-                #             if arc2[0] == n2:
-                #                 break
-                #             x2TMP[v2, n2, arc2[0], arc2[1]] -= numeroPallet
-                #
-                #         if numeroTotPallet == numeroPallet:
-                #             for gamma in succN2:
-                #                 x2TMP[v2, gamma, precN2[0], n2] = 0
-                #                 x2TMP[v2, gamma, n2, succN2[0]] = 0
-                #
-                #             x2TMP[v2, succN2[0], n2, succN2[0]] = 0
-                #             w2TMP[v2, precN2[0], n2] = 0
-                #             w2TMP[v2, n2, succN2[0]] = 0
-
                 # verificare ammissibilità
                 if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
                     print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili, minCostKey, smd10[minCostKey]))
@@ -1245,6 +1182,7 @@ def updateRotteSmd10(rotte, keyLocalSearch, flagAllPallets):
             rotte[v2].remove((n2, succN2[0]))
         else:
             rotte[v2].remove((precN2[0], n2))
+
 
 def updateRotteSmd11(rotte, keyLocalSearch):
     v1 = keyLocalSearch[0]
