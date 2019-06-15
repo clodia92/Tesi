@@ -811,15 +811,12 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                     # se n2 in succN1
                     elif n2 in succN1 and ((n1, n2) not in rotte[v1]):
-                        # viene creata la chiave
-                        smd10[v1, v2, n1, n2, numeroPallet] = 0
-
                         # nik2ij
-                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
-                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, precN2[0], n2]
+                        w2TMP[v1, n1, succN1[0]] = 0
+                        w2TMP[v1, precN2[0], n2] = 0
 
-                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
-                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
+                        w2TMP[v1, n1, n2] = 1
+                        w2TMP[v1, n2, succN1[0]] = 1
 
                         # ak2ij
                         # prima di n1
@@ -841,26 +838,22 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                             # (n1, succN1)
                             if flag == 1:
                                 for gamma in succN1:
-                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
-                                        v1, n1, succN1[0]]
-                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
-                                        v1, n1, n2]
+                                    x2TMP[v1, gamma, n1, succN1[0]] = 0
+                                    x2TMP[v1, gamma, n1, n2] = x2[v1, gamma, n1, succN1[0]]
+
                                     if gamma != n2:
-                                        smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
-                                            v1, n2, succN1[0]]
+                                        x2TMP[v1, gamma, n2, succN1[0]] = x2[v1, gamma, n1, succN1[0]]
                             # (succN1, ...)
                             if flag == 2:
-                                smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, n2, precN2[0], n2] * ak2ij[
-                                    v1, arc1[0], arc1[1]]
-                            #
+                                x2TMP[v1, n2, arc1[0], arc1[1]] = 0
+                            # (n2, succN2)
                             if flag == 3:
-                                smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, precN2[0], n2]
-                                smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n2, succN2[0]]
+                                w2TMP[v1, precN2[0], n2] = 1
+                                w2TMP[v1, n2, succN2[0]] = 0
+
                                 for gamma in succN2:
-                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n2, succN2[0]] * ak2ij[
-                                        v1, n2, succN2[0]]
-                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n2, succN2[0]] * ak2ij[
-                                        v1, precN2[0], succN2[0]]
+                                    x2TMP[v1, gamma, n2, succN2[0]] = 0
+                                    x2TMP[v1, gamma, precN2[0], succN2[0]] = x2[v1, gamma, n2, succN2[0]]
 
                     # se n1 in succN2 ma non (n1, n2)
                     elif n1 in succN2:
