@@ -455,7 +455,6 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             for gamma in succN2:
                                 smd10[v1, v2, n1, n2, numeroPallet] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
                         # dopo succN2[0] -> non vengono modificati
-                pass
 
 
 def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
@@ -509,21 +508,77 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                 smd11[v1, v2, n1, n2] -= x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
 
             else:
-                # v1 se n1 ha successori
-                if succN1[0] != -1:
-                    # nik2ij
-                    # aggiungere costo arco (n2, succN1)
-                    smd11[v1, v2, n1, n2] += nik2ij[v1, n2, succN1[0]]
-                    # eliminare costo arco (n1, succN1)
+                # v1 se n2 in v1
+                # DA VERIFICARE
+                if n2 in [c[1] for c in rotte[v1]]:
+                    smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
                     smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
+                    smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], succN1[0]]
+
+                    # (..., precN1)
+                    flag=0
+                    for arc1 in rotte[v1]:
+                        # (precN1, n1)
+                        if arc1[0] == precN1[0]:
+                            flag=1
+                        # (n1, succN1)
+                        if arc1[0] == n1:
+                            flag=2
+
+                        # (..., precN1)
+                        if flag==0:
+                            smd11[v1, v2, n1, n2] -= x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc1[0], arc1[1]]
+                        # (precN1, n1)
+                        if flag==1:
+                            for gamma in [n1]+succN1:
+                                smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
+                        # (n1, succN1)
+                        if flag==2:
+                            for gamma in succN1:
+                                smd11[v1, v2, n1, n2] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]]
+                                smd11[v1, v2, n1, n2] += x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, precN1[0], succN1[0]]
+
+                    # aggiugni a n2 in v1 i pallet di v2
+                    for arc1 in rotte[v1]:
+                        if arc1[0]==n2:
+                            break
+                        smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]]
+
+                # DA VERIFICARE
+                else:
+                    # v1 se n1 ha successori
+                    if succN1[0] != -1:
+                        # nik2ij
+                        # aggiungere costo arco (n2, succN1)
+                        smd11[v1, v2, n1, n2] += nik2ij[v1, n2, succN1[0]]
+                        # eliminare costo arco (n1, succN1)
+                        smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
+                        # ak2ij
+                        for gamma in succN1:
+                            # aggiungere costi pallet dei succN1 in (precN1, n2) e (n2, succN1)
+                            smd11[v1, v2, n1, n2] += (x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2])
+                            smd11[v1, v2, n1, n2] += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
+                            # eliminare costi pallet dei succN1 da (precN1, n1) e (n1, succN1)
+                            smd11[v1, v2, n1, n2] -= (x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
+                            smd11[v1, v2, n1, n2] -= (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
+
+                    # v1 sempre
+                    # nik2ij
+                    # aggiungere costo arco (precN1, n2)
+                    smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], n2]
+                    # eliminare costo arco (precN1, n1)
+                    smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
                     # ak2ij
-                    for gamma in succN1:
-                        # aggiungere costi pallet dei succN1 in (precN1, n2) e (n2, succN1)
-                        smd11[v1, v2, n1, n2] += (x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2])
-                        smd11[v1, v2, n1, n2] += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
-                        # eliminare costi pallet dei succN1 da (precN1, n1) e (n1, succN1)
-                        smd11[v1, v2, n1, n2] -= (x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
-                        smd11[v1, v2, n1, n2] -= (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
+                    for arc1 in rotte[v1]:
+                        # (n1, succN1[0])
+                        if arc1[1] == n1:
+                            break
+                        # aggiungere costo pallet n2 ai precN1
+                        smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]])
+                        # eliminare costo pallet n1 dai precN1
+                        smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc1[0], arc1[1]])
+                    smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, precN1[0], n2])
+                    smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
 
                 # v2 se n2 ha successori
                 if succN2[0] != -1:
@@ -540,24 +595,6 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                         # eliminare costi pallet dei succN2 da (precN2, n2) e (n2, succN2)
                         smd11[v1, v2, n1, n2] -= (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                         smd11[v1, v2, n1, n2] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
-
-                # v1 sempre
-                # nik2ij
-                # aggiungere costo arco (precN1, n2)
-                smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], n2]
-                # eliminare costo arco (precN1, n1)
-                smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
-                # ak2ij
-                for arc1 in rotte[v1]:
-                    # (n1, succN1[0])
-                    if arc1[1] == n1:
-                        break
-                    # aggiungere costo pallet n2 ai precN1
-                    smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]])
-                    # eliminare costo pallet n1 dai precN1
-                    smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc1[0], arc1[1]])
-                smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, precN1[0], n2])
-                smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
 
                 # v2 sempre
                 # nik2ij
@@ -1098,20 +1135,6 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                         x2TMP[v1, gamma, precN1[0], n1] = 0
                         x2TMP[v1, gamma, n1, succN1[0]] = 0
 
-                # v2 se n2 ha successori
-                if succN2[0] != -1:
-                    # aggiungere arco (n1, succN2)
-                    w2TMP[v2, n1, succN2[0]] = 1
-                    # eliminare arco (n2, succN2)
-                    w2TMP[v2, n2, succN2[0]] = 0
-                    for gamma in succN2:
-                        # aggiungere pallet dei succN2 in (precN2, n1) e (n1, succN2)
-                        x2TMP[v2, gamma, precN2[0], n1] = x2[v2, gamma, precN2[0], n2]
-                        x2TMP[v2, gamma, n1, succN2[0]] = x2[v2, gamma, n2, succN2[0]]
-                        # eliminare pallet dei succN2 da (precN2, n2) e (n2, succN2)
-                        x2TMP[v2, gamma, precN2[0], n2] = 0
-                        x2TMP[v2, gamma, n2, succN2[0]] = 0
-
                 # v1 sempre
                 # aggiungere arco (precN1, n2)
                 w2TMP[v1, precN1[0], n2] = 1
@@ -1128,6 +1151,20 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                     x2TMP[v1, n1, arc1[0], arc1[1]] = 0
                 x2TMP[v2, n2, precN1[0], n2] = palletN2
                 x2TMP[v1, n1, precN1[0], n1] = 0
+
+                # v2 se n2 ha successori
+                if succN2[0] != -1:
+                    # aggiungere arco (n1, succN2)
+                    w2TMP[v2, n1, succN2[0]] = 1
+                    # eliminare arco (n2, succN2)
+                    w2TMP[v2, n2, succN2[0]] = 0
+                    for gamma in succN2:
+                        # aggiungere pallet dei succN2 in (precN2, n1) e (n1, succN2)
+                        x2TMP[v2, gamma, precN2[0], n1] = x2[v2, gamma, precN2[0], n2]
+                        x2TMP[v2, gamma, n1, succN2[0]] = x2[v2, gamma, n2, succN2[0]]
+                        # eliminare pallet dei succN2 da (precN2, n2) e (n2, succN2)
+                        x2TMP[v2, gamma, precN2[0], n2] = 0
+                        x2TMP[v2, gamma, n2, succN2[0]] = 0
 
                 # v2 sempre
                 # aggiungere arco (precN2, n1)
