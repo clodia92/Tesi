@@ -585,7 +585,30 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                 if n1 in [c[1] for c in rotte[v2]]:
                     pass
                     # in v2: n1 in precN2
+                    if n1 in precN2:
+                        smd11[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
 
+                        flag1=0
+                        flag2=0
+                        for arc2 in rotte[v2]:
+                            if arc2[0] == n2:
+                                flag1=1
+                            if arc2[0] == n1:
+                                flag2=1
+                            if arc2[0] == succN2[0]:
+                                break
+
+                            if flag1==0:
+                                smd11[v1, v2, n1, n2] -= x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc2[0], arc2[1]]
+                            if flag1==1:
+                                smd11[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
+                                smd11[v1, v2, n1, n2] += nik2ij[v2, precN2[0], succN2[0]]
+                                for gamma in succN1:
+                                    smd11[v1, v2, n1, n2] -= x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2]
+                                    smd11[v1, v2, n1, n2] -= x2[v2, gamma, precN2[0], n2] * ak2ij[v2, n2, succN2[0]]
+                                    smd11[v1, v2, n1, n2] += x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]]
+                            if flag2==0:
+                                smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc2[0], arc2[1]]
                     # in v2: (n2, n1)
                     # in v2: (n2, n)(n, n1)
 
@@ -1294,6 +1317,17 @@ def updateRotteSmd11(rotte, keyLocalSearch):
                 rotte[v1][index] = (arc[0], n2)
             if arc[0] == n1:
                 rotte[v1][index] = (n2, n1)
+            if arc[0] == n2:
+                rotte[v1][index] = (n1, arc[1])
+
+    elif v1==v2:
+        for index, arc in enumerate(rotte[v1]):
+            if arc[1] == n1:
+                rotte[v1][index] = (arc[0], n2)
+            if arc[0] == n1:
+                rotte[v1][index] = (n2, arc[1])
+            if arc[1] == n2:
+                rotte[v1][index] = (arc[0], n1)
             if arc[0] == n2:
                 rotte[v1][index] = (n1, arc[1])
 
