@@ -515,7 +515,31 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                 # DA VERIFICARE
                 if n2 in [c[1] for c in rotte[v1]]:
                     pass
-                    # in v1: (n2, n1)
+                    # in v1: n2 in precN1
+                    if n2 in precN1:
+                        smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
+
+                        flag1=0
+                        flag2=0
+                        for arc1 in rotte[v1]:
+                            if arc1[0] == n1:
+                                flag1=1
+                            if arc1[0] == n2:
+                                flag2=1
+                            if arc1[0] == succN1[0]:
+                                break
+
+                            if flag1==0:
+                                smd11[v1, v2, n1, n2] -= x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc1[0], arc1[1]]
+                            if flag1==1:
+                                smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
+                                smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], succN1[0]]
+                                for gamma in succN1:
+                                    smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
+                                    smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, n1, succN1[0]]
+                                    smd11[v1, v2, n1, n2] += x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], succN1[0]]
+                            if flag2==0:
+                                smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]]
                     # in v1: (n1, n2)
                     # in v1: (n1, n)(n, n2)
 
@@ -560,7 +584,8 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                 # DA VERIFICARE
                 if n1 in [c[1] for c in rotte[v2]]:
                     pass
-                    # in v2: (n1, n2)
+                    # in v2: n1 in precN2
+
                     # in v2: (n2, n1)
                     # in v2: (n2, n)(n, n1)
 
@@ -1113,7 +1138,31 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                 # DA VERIFICARE
                 if n2 in [c[1] for c in rotte[v1]]:
                     pass
-                    # in v1: (n2, n1)
+                    # in v1: n2 in precN1
+                    if n2 in precN1:
+                        w2TMP[v1, precN1[0], n1] = 0
+
+                        flag1=0
+                        flag2=0
+                        for arc1 in rotte[v1]:
+                            if arc1[0] == n1:
+                                flag1=1
+                            if arc1[0] == n2:
+                                flag2=1
+                            if arc1[0] == succN1[0]:
+                                break
+
+                            if flag1==0:
+                                x2TMP[v1, n1, arc1[0], arc1[1]] = 0
+                            if flag1==1:
+                                w2TMP[v1, n1, succN1[0]] = 0
+                                w2TMP[v1, precN1[0], succN1[0]] = 1
+                                for gamma in succN1:
+                                    x2TMP[v1, gamma, precN1[0], n1] = 0
+                                    x2TMP[v1, gamma, n1, succN1[0]] = 0
+                                    x2TMP[v1, gamma, precN1[0], succN1[0]] = x2[v1, gamma, precN1[0], n1]
+                            if flag2==0:
+                                x2TMP[v1, n2, arc1[0], arc1[1]] += x2[v2, n2, precN2[0], n2]
                     # in v1: (n1, n2)
                     # in v1: (n1, n)(n, n2)
 
@@ -1155,7 +1204,8 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                 # DA VERIFICARE
                 if n1 in [c[1] for c in rotte[v2]]:
                     pass
-                    # in v2: (n1, n2)
+                    # in v2: n1 in precN2
+
                     # in v2: (n2, n1)
                     # in v2: (n2, n)(n, n1)
 
