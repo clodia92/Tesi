@@ -507,42 +507,17 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                 smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v1, n2, n1]
                 smd11[v1, v2, n1, n2] -= x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
 
-            else:
+            ### PERMETTERE MOSSA [7, 8, 7, 7]?
+            ### PER ORA NO
+            elif n1!=n2:
+                # v1
                 # v1 se n2 in v1
                 # DA VERIFICARE
                 if n2 in [c[1] for c in rotte[v1]]:
-                    smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
-                    smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
-                    smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], succN1[0]]
-
-                    # (..., precN1)
-                    flag=0
-                    for arc1 in rotte[v1]:
-                        # (precN1, n1)
-                        if arc1[0] == precN1[0]:
-                            flag=1
-                        # (n1, succN1)
-                        if arc1[0] == n1:
-                            flag=2
-
-                        # (..., precN1)
-                        if flag==0:
-                            smd11[v1, v2, n1, n2] -= x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc1[0], arc1[1]]
-                        # (precN1, n1)
-                        if flag==1:
-                            for gamma in [n1]+succN1:
-                                smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
-                        # (n1, succN1)
-                        if flag==2:
-                            for gamma in succN1:
-                                smd11[v1, v2, n1, n2] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]]
-                                smd11[v1, v2, n1, n2] += x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, precN1[0], succN1[0]]
-
-                    # aggiugni a n2 in v1 i pallet di v2
-                    for arc1 in rotte[v1]:
-                        if arc1[0]==n2:
-                            break
-                        smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]]
+                    pass
+                    # in v1: (n2, n1)
+                    # in v1: (n1, n2)
+                    # in v1: (n1, n)(n, n2)
 
                 # DA VERIFICARE
                 else:
@@ -580,39 +555,51 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                     smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, precN1[0], n2])
                     smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
 
-                # v2 se n2 ha successori
-                if succN2[0] != -1:
-                    # nik2ij
-                    # aggiungere costo arco (n1, succN2)
-                    smd11[v1, v2, n1, n2] += nik2ij[v2, n1, succN2[0]]
-                    # eliminare costo arco (n2, succN2)
-                    smd11[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
-                    # ak2ij
-                    for gamma in succN2:
-                        # aggiungere costi pallet dei succN2 in (precN2, n1) e (n1, succN2)
-                        smd11[v1, v2, n1, n2] += (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n1])
-                        smd11[v1, v2, n1, n2] += (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n1, succN2[0]])
-                        # eliminare costi pallet dei succN2 da (precN2, n2) e (n2, succN2)
-                        smd11[v1, v2, n1, n2] -= (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
-                        smd11[v1, v2, n1, n2] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
+                # v2
+                # v2 se n1 in v2
+                # DA VERIFICARE
+                if n1 in [c[1] for c in rotte[v2]]:
+                    pass
+                    # in v2: (n1, n2)
+                    # in v2: (n2, n1)
+                    # in v2: (n2, n)(n, n1)
 
-                # v2 sempre
-                # nik2ij
-                # aggiungere costo arco (precN2, n1)
-                smd11[v1, v2, n1, n2] += nik2ij[v2, precN2[0], n1]
-                # eliminare costo arco (precN2, n2)
-                smd11[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
-                # ak2ij
-                for arc2 in rotte[v2]:
-                    # (n2, succN2[0])
-                    if arc2[1] == n2:
-                        break
-                    # aggiungere costo pallet n1 ai precN2
-                    smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc2[0], arc2[1]])
-                    # eliminare costo pallet n2 dai precN2
-                    smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc2[0], arc2[1]])
-                smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, precN2[0], n1])
-                smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+                # DA VERIFICARE
+                else:
+
+                    # v2 se n2 ha successori
+                    if succN2[0] != -1:
+                        # nik2ij
+                        # aggiungere costo arco (n1, succN2)
+                        smd11[v1, v2, n1, n2] += nik2ij[v2, n1, succN2[0]]
+                        # eliminare costo arco (n2, succN2)
+                        smd11[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
+                        # ak2ij
+                        for gamma in succN2:
+                            # aggiungere costi pallet dei succN2 in (precN2, n1) e (n1, succN2)
+                            smd11[v1, v2, n1, n2] += (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n1])
+                            smd11[v1, v2, n1, n2] += (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n1, succN2[0]])
+                            # eliminare costi pallet dei succN2 da (precN2, n2) e (n2, succN2)
+                            smd11[v1, v2, n1, n2] -= (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+                            smd11[v1, v2, n1, n2] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
+
+                    # v2 sempre
+                    # nik2ij
+                    # aggiungere costo arco (precN2, n1)
+                    smd11[v1, v2, n1, n2] += nik2ij[v2, precN2[0], n1]
+                    # eliminare costo arco (precN2, n2)
+                    smd11[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
+                    # ak2ij
+                    for arc2 in rotte[v2]:
+                        # (n2, succN2[0])
+                        if arc2[1] == n2:
+                            break
+                        # aggiungere costo pallet n1 ai precN2
+                        smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc2[0], arc2[1]])
+                        # eliminare costo pallet n2 dai precN2
+                        smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc2[0], arc2[1]])
+                    smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, precN2[0], n1])
+                    smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
 
 
 # restituisce una lista di tuple [(cliente, veicolo), ...]
@@ -1120,67 +1107,89 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                 pass
 
-            else:
-                # v1 se n1 ha successori
-                if succN1[0] != -1:
-                    # aggiungere arco (n2, succN1)
-                    w2TMP[v1, n2, succN1[0]] = 1
-                    # eliminare arco (n1, succN1)
-                    w2TMP[v1, n1, succN1[0]] = 0
-                    for gamma in succN1:
-                        # aggiungere pallet dei succN1 in (precN1, n2) e (n2, succN1)
-                        x2TMP[v1, gamma, precN1[0], n2] = x2[v1, gamma, precN1[0], n1]
-                        x2TMP[v1, gamma, n2, succN1[0]] = x2[v1, gamma, n1, succN1[0]]
-                        # eliminare pallet dei succN1 da (precN1, n1) e (n1, succN1)
-                        x2TMP[v1, gamma, precN1[0], n1] = 0
-                        x2TMP[v1, gamma, n1, succN1[0]] = 0
+            elif n1!=n2:
+                # v1
+                # v1 se n2 in v1
+                # DA VERIFICARE
+                if n2 in [c[1] for c in rotte[v1]]:
+                    pass
+                    # in v1: (n2, n1)
+                    # in v1: (n1, n2)
+                    # in v1: (n1, n)(n, n2)
 
-                # v1 sempre
-                # aggiungere arco (precN1, n2)
-                w2TMP[v1, precN1[0], n2] = 1
-                # eliminare arco (precN1, n1)
-                w2TMP[v1, precN1[0], n1] = 0
-                # ak2ij
-                for arc1 in rotte[v1]:
-                    # (n1, succN1[0])
-                    if arc1[1] == n1:
-                        break
-                    # aggiungere pallet n2 ai precN1
-                    x2TMP[v2, n2, arc1[0], arc1[1]] = palletN2
-                    # eliminare pallet n1 dai precN1
-                    x2TMP[v1, n1, arc1[0], arc1[1]] = 0
-                x2TMP[v2, n2, precN1[0], n2] = palletN2
-                x2TMP[v1, n1, precN1[0], n1] = 0
+                # DA VERIFICARE
+                else:
+                    # v1 se n1 ha successori
+                    if succN1[0] != -1:
+                        # aggiungere arco (n2, succN1)
+                        w2TMP[v1, n2, succN1[0]] = 1
+                        # eliminare arco (n1, succN1)
+                        w2TMP[v1, n1, succN1[0]] = 0
+                        for gamma in succN1:
+                            # aggiungere pallet dei succN1 in (precN1, n2) e (n2, succN1)
+                            x2TMP[v1, gamma, precN1[0], n2] = x2[v1, gamma, precN1[0], n1]
+                            x2TMP[v1, gamma, n2, succN1[0]] = x2[v1, gamma, n1, succN1[0]]
+                            # eliminare pallet dei succN1 da (precN1, n1) e (n1, succN1)
+                            x2TMP[v1, gamma, precN1[0], n1] = 0
+                            x2TMP[v1, gamma, n1, succN1[0]] = 0
 
-                # v2 se n2 ha successori
-                if succN2[0] != -1:
-                    # aggiungere arco (n1, succN2)
-                    w2TMP[v2, n1, succN2[0]] = 1
-                    # eliminare arco (n2, succN2)
-                    w2TMP[v2, n2, succN2[0]] = 0
-                    for gamma in succN2:
-                        # aggiungere pallet dei succN2 in (precN2, n1) e (n1, succN2)
-                        x2TMP[v2, gamma, precN2[0], n1] = x2[v2, gamma, precN2[0], n2]
-                        x2TMP[v2, gamma, n1, succN2[0]] = x2[v2, gamma, n2, succN2[0]]
-                        # eliminare pallet dei succN2 da (precN2, n2) e (n2, succN2)
-                        x2TMP[v2, gamma, precN2[0], n2] = 0
-                        x2TMP[v2, gamma, n2, succN2[0]] = 0
+                    # v1 sempre
+                    # aggiungere arco (precN1, n2)
+                    w2TMP[v1, precN1[0], n2] = 1
+                    # eliminare arco (precN1, n1)
+                    w2TMP[v1, precN1[0], n1] = 0
+                    # ak2ij
+                    for arc1 in rotte[v1]:
+                        # (n1, succN1[0])
+                        if arc1[1] == n1:
+                            break
+                        # aggiungere pallet n2 ai precN1
+                        x2TMP[v2, n2, arc1[0], arc1[1]] = palletN2
+                        # eliminare pallet n1 dai precN1
+                        x2TMP[v1, n1, arc1[0], arc1[1]] = 0
+                    x2TMP[v2, n2, precN1[0], n2] = palletN2
+                    x2TMP[v1, n1, precN1[0], n1] = 0
 
-                # v2 sempre
-                # aggiungere arco (precN2, n1)
-                w2TMP[v2, precN2[0], n1] = 1
-                # eliminare arco (precN2, n2)
-                w2TMP[v2, precN2[0], n2] = 0
-                for arc2 in rotte[v2]:
-                    # (n2, succN2[0])
-                    if arc2[1] == n2:
-                        break
-                    # aggiungere pallet n1 ai precN2
-                    x2TMP[v1, n1, arc2[0], arc2[1]] = palletN1
-                    # eliminare pallet n2 dai precN2
-                    x2TMP[v2, n2, arc2[0], arc2[1]] = 0
-                x2TMP[v1, n1, precN2[0], n1] = palletN1
-                x2TMP[v2, n2, precN2[0], n2] = 0
+                # v2
+                # v2 se n1 in v2
+                # DA VERIFICARE
+                if n1 in [c[1] for c in rotte[v2]]:
+                    pass
+                    # in v2: (n1, n2)
+                    # in v2: (n2, n1)
+                    # in v2: (n2, n)(n, n1)
+
+                # DA VERIFICARE
+                else:
+                    # v2 se n2 ha successori
+                    if succN2[0] != -1:
+                        # aggiungere arco (n1, succN2)
+                        w2TMP[v2, n1, succN2[0]] = 1
+                        # eliminare arco (n2, succN2)
+                        w2TMP[v2, n2, succN2[0]] = 0
+                        for gamma in succN2:
+                            # aggiungere pallet dei succN2 in (precN2, n1) e (n1, succN2)
+                            x2TMP[v2, gamma, precN2[0], n1] = x2[v2, gamma, precN2[0], n2]
+                            x2TMP[v2, gamma, n1, succN2[0]] = x2[v2, gamma, n2, succN2[0]]
+                            # eliminare pallet dei succN2 da (precN2, n2) e (n2, succN2)
+                            x2TMP[v2, gamma, precN2[0], n2] = 0
+                            x2TMP[v2, gamma, n2, succN2[0]] = 0
+
+                    # v2 sempre
+                    # aggiungere arco (precN2, n1)
+                    w2TMP[v2, precN2[0], n1] = 1
+                    # eliminare arco (precN2, n2)
+                    w2TMP[v2, precN2[0], n2] = 0
+                    for arc2 in rotte[v2]:
+                        # (n2, succN2[0])
+                        if arc2[1] == n2:
+                            break
+                        # aggiungere pallet n1 ai precN2
+                        x2TMP[v1, n1, arc2[0], arc2[1]] = palletN1
+                        # eliminare pallet n2 dai precN2
+                        x2TMP[v2, n2, arc2[0], arc2[1]] = 0
+                    x2TMP[v1, n1, precN2[0], n1] = palletN1
+                    x2TMP[v2, n2, precN2[0], n2] = 0
 
             # verificare ammissibilità
             if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
