@@ -1335,7 +1335,34 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                                 x2TMP[v2, n1, arc2[0], arc2[1]] += x2[v1, n1, precN1[0], n1]
 
                     # in v2: n1 in succN2
+                    elif n1 in succN2:
+                        w2TMP[v2, precN2[0], n2] = 0
+                        w2TMP[v2, n2, succN2[0]] = 0
+                        w2TMP[v2, precN2[0], succN2[0]] = 1
 
+                        for gamma in succN2:
+                            x2TMP[v2, gamma, precN2[0], n2] = 0
+                            x2TMP[v2, gamma, n2, succN2[0]] = 0
+                            x2TMP[v2, gamma, precN2[0], succN2[0]] = x2[v2, gamma, precN2[0], n2]
+
+                        x2TMP[v2, n1, precN2[0], succN2[0]] += x2[v1, n1, precN1[0], n1]
+
+                        flag1=0
+                        flag2=0
+                        for arc2 in rotte[v2]:
+                            if arc2[0]==n2:
+                                flag1=1
+                            if arc2[0]==precN2[0]:
+                                flag2=1
+                            if arc2[0]==succN2[0] and arc2[0]!=n1:
+                                flag2=0
+                            if arc2[0]==n1:
+                                break
+
+                            if flag1==0:
+                                x2TMP[v2, n2, arc2[0], arc2[1]] = 0
+                            if flag2==0:
+                                x2TMP[v2, n1, arc2[0], arc2[1]] += x2[v1, n1, precN1[0], n1]
 
                 # DA VERIFICARE
                 else:
