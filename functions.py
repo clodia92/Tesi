@@ -560,6 +560,10 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                                 flag1=1
                             if arc1[0]==precN1[0]:
                                 flag2=1
+                            if arc1[0]==succN1[0] and arc1[0]!=n2:
+                                flag2=0
+                            if arc1[0] ==n2:
+                                break
 
                             if flag1==0:
                                 smd11[v1, v2, n1, n2] -= x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc1[0], arc1[1]]
