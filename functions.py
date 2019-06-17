@@ -540,7 +540,7 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                                     smd11[v1, v2, n1, n2] += x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], succN1[0]]
                             if flag2==0:
                                 smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]]
-                    # in v1: (n1, n2)
+                    # in v1: n2 in succN1
                     elif n2 in succN1:
                         smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
                         smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
@@ -569,9 +569,6 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                                 smd11[v1, v2, n1, n2] -= x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc1[0], arc1[1]]
                             if flag2==0:
                                 smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]]
-
-                        pass
-                    # in v1: (n1, n)(n, n2)
 
                 # DA VERIFICARE
                 else:
@@ -639,8 +636,7 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                                     smd11[v1, v2, n1, n2] += x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]]
                             if flag2==0:
                                 smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc2[0], arc2[1]]
-                    # in v2: (n2, n1)
-                    # in v2: (n2, n)(n, n1)
+                    # in v2: n1 in succN2
 
                 # DA VERIFICARE
                 else:
@@ -1216,8 +1212,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                                     x2TMP[v1, gamma, precN1[0], succN1[0]] = x2[v1, gamma, precN1[0], n1]
                             if flag2==0:
                                 x2TMP[v1, n2, arc1[0], arc1[1]] += x2[v2, n2, precN2[0], n2]
-                    # in v1: (n1, n2)
-                    # in v1: (n1, n)(n, n2)
+                    # in v1: n2 in succN1
 
                 # DA VERIFICARE
                 else:
@@ -1283,8 +1278,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                             if flag2==0:
                                 x2TMP[v2, n1, arc2[0], arc2[1]] += x2[v1, n1, precN1[0], n1]
 
-                    # in v2: (n2, n1)
-                    # in v2: (n2, n)(n, n1)
+                    # in v2: n1 in succN2
 
                 # DA VERIFICARE
                 else:
