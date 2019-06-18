@@ -1209,7 +1209,6 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                 # v1
                 # v1 se n2 in v1
                 if n2 in [c[1] for c in rotte[v1]]:
-                    pass
                     # in v1: n2 in precN1
                     if n2 in precN1:
                         w2TMP[v1, precN1[0], n1] = 0
@@ -1408,14 +1407,15 @@ def updateRotteSmd10(rotte, keyLocalSearch, flagAllPallets):
     precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
     precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
-    # modifica della rotta del veicolo v1
-    if succN1[0] != -1:
-        index = rotte[v1].index((n1, succN1[0]))
-        rotte[v1][index] = (n1, n2)
-        rotte[v1].insert(index + 1, (n2, succN1[0]))
+    if n2 in [c[1] for c in rotte[v1]]:
+        # modifica della rotta del veicolo v1
+        if succN1[0] != -1:
+            index = rotte[v1].index((n1, succN1[0]))
+            rotte[v1][index] = (n1, n2)
+            rotte[v1].insert(index + 1, (n2, succN1[0]))
 
-    else:
-        rotte[v1].append((n1, n2))
+        else:
+            rotte[v1].append((n1, n2))
 
     if flagAllPallets:
         # modifica della rotta del veicolo v2
