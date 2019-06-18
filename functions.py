@@ -512,7 +512,6 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
             elif n1!=n2:
                 # v1
                 # v1 se n2 in v1
-                # DA VERIFICARE
                 if n2 in [c[1] for c in rotte[v1]]:
                     pass
                     # in v1: n2 in precN1
@@ -570,7 +569,6 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                             if flag2==0:
                                 smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]]
 
-                # DA VERIFICARE
                 else:
                     # v1 se n1 ha successori
                     if succN1[0] != -1:
@@ -608,7 +606,6 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
 
                 # v2
                 # v2 se n1 in v2
-                # DA VERIFICARE
                 if n1 in [c[1] for c in rotte[v2]]:
                     pass
                     # in v2: n1 in precN2
@@ -666,7 +663,6 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                             if flag2==0:
                                 smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc2[0], arc2[1]]
 
-                # DA VERIFICARE
                 else:
 
                     # v2 se n2 ha successori
@@ -1212,7 +1208,6 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
             elif n1!=n2:
                 # v1
                 # v1 se n2 in v1
-                # DA VERIFICARE
                 if n2 in [c[1] for c in rotte[v1]]:
                     pass
                     # in v1: n2 in precN1
@@ -1270,7 +1265,6 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                             if flag2==0:
                                 x2TMP[v1, n2, arc1[0], arc1[1]] += x2[v2, n2, precN2[0], n2]
 
-                # DA VERIFICARE
                 else:
                     # v1 se n1 ha successori
                     if succN1[0] != -1:
@@ -1305,7 +1299,6 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                 # v2
                 # v2 se n1 in v2
-                # DA VERIFICARE
                 if n1 in [c[1] for c in rotte[v2]]:
                     pass
                     # in v2: n1 in precN2
@@ -1364,7 +1357,6 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                             if flag2==0:
                                 x2TMP[v2, n1, arc2[0], arc2[1]] += x2[v1, n1, precN1[0], n1]
 
-                # DA VERIFICARE
                 else:
                     # v2 se n2 ha successori
                     if succN2[0] != -1:
