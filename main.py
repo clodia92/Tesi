@@ -123,6 +123,12 @@ class Prob3:
 
 if __name__ == "__main__":
 
+    # rotte = {3: [(1, 3), (3, 5), (5, 7), (7, 9)], 4: [(1, 5), (5, 7), (7, 8)]}
+    # keyLocalSearch = (3, 3, 5, 3)
+    # print("rotte old: ", rotte)
+    # updateRotteSmd11(rotte, keyLocalSearch)
+    # print("rotte new: ", rotte)
+
     print("Start Prob3: ")
     myProb = Prob3("2_2_100_0_20")
 
@@ -131,7 +137,7 @@ if __name__ == "__main__":
         print("\n\n\nSTART satellite: {}".format(s))
         start_time = time.time()
 
-        # lista delle soluzioni trovate: (x2, w2, cost)
+        # lista delle soluzioni trovate: (cost, x2, w2)
         solutions = []
 
         # generate variables for Model Three
@@ -141,7 +147,8 @@ if __name__ == "__main__":
         resultSolutionBase, myProb.x2, myProb.w2, rotte = findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2,
                                                                            myProb.Pgac, myProb.PsGa, myProb.K2diS[s],
                                                                            myProb.A2, myProb.GammadiS[s], myProb.CdiS)
-        cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
+        cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij,
+                           s)
         costTMP = cost + 1
 
         # struttura che contiene tutte le mosse con relativi costi
@@ -167,10 +174,13 @@ if __name__ == "__main__":
             itMosse = 0
 
             while True:
-                x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, s, myProb.uk2,
-                                                                           myProb.Pgac, myProb.PsGa, myProb.K2diS[s], myProb.A2,
+                x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11, myProb.x2, myProb.w2,
+                                                                           rotte, s, myProb.uk2,
+                                                                           myProb.Pgac, myProb.PsGa, myProb.K2diS[s],
+                                                                           myProb.A2,
                                                                            myProb.GammadiS[s], myProb.CdiS)
-                costTMP = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij, s)
+                costTMP = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
+                                      myProb.ak2ij, s)
 
                 if keyLocalSearch == -1 or costTMP > cost:
 
