@@ -80,7 +80,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                 for numeroPallet in range(1, x2[v2, n2, precN2[0], n2]):
                     # se viene trattato un cliente splittato sulle rotte v1 e v2
                     #
-                    if (n2 in [c for c, k in clienteVeicolo if k == v1]) and v1 != v2:
+                    if (n2 in [c[1] for c in rotte[v1]]) and v1 != v2 and n2 != n1:
                         # viene creata la chiave
                         smd10[v1, v2, n1, n2, numeroPallet] = 0
                         # calcolo dei costi
@@ -108,7 +108,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             smd10[v1, v2, n1, n2, numeroPallet] -= (numeroPallet * ak2ij[v2, arc2[0], arc2[1]])
                     # l'arco non deve esistere nella soluzione attuale
                     # un veicolo non puo' essere spostato dietro se stesso
-                    elif (v1 != v2) and (n2 != n1):
+                    elif v1 != v2 and n2 != n1:
                         # viene creata la chiave
                         smd10[v1, v2, n1, n2, numeroPallet] = 0
 
@@ -170,7 +170,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 
                 # se viene trattato un cliente splittato sulle rotte v1 e v2
                 # Spostamento di tutti i pallet verso un altro veicolo
-                if n2 in [c for c, k in clienteVeicolo if k == v1] and v1 != v2:
+                if n2 in [c[1] for c in rotte[v1]] and v1 != v2 and n2 != n1:
                     # viene creata la chiave
                     smd10[v1, v2, n1, n2, numeroPallet] = 0
                     # calcolo dei costi
@@ -906,7 +906,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                 # se viene trattato un cliente splittato sulle rotte v1 e v2
                 #
-                if n2 in [c for c, k in clienteVeicolo if k == v1] and v1 != v2:
+                if n2 in [c[1] for c in rotte[v1]] and v1 != v2 and n1 != n2:
                     # v1
                     for arc1 in rotte[v1]:
                         if arc1[0] == n1:
@@ -1034,8 +1034,6 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                     # se n1 in succN2 ma non (n2, n1)
                     elif n1 in succN2 and ((n2, n1) not in rotte[v1]):
-                        # viene creata la chiave
-                        smd10[v1, v2, n1, n2, numeroPallet] = 0
 
                         # nik2ij
                         w2TMP[v1, precN2[0], n2] = 0
@@ -1088,7 +1086,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                 # l'arco non deve esistere nella soluzione attuale
                 # un veicolo non puo' essere spostato dietro se stesso
-                elif (((v1 == v2) and ((n1, n2) not in rotte[v1])) or (v1 != v2)) and n2 != n1:
+                elif v1 != v2 and n2 != n1:
                     # calcolo dei costi
                     # v1
                     # nik2ij
@@ -1420,24 +1418,48 @@ def updateRotteSmd10(rotte, keyLocalSearch, flagAllPallets):
     precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
     precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
-    if n2 in [c[1] for c in rotte[v1]]:
-        # modifica della rotta del veicolo v1
-        if succN1[0] != -1:
-            index = rotte[v1].index((n1, succN1[0]))
-            rotte[v1][index] = (n1, n2)
-            rotte[v1].insert(index + 1, (n2, succN1[0]))
-
-        else:
-            rotte[v1].append((n1, n2))
-
-    if flagAllPallets:
-        # modifica della rotta del veicolo v2
-        if succN2[0] != -1:
+    # se viene trattato un cliente splittato sulle rotte v1 e v2
+    #
+    if n2 in [c[1] for c in rotte[v1]] and v1 != v2 and n1!=n2:
+        # v1 non viene modificato
+        # v2
+        if flagAllPallets:
             index = rotte[v2].index((precN2[0], n2))
-            rotte[v2][index] = (precN2[0], succN2[0])
-            rotte[v2].remove((n2, succN2[0]))
-        else:
             rotte[v2].remove((precN2[0], n2))
+            if succN2[0]!=-1:
+                rotte[v2][index] = (precN2[0], succN2[0])
+
+    # se n1 e n2 sono sullo stesso veicolo
+    elif v1 == v2 and ((n1, n2) not in rotte[v1]):
+        index = rotte[v1].index((precN2[0], n2))
+        if succN2[0]!=-1:
+            rotte[v1][index + 1] = (precN2[0], succN2[0])
+        rotte[v1].remove((precN2[0], n2))
+        if precN1[0]==-1:
+            index = -1
+        else:
+            index = rotte[v1].index((precN1[0], n1))
+        if succN1[0]!=-1:
+            rotte[v1][index+1] = (n2, succN1[0])
+        rotte[v1].insert(index + 1, (n1, n2))
+
+    # l'arco non deve esistere nella soluzione attuale
+    # un veicolo non puo' essere spostato dietro se stesso
+    elif v1 != v2 and n2 != n1:
+        # v1
+        if precN1[0]==-1:
+            index = -1
+        else:
+            index = rotte[v1].index((precN1[0], n1))
+        if succN1[0] != -1:
+            rotte[v1][index + 1] = (n2, succN1[0])
+        rotte[v1].insert(index + 1, (n1, n2))
+        # v2
+        if flagAllPallets:
+            index = rotte[v2].index((precN2[0], n2))
+            rotte[v2].remove((precN2[0], n2))
+            if succN2[0] != -1:
+                rotte[v2][index] = (precN2[0], succN2[0])
 
 
 def updateRotteSmd11(rotte, keyLocalSearch):
