@@ -507,8 +507,6 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                 smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v1, n2, n1]
                 smd11[v1, v2, n1, n2] -= x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
 
-            ### PERMETTERE MOSSA [7, 8, 7, 7]?
-            ### PER ORA NO
             elif n1!=n2:
                 # v1
                 # v1 se n2 in v1
@@ -699,6 +697,15 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                     smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, precN2[0], n1])
                     smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
 
+            elif v1 != v2 and n1 == n2:
+                for arc in rotte[v1]:
+                    if arc[0] == n1:
+                        break
+                    smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] - x2[v1, n1, precN1[0], n1]) * ak2ij[v1, arc[0], arc[1]]
+                for arc in rotte[v2]:
+                    if arc[0] == n2:
+                        break
+                    smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] - x2[v2, n2, precN2[0], n2]) * ak2ij[v2, arc[0], arc[1]]
 
 # restituisce una lista di tuple [(cliente, veicolo), ...]
 def getClienteVeicolo(rotte):
@@ -1387,6 +1394,12 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                     x2TMP[v1, n1, precN2[0], n1] = palletN1
                     x2TMP[v2, n2, precN2[0], n2] = 0
 
+            elif v1 != v2 and n1 == n2:
+                for arc in precN1+[n1]:
+                    x2TMP[v1, n1, arc[0], arc[1]] = x2[v2, n2, precN2[0], n2]
+                for arc in precN2+[n2]:
+                    x2TMP[v2, n2, arc[0], arc[1]] = x2[v1, n1, precN1[0], n1]
+
             # verificare ammissibilità
             if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
                 print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili, minCostKey, smd11[minCostKey]))
@@ -1433,38 +1446,47 @@ def updateRotteSmd11(rotte, keyLocalSearch):
     n1 = keyLocalSearch[2]
     n2 = keyLocalSearch[3]
 
-    # se (n1, n2) è un arco già presente
+    # lista dei nodi precedenti e dei nodi successivi
+    precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
+    precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
+
+    # se (n1, n2) è un arco già presente nella rotta
     if v1 == v2 and (n1, n2) in rotte[v1]:
-        # modifica della rotta del veicolo v1/v2
-        for index, arc in enumerate(rotte[v1]):
-            if arc[1] == n1:
-                rotte[v1][index] = (arc[0], n2)
-            if arc[0] == n1:
-                rotte[v1][index] = (n2, n1)
-            if arc[0] == n2:
-                rotte[v1][index] = (n1, arc[1])
+        index = rotte[v1].index((n1, n2))
+        rotte[v1][index] = (n2, n1)
+        rotte[v1][index-1] = (precN1[0], n2)
+        if succN2[0]!=-1:
+            rotte[v1][index+1] = (n1, succN2[0])
 
-    elif v1==v2:
-        for index, arc in enumerate(rotte[v1]):
-            if arc[1] == n1:
-                rotte[v1][index] = (arc[0], n2)
-            if arc[0] == n1:
-                rotte[v1][index] = (n2, arc[1])
-            if arc[1] == n2:
-                rotte[v1][index] = (arc[0], n1)
-            if arc[0] == n2:
-                rotte[v1][index] = (n1, arc[1])
+    elif n1 != n2:
+        # v1
+        # v1: se n2 in v1
+        if n2 in [c[1] for c in rotte[v1]]:
+            index = rotte[v1].index((precN1[0], n1))
+            rotte[v1].remove((precN1[0], n1))
+            if succN1[0]!=-1:
+                rotte[v1][index] = (precN1[0], succN1[0])
+        # v1: n2 non è presente in v1
+        else:
+            index = rotte[v1].index((precN1[0], n1))
+            rotte[v1][index] = (precN1[0], n2)
+            if succN1[0]!=-1:
+                rotte[v1][index+1] = (n2, succN1[0])
 
-    else:
-        # modifica della rotta del veicolo v1
-        for index, arc in enumerate(rotte[v1]):
-            if arc[0] == n1:
-                rotte[v1][index] = (n2, arc[1])
-            if arc[1] == n1:
-                rotte[v1][index] = (arc[0], n2)
-        # modifica della rotta del veicolo v2
-        for index, arc in enumerate(rotte[v2]):
-            if arc[0] == n2:
-                rotte[v2][index] = (n1, arc[1])
-            if arc[1] == n1:
-                rotte[v2][index] = (arc[0], n1)
+        # v2
+        # v2: se n1 in v2
+        if n1 in [c[1] for c in rotte[v2]]:
+            index = rotte[v2].index((precN2[0], n2))
+            rotte[v2].remove((precN2[0], n2))
+            if succN2[0]!=-1:
+                rotte[v2][index] = (precN2[0], succN2[0])
+        # v2: n1 non è presente in v2
+        else:
+            index = rotte[v2].index((precN2[0], n2))
+            rotte[v2][index] = (precN2[0], n1)
+            if succN2[0]!=-1:
+                rotte[v2][index+1] = (n1, succN2[0])
+
+    elif v1 != v2 and n1 == n2:
+        # non viene effettuata nessuna modifica nelle rotte
+        pass
