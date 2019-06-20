@@ -570,7 +570,6 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                         if arc[0] == succN2[0]:
                             break
 
-
                         # (precN1, n1)
                         if flag == 1:
                             for gamma in [n1]+succN1:
@@ -1281,32 +1280,96 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
             palletN1 = x2TMP[v1, n1, precN1[0], n1]
             palletN2 = x2TMP[v2, n2, precN2[0], n2]
 
-            # se (n1, n2) è un arco già presente nella rotta
-            if v1 == v2 and (n1, n2) in rotte[v1]:
-                w2TMP[v1, precN1[0], n2] = 1
-                w2TMP[v1, n2, n1] = 1
+            # se n1 e n2 fanno parte della stessa rotta
+            if v1 == v2:
+                # se (n1, n2) è un arco già presente nella rotta
+                if (n1, n2) in rotte[v1]:
+                    w2TMP[v1, precN1[0], n2] = 1
+                    w2TMP[v1, n2, n1] = 1
 
-                w2TMP[v1, precN1[0], n1] = 0
-                w2TMP[v1, n1, n2] = 0
+                    w2TMP[v1, precN1[0], n1] = 0
+                    w2TMP[v1, n1, n2] = 0
 
-                for gamma in [n1] + succN1:
-                    x2TMP[v1, gamma, precN1[0], n2] = x2[v1, gamma, precN1[0], n1]
-                    x2TMP[v1, gamma, precN1[0], n1] = 0
+                    for gamma in [n1] + succN1:
+                        x2TMP[v1, gamma, precN1[0], n2] = x2[v1, gamma, precN1[0], n1]
+                        x2TMP[v1, gamma, precN1[0], n1] = 0
 
-                if succN2[0] != -1:
-                    w2TMP[v1, n1, succN2[0]] = 1
-                    w2TMP[v1, n2, succN2[0]] = 0
+                    if succN2[0] != -1:
+                        w2TMP[v1, n1, succN2[0]] = 1
+                        w2TMP[v1, n2, succN2[0]] = 0
 
-                    for gamma in succN2:
-                        x2TMP[v1, gamma, n2, n1] = x2[v1, gamma, n1, n2]
-                        x2TMP[v1, gamma, n1, n2] = 0
+                        for gamma in succN2:
+                            x2TMP[v1, gamma, n2, n1] = x2[v1, gamma, n1, n2]
+                            x2TMP[v1, gamma, n1, n2] = 0
 
-                        x2TMP[v1, gamma, n1, succN2[0]] = x2[v1, gamma, n2, succN2[0]]
-                        x2TMP[v1, gamma, n2, succN2[0]] = 0
-                x2TMP[v1, n1, n2, n1] = palletN1
-                x2TMP[v1, n2, n1, n2] = 0
+                            x2TMP[v1, gamma, n1, succN2[0]] = x2[v1, gamma, n2, succN2[0]]
+                            x2TMP[v1, gamma, n2, succN2[0]] = 0
+                    x2TMP[v1, n1, n2, n1] = palletN1
+                    x2TMP[v1, n2, n1, n2] = 0
 
-                pass
+                # n1 e n2 nella stessa rotta ma non (n1, n2)
+                else:
+                    w2TMP[v1, precN1[0], n1] = 0
+                    w2TMP[v1, n1, succN1[0]] = 0
+                    w2TMP[v1, precN1[0], n2] = 1
+                    w2TMP[v1, n2, succN1[0]] = 1
+                    w2TMP[v1, precN2[0], n2] = 0
+                    w2TMP[v1, precN2[0], n1] = 1
+
+                    # se n2 ha successori
+                    if succN2[0] != -1:
+                        w2TMP[v1, n2, succN2[0]] = 0
+                        w2TMP[v1, n1, succN2[0]] = 1
+
+                    flag = 0
+                    for arc in rotte[v1]:
+                        # (precN1, n1)
+                        if arc[0] == precN1[0]:
+                            flag = 1
+                        # (n1, succN1)
+                        if arc[0] == n1:
+                            flag = 2
+                        # (succN1, ...)
+                        if arc[0] == succN1[0]:
+                            flag = 3
+                        # (precN2, n2)
+                        if arc[0] == precN2[0]:
+                            flag = 4
+                        # (n2, succN2)
+                        if arc[0] == n2:
+                            flag = 5
+                        # (succN2, ...)
+                        if arc[0] == succN2[0]:
+                            break
+
+                        # (precN1, n1)
+                        if flag == 1:
+                            for gamma in [n1] + succN1:
+                                x2TMP[v1, gamma, precN1[0], n1] = 0
+                                x2TMP[v1, precN1[0], n2] = x2[v1, gamma, precN1[0], n1]
+                        # (n1, succN1)
+                        if flag == 2:
+                            for gamma in succN1:
+                                x2TMP[v1, gamma, n1, succN1[0]] = 0
+                                if gamma != n2:
+                                    x2TMP[v1, gamma, n2, succN1[0]] = x2[v1, gamma, n1, succN1[0]]
+                            x2TMP[v1, n1, n2, succN1[0]] = x2[v1, n1, precN1[0], n1]
+                        # (succN1, ...)
+                        if flag == 3:
+                            x2TMP[v1, n2, arc[0], arc[1]] = 0
+                            x2TMP[v1, n1, arc[0], arc[1]] = x2[v1, n1, arc[0], arc[1]]
+                        # (precN2, n2)
+                        if flag == 4:
+                            x2[v1, n2, precN2[0], n2] = 0
+                            x2[v1, n1, precN2[0], n1] = x2[v1, n1, precN1[0], n1]
+                        # (n2, succN2)
+                        if flag == 5:
+                            for gamma in succN2:
+                                x2TMP[v1, gamma, precN2[0], n2] = 0
+                                x2TMP[v1, gamma, precN2[0], n1] = x2[v1, gamma, precN2[0], n2]
+
+                                x2TMP[v1, gamma, n2, succN2[0]] = 0
+                                x2TMP[v1, gamma, n1, succN2[0]] = x2[v1, gamma, n2, succN2[0]]
 
             elif n1 != n2:
                 # v1
