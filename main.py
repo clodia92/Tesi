@@ -193,6 +193,9 @@ if __name__ == "__main__":
                     print("dictSolutions[{}]:".format(s))
                     for solution in dictSolutions[s]:
                         print("costo: {}, rotte: {}, padre: {}, figli: {}".format(solution[0], solution[3], solution[4], solution[5]))
+
+                    # LANCIARE TABU SEARCH
+
                     break
                 else:
                     itMosse += 1
@@ -227,7 +230,6 @@ if __name__ == "__main__":
                     heapSMD = list(smd10.values()) + list(smd11.values())
                     # crea l'heap di smd10 e di smd11
                     heapq.heapify(heapSMD)
-                    pass
         else:
             # trovare un'altra soluzione
             print("Trova un'altra soluzione iniziale.")
