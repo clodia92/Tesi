@@ -124,7 +124,7 @@ class Prob3:
 if __name__ == "__main__":
 
     # rotte = {3: [(1, 3), (3, 5), (5, 7), (7, 9)], 4: [(1, 5), (5, 7), (7, 8)]}
-    # keyLocalSearch = (3, 3, 5, 3)
+    # keyLocalSearch = (4, 4, 5, 8)
     # print("rotte old: ", rotte)
     # updateRotteSmd11(rotte, keyLocalSearch)
     # print("rotte new: ", rotte)

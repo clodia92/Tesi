@@ -488,14 +488,14 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
     # lista di tuple: (cliente, veicolo)
     clienteVeicolo = getClienteVeicolo(rotte)
 
-    # index2 viene utilizzato per scorrere la seconda volta clienteVeicolo solo dall'attuale coppia (v, n) in poi
+    # indexCV viene utilizzato per scorrere la seconda volta clienteVeicolo solo dall'attuale coppia (v, n) in poi
     # in modo da evitare duplicati: smd11[7, 8, 3, 4] == smd11[8, 7, 4, 3]
-    index2 = 0
+    indexCV = 0
 
     for n1, v1 in clienteVeicolo:
-        index2 += 1
+        indexCV += 1
 
-        for n2, v2 in clienteVeicolo[index2:]:
+        for n2, v2 in clienteVeicolo[indexCV:]:
             # lista dei nodi precedenti e dei nodi successivi
             precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
             precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
@@ -503,36 +503,102 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
             # viene creata la chiave
             smd11[v1, v2, n1, n2] = 0
 
-            # se (n1, n2) è un arco già presente nella rotta
-            if v1 == v2 and (n1, n2) in rotte[v1]:
-                # nik2ij
-                smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], n2]
-                smd11[v1, v2, n1, n2] += nik2ij[v1, n2, n1]
-
-                smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
-                smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, n2]
-
-                # ak2ij
-                for gamma in [n1] + succN1:
-                    smd11[v1, v2, n1, n2] += x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2]
-                    smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
-
-                if succN2[0] != -1:
+            # se n1 e n2 fanno parte della stessa rotta
+            if v1 == v2:
+                # se (n1, n2) è un arco già presente nella rotta
+                if (n1, n2) in rotte[v1]:
                     # nik2ij
-                    smd11[v1, v2, n1, n2] += nik2ij[v1, n1, succN2[0]]
-                    smd11[v1, v2, n1, n2] += nik2ij[v1, n2, succN2[0]]
+                    smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], n2]
+                    smd11[v1, v2, n1, n2] += nik2ij[v1, n2, n1]
+
+                    smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
+                    smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, n2]
 
                     # ak2ij
-                    for gamma in succN2:
-                        smd11[v1, v2, n1, n2] += x2[v1, gamma, n1, n2] * ak2ij[v1, n2, n1]
-                        smd11[v1, v2, n1, n2] -= x2[v1, gamma, n1, n2] * ak2ij[v1, n1, n2]
+                    for gamma in [n1] + succN1:
+                        smd11[v1, v2, n1, n2] += x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2]
+                        smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
 
-                        smd11[v1, v2, n1, n2] += x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n1, succN2[0]]
-                        smd11[v1, v2, n1, n2] -= x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n2, succN2[0]]
+                    if succN2[0] != -1:
+                        # nik2ij
+                        smd11[v1, v2, n1, n2] += nik2ij[v1, n1, succN2[0]]
+                        smd11[v1, v2, n1, n2] += nik2ij[v1, n2, succN2[0]]
 
-                # ak2ij
-                smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v1, n2, n1]
-                smd11[v1, v2, n1, n2] -= x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
+                        # ak2ij
+                        for gamma in succN2:
+                            smd11[v1, v2, n1, n2] += x2[v1, gamma, n1, n2] * ak2ij[v1, n2, n1]
+                            smd11[v1, v2, n1, n2] -= x2[v1, gamma, n1, n2] * ak2ij[v1, n1, n2]
+
+                            smd11[v1, v2, n1, n2] += x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n1, succN2[0]]
+                            smd11[v1, v2, n1, n2] -= x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n2, succN2[0]]
+
+                    # ak2ij
+                    smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v1, n2, n1]
+                    smd11[v1, v2, n1, n2] -= x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
+                # n1 e n2 nella stessa rotta ma non (n1, n2)
+                else:
+                    smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
+                    smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
+                    smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], n2]
+                    smd11[v1, v2, n1, n2] += nik2ij[v1, n2, succN1[0]]
+                    smd11[v1, v2, n1, n2] -= nik2ij[v1, precN2[0], n2]
+                    smd11[v1, v2, n1, n2] += nik2ij[v1, precN2[0], n1]
+
+                    # se n2 ha successori
+                    if succN2[0] != -1:
+                        smd11[v1, v2, n1, n2] -= nik2ij[v1, n2, succN2[0]]
+                        smd11[v1, v2, n1, n2] += nik2ij[v1, n1, succN2[0]]
+
+                    flag=0
+                    for arc in rotte[v1]:
+                        # (precN1, n1)
+                        if arc[0]==precN1[0]:
+                            flag=1
+                        # (n1, succN1)
+                        if arc[0]==n1:
+                            flag=2
+                        # (succN1, ...)
+                        if arc[0] == succN1[0]:
+                            flag=3
+                        # (precN2, n2)
+                        if arc[0] == precN2[0]:
+                            flag=4
+                        # (n2, succN2)
+                        if arc[0] == n2:
+                            flag=5
+                        # (succN2, ...)
+                        if arc[0] == succN2[0]:
+                            break
+
+
+                        # (precN1, n1)
+                        if flag == 1:
+                            for gamma in [n1]+succN1:
+                                smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
+                                smd11[v1, v2, n1, n2] += x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2]
+                        # (n1, succN1)
+                        if flag == 2:
+                            for gamma in succN1:
+                                smd11[v1, v2, n1, n2] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]]
+                                if gamma!=n2:
+                                    smd11[v1, v2, n1, n2] += x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]]
+                            smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v1, n2, succN1[0]]
+                        # (succN1, ...)
+                        if flag == 3:
+                            smd11[v1, v2, n1, n2] -= x2[v1, n2, arc[0], arc[1]] * ak2ij[v1, arc[0], arc[1]]
+                            smd11[v1, v2, n1, n2] += x2[v1, n1, arc[0], arc[1]] * ak2ij[v1, arc[0], arc[1]]
+                        # (precN2, n2)
+                        if flag == 4:
+                            smd11[v1, v2, n1, n2] -= x2[v1, n2, precN2[0], n2] * ak2ij[v1, precN2[0], n2]
+                            smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v1, precN2[0], n1]
+                        # (n2, succN2)
+                        if flag == 5:
+                            for gamma in succN2:
+                                smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN2[0], n2] * ak2ij[v1, precN2[0], n2]
+                                smd11[v1, v2, n1, n2] += x2[v1, gamma, precN2[0], n2] * ak2ij[v1, precN2[0], n1]
+
+                                smd11[v1, v2, n1, n2] -= x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n2, succN2[0]]
+                                smd11[v1, v2, n1, n2] += x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n1, succN2[0]]
 
             elif n1 != n2:
                 # v1
