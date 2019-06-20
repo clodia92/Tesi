@@ -1,6 +1,7 @@
 from lettura import readFile
 from functions import *
 from constraintsModelThree import computeCost
+from copy import deepcopy
 import heapq
 import time
 
@@ -126,13 +127,18 @@ if __name__ == "__main__":
     print("Start Prob3: ")
     myProb = Prob3("2_2_100_0_20")
 
+    # dizionario delle soluzioni per ogni satellite
+    dictSolutions = {}
+
     # ogni rotta viene calcolata per ogni satellite separatamente
     for s in myProb.Sneg:
         print("\n\n\nSTART satellite: {}".format(s))
         start_time = time.time()
 
-        # lista delle soluzioni trovate: (cost, x2, w2)
-        solutions = []
+        # lista delle soluzioni trovate: (cost, x2, w2, rotte, padre, figli)
+        # padre: indice alla soluzione di partenze in solutions
+        # figli: lista di indici alle soluzioni ricavate in solutions
+        dictSolutions[s] = []
 
         # generate variables for Model Three
         generateVariablesModelThree(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, s)
@@ -154,7 +160,9 @@ if __name__ == "__main__":
         if resultSolutionBase:
             print("Soluzione di base trovata, costo: {}.".format(cost))
             # aggiungo la soluzione alle soluzioni
-            solutions.append((cost, myProb.x2, myProb.w2))
+            padre = -1
+            dictSolutions[s].append((cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padre, []))
+            padre = len(dictSolutions[s])-1
 
             # vengono inizializzati gli SMD
             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
@@ -179,8 +187,12 @@ if __name__ == "__main__":
                 if keyLocalSearch == -1 or costTMP > cost:
 
                     print("Soluzione finale trovata, itMosse: {}, costo: {}.".format(itMosse, cost))
-                    print("rotte: {}".format(rotte))
+                    # print("rotte: {}".format(rotte))
                     print("time elapsed: {:.2f}s.".format(time.time() - start_time))
+
+                    print("dictSolutions[{}]:".format(s))
+                    for solution in dictSolutions[s]:
+                        print("costo: {}, rotte: {}, padre: {}, figli: {}".format(solution[0], solution[3], solution[4], solution[5]))
                     break
                 else:
                     itMosse += 1
@@ -205,8 +217,11 @@ if __name__ == "__main__":
                     inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
 
                     print("Soluzione migliore trovata, costo: {}.".format(cost))
-                    print("rotte: {}".format(rotte))
-                    solutions.append([cost, myProb.x2, myProb.w2])
+                    # print("rotte: {}".format(rotte))
+
+                    dictSolutions[s].append([cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padre, []])
+                    dictSolutions[s][padre][5].append(len(dictSolutions[s])-1)
+                    padre = len(dictSolutions[s])-1
 
                     # crea la lista unica dei costi in cui verrà salvato l'heap
                     heapSMD = list(smd10.values()) + list(smd11.values())
