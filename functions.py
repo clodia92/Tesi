@@ -1638,12 +1638,22 @@ def updateRotteSmd11(rotte, keyLocalSearch):
     precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
     # se (n1, n2) è un arco già presente nella rotta
-    if v1 == v2 and (n1, n2) in rotte[v1]:
-        index = rotte[v1].index((n1, n2))
-        rotte[v1][index] = (n2, n1)
-        rotte[v1][index - 1] = (precN1[0], n2)
-        if succN2[0] != -1:
-            rotte[v1][index + 1] = (n1, succN2[0])
+    if v1 == v2:
+        if (n1, n2) in rotte[v1]:
+            index = rotte[v1].index((n1, n2))
+            rotte[v1][index] = (n2, n1)
+            rotte[v1][index - 1] = (precN1[0], n2)
+            if succN2[0] != -1:
+                rotte[v1][index + 1] = (n1, succN2[0])
+        else:
+            index = rotte[v1].index((precN1[0], n1))
+            rotte[v1][index] = (precN1[0], n2)
+            rotte[v1][index+1] = (n2, succN1[0])
+
+            index = rotte[v1].index((precN2[0], n2))
+            rotte[v1][index] = (precN2[0], n1)
+            if succN2[0] != -1:
+                rotte[v1][index+1] = (n1, succN2[0])
 
     elif n1 != n2:
         # v1
