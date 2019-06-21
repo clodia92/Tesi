@@ -130,6 +130,9 @@ if __name__ == "__main__":
     # dizionario delle soluzioni per ogni satellite
     dictSolutions = {}
 
+    # dizionario delle soluzioni tabu
+    tabuList = {}
+
     # ogni rotta viene calcolata per ogni satellite separatamente
     for s in myProb.Sneg:
         print("\n\n\nSTART satellite: {}".format(s))
@@ -139,6 +142,10 @@ if __name__ == "__main__":
         # padre: indice alla soluzione di partenze in solutions
         # figli: lista di indici alle soluzioni ricavate in solutions
         dictSolutions[s] = []
+
+        # tabu list per ogni satellite. Vengono riportati l'indice della soluzione e la mossa che l'ha determinata
+        # indiece padre o indice figlio??
+        tabuList[s] = []
 
         # generate variables for Model Three
         generateVariablesModelThree(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, s)
@@ -175,6 +182,9 @@ if __name__ == "__main__":
 
             itMosse = 0
 
+            # chiave della mossa precedente
+            oldKey = -1
+
             while True:
                 x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11, myProb.x2, myProb.w2,
                                                                            rotte, s, myProb.uk2,
@@ -195,6 +205,11 @@ if __name__ == "__main__":
                         print("costo: {}, rotte: {}, padre: {}, figli: {}".format(solution[0], solution[3], solution[4], solution[5]))
 
                     # LANCIARE TABU SEARCH
+
+
+                    # indiece padre o indice figlio??
+                    # gestire il caso di oldKey == -1
+                    tabuList[s].append(len(dictSolutions[s]), oldKey)
 
                     break
                 else:
@@ -230,6 +245,8 @@ if __name__ == "__main__":
                     heapSMD = list(smd10.values()) + list(smd11.values())
                     # crea l'heap di smd10 e di smd11
                     heapq.heapify(heapSMD)
+
+                    oldKey = keyLocalSearch
         else:
             # trovare un'altra soluzione
             print("Trova un'altra soluzione iniziale.")
