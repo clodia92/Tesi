@@ -1,5 +1,6 @@
 from constraintsModelThree import *
 import heapq
+from random import shuffle
 
 
 # generate variables for Model Three
@@ -848,6 +849,15 @@ def trovaPrecSuccList(rotta, nodo):
 
 
 def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
+    # soluzione alternativa
+    # Gamma.reverse()
+    #shuffle(Gamma)
+    if s == 2:
+        Gamma = [6, 8 ,3 ,5, 4, 7]
+    # K2.reverse()
+    #shuffle(K2)
+        K2 = [8, 7, 3]
+
     print("START findSolutionBase()")
 
     x2TMP = x2.copy()
@@ -858,15 +868,6 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 
     # numero massimo di pallet trasportabili dal veicolo k che serve s
     uk2diS = {}
-
-    # lista dei clienti di s
-    # Gamma = Gamma[s]
-    # Gamma.reverse()
-
-    # lista dei veicoli di s
-    # K2 = K2[s]
-    # soluzione alternativa
-    # K2.reverse()
 
     # dizionario delle rotte per ogni veicolo con relativi pallet:
     # trasportoPalletDiGamma [ k ] = ( gamma1, pallet1) , ( gamma2, pallet2) , ( gamma3, pallet3) ....
@@ -892,12 +893,13 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 
     while (palletDaConsegnare > 0):
         # cicla finchè non trova un veicolo con ancora spazio
-        while (palletTrasportatiDiK2[posV] >= uk2diS[K2[posV]]):
+        while (palletTrasportatiDiK2[posV] > uk2diS[K2[posV]]):
             posV = (posV + 1) % len(K2)
 
         # se il cliente deve ancora ricevere dei pallet
         if (PGa[Gamma[posG]] > 0):
             # consegna a gamma
+            # gamma non viene splittato
             if (PGa[Gamma[posG]] <= (uk2diS[K2[posV]] - palletTrasportatiDiK2[posV])):
                 # aggiorno le rotte
                 if K2[posV] in trasportoPalletDiGamma:
@@ -915,6 +917,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
                 palletDaConsegnare -= PGa[Gamma[posG]]
                 palletTrasportatiDiK2[posV] += PGa[Gamma[posG]]
                 PGa[Gamma[posG]] = 0
+            # gamma viene splittato
             else:
                 # aggiorno le rotte
                 if K2[posV] in trasportoPalletDiGamma:
@@ -931,8 +934,10 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
                     rotte[K2[posV]] = [(s, Gamma[posG])]
 
                 palletDaConsegnare -= uk2diS[K2[posV]] - palletTrasportatiDiK2[posV]
-                PGa[Gamma[posG]] -= uk2diS[K2[posV]] - palletTrasportatiDiK2[posV]
-                palletTrasportatiDiK2[posV] += PGa[Gamma[posG]]  # full
+                palletTrasportatiDiK2PosV = palletTrasportatiDiK2[posV] # variabile temporanea
+                palletTrasportatiDiK2[posV] += PGa[Gamma[posG]]
+                PGa[Gamma[posG]] -= uk2diS[K2[posV]] - palletTrasportatiDiK2PosV
+                # full
 
             # passo al veicolo sucessivo
             posV = (posV + 1) % len(K2)
@@ -946,7 +951,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     assignx2w2(x2TMP, w2TMP, trasportoPalletDiGamma, rotte)
 
     # verifica dell'ammissibilità della soluzione
-    if (verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)):
+    if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
         # soluzione ammissibile trovata
         x2 = x2TMP.copy()
         w2 = w2TMP.copy()
@@ -1554,9 +1559,13 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                     x2TMP[v2, n2, precN2[0], n2] = 0
 
             elif v1 != v2 and n1 == n2:
-                for arc in precN1 + [n1]:
+                for arc in rotte[v1]:
+                    if arc[0] == n1:
+                        break
                     x2TMP[v1, n1, arc[0], arc[1]] = x2[v2, n2, precN2[0], n2]
-                for arc in precN2 + [n2]:
+                for arc in rotte[v2]:
+                    if arc[0] == n2:
+                        break
                     x2TMP[v2, n2, arc[0], arc[1]] = x2[v1, n1, precN1[0], n1]
 
             # verificare ammissibilità

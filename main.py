@@ -209,7 +209,7 @@ if __name__ == "__main__":
 
                     # indiece padre o indice figlio??
                     # gestire il caso di oldKey == -1
-                    tabuList[s].append(len(dictSolutions[s]), oldKey)
+                    tabuList[s].append((len(dictSolutions[s]), oldKey))
 
                     break
                 else:
