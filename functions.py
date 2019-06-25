@@ -90,23 +90,23 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         # non viene modificato
 
                         # ak2ij
-                        for arc1 in rotte[v1]:
+                        for arc in rotte[v1]:
                             #
-                            if arc1[0] == n2:
+                            if arc[0] == n2:
                                 break
-                            smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, arc1[0], arc1[1]])
+                            smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, arc[0], arc[1]])
 
                         # v2
                         # nik2ij -> non essendo eliminato l'arco in v2, non vi sono ripercussioni sull'smd per nik2ij
 
                         # ak2ij modifica costi sui precedenti di n2
-                        for arc2 in rotte[v2]:
+                        for arc in rotte[v2]:
                             # n2,succN2[0]
-                            if arc2[0] == n2:
+                            if arc[0] == n2:
                                 break
 
                             # prima di precN2[0]
-                            smd10[v1, v2, n1, n2, numeroPallet] -= (numeroPallet * ak2ij[v2, arc2[0], arc2[1]])
+                            smd10[v1, v2, n1, n2, numeroPallet] -= (numeroPallet * ak2ij[v2, arc[0], arc[1]])
                     # l'arco non deve esistere nella soluzione attuale
                     # un veicolo non puo' essere spostato dietro se stesso
                     elif v1 != v2 and n2 != n1:
@@ -130,17 +130,17 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         flag = 0
                         if succN1[0] == -1:
                             smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, n1, n2])
-                        for arc1 in rotte[v1]:
+                        for arc in rotte[v1]:
                             # n1, n2
-                            if arc1[0] == n1:
+                            if arc[0] == n1:
                                 flag = 1
                             # dopo n2 -> non vengono modificati
-                            if arc1[0] == succN1[0]:
+                            if arc[0] == succN1[0]:
                                 break
 
                             # prima di n1
                             if flag == 0:
-                                smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, arc1[0], arc1[1]])
+                                smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, arc[0], arc[1]])
                             # n1, n2
                             if flag == 1:
                                 smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, n1, n2])
@@ -159,12 +159,12 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         # non viene modificato
 
                         # ak2ij
-                        for arc2 in rotte[v2]:
+                        for arc in rotte[v2]:
                             # n2, succN2[0]
-                            if arc2[0] == n2:
+                            if arc[0] == n2:
                                 break
 
-                            smd10[v1, v2, n1, n2, numeroPallet] -= (numeroPallet * ak2ij[v2, arc2[0], arc2[1]])
+                            smd10[v1, v2, n1, n2, numeroPallet] -= (numeroPallet * ak2ij[v2, arc[0], arc[1]])
                             # dopo N2 -> non vengono modificati
 
                 ######### Senza split
@@ -181,32 +181,32 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                     # non viene modificato
 
                     # ak2ij
-                    for arc1 in rotte[v1]:
+                    for arc in rotte[v1]:
                         #
-                        if arc1[0] == n2:
+                        if arc[0] == n2:
                             break
-                        smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]])
+                        smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
 
                     # v2
                     # rimozione del vecchio arco in n2
                     smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v2, precN2[0], n2]
                     # prima di precN2[0]
                     flag = 0
-                    for arc2 in rotte[v2]:
+                    for arc in rotte[v2]:
                         # precN2[0], n2
-                        if arc2[0] == precN2[0]:
+                        if arc[0] == precN2[0]:
                             flag = 1
                         # n2, succN2[0]
-                        if arc2[0] == n2:
+                        if arc[0] == n2:
                             flag = 2
                         # dopo succN2[0] -> non vengono modificati
-                        if arc2[0] == succN2[0]:
+                        if arc[0] == succN2[0]:
                             break
 
                         # prima di precN2[0]
                         if flag == 0:
                             smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                        x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc2[0], arc2[1]])
+                                        x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]])
                         # precN2[0], n2
                         if flag == 1:
                             smd10[v1, v2, n1, n2, numeroPallet] -= (
@@ -248,12 +248,12 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 
                         # ak2ij
                         flag = 0
-                        for arc1 in rotte[v1]:
-                            if arc1[0] == precN2[0]:
+                        for arc in rotte[v1]:
+                            if arc[0] == precN2[0]:
                                 flag = 1
-                            if arc1[0] == n2:
+                            if arc[0] == n2:
                                 flag = 2
-                            if arc1[0] == n1:
+                            if arc[0] == n1:
                                 flag = 3
 
                             if flag == 1:
@@ -290,18 +290,18 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         # ak2ij
                         # prima di n1
                         flag = 0
-                        for arc1 in rotte[v1]:
+                        for arc in rotte[v1]:
                             # (n1, succN1)
-                            if arc1[0] == n1:
+                            if arc[0] == n1:
                                 flag = 1
                             # (succN1, ...)
-                            if arc1[0] == succN1[0]:
+                            if arc[0] == succN1[0]:
                                 flag = 2
                             # (n2, succN2)
-                            if arc1[0] == n2:
+                            if arc[0] == n2:
                                 flag = 3
                             # (succN2, ...)
-                            if arc1[0] == succN2[0]:
+                            if arc[0] == succN2[0]:
                                 break
 
                             # (n1, succN1)
@@ -317,7 +317,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             # (succN1, ...)
                             if flag == 2:
                                 smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, n2, precN2[0], n2] * ak2ij[
-                                    v1, arc1[0], arc1[1]]
+                                    v1, arc[0], arc[1]]
                             # (n2, succN2)
                             if flag == 3:
                                 smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, precN2[0], n2]
@@ -344,21 +344,21 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 
                         # prima di n2
                         flag = 0
-                        for arc1 in rotte[v1]:
+                        for arc in rotte[v1]:
                             # (precN2, n2)
-                            if arc1[1] == n2:
+                            if arc[1] == n2:
                                 flag = 1
                             # (n2, succN2)
-                            if arc1[0] == n2:
+                            if arc[0] == n2:
                                 flag = 2
                             # (succN2, ...)
-                            if arc1[0] == succN2[0]:
+                            if arc[0] == succN2[0]:
                                 flag = 3
                             # (n1, succN1)
-                            if arc1[0] == n1:
+                            if arc[0] == n1:
                                 flag = 4
                             # (succN1, ...)
-                            if arc1[0] == succN1[0]:
+                            if arc[0] == succN1[0]:
                                 break
 
                             # (precN2, n2)
@@ -376,7 +376,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             # (succN2, ...)
                             if flag == 3:
                                 smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, n2, precN2[0], n2] * ak2ij[
-                                    v1, arc1[0], arc1[1]]
+                                    v1, arc[0], arc[1]]
                             # (n1, succN1)
                             if flag == 4:
                                 smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
@@ -412,19 +412,19 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                     flag = 0
                     if succN1[0] == -1:
                         smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
-                    for arc1 in rotte[v1]:
+                    for arc in rotte[v1]:
                         # n1, n2
-                        if arc1[0] == n1:
+                        if arc[0] == n1:
                             flag = 1
                         # dopo n2 -> non vengono modificati
-                        if arc1[0] == succN1[0]:
+                        if arc[0] == succN1[0]:
                             # flag=2
                             break
 
                         # prima di n1
                         if flag == 0:
                             smd10[v1, v2, n1, n2, numeroPallet] += (
-                                        x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]])
+                                        x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
                         # n1, n2
                         if flag == 1:
                             smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
@@ -452,21 +452,21 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                     # ak2ijsuccN2
                     # prima di precN2[0]
                     flag = 0
-                    for arc2 in rotte[v2]:
+                    for arc in rotte[v2]:
                         # precN2[0], n2
-                        if arc2[0] == precN2[0]:
+                        if arc[0] == precN2[0]:
                             flag = 1
                         # n2, succN2[0]
-                        if arc2[0] == n2:
+                        if arc[0] == n2:
                             flag = 2
                         # dopo succN2[0] -> non vengono modificati
-                        if arc2[0] == succN2[0]:
+                        if arc[0] == succN2[0]:
                             break
 
                         # prima di precN2[0]
                         if flag == 0:
                             smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                        x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc2[0], arc2[1]])
+                                        x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]])
                         # precN2[0], n2
                         if flag == 1:
                             smd10[v1, v2, n1, n2, numeroPallet] -= (
@@ -610,16 +610,16 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
 
                         flag1 = 0
                         flag2 = 0
-                        for arc1 in rotte[v1]:
-                            if arc1[0] == n1:
+                        for arc in rotte[v1]:
+                            if arc[0] == n1:
                                 flag1 = 1
-                            if arc1[0] == n2:
+                            if arc[0] == n2:
                                 flag2 = 1
-                            if arc1[0] == succN1[0]:
+                            if arc[0] == succN1[0]:
                                 break
 
                             if flag1 == 0:
-                                smd11[v1, v2, n1, n2] -= x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc1[0], arc1[1]]
+                                smd11[v1, v2, n1, n2] -= x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc[0], arc[1]]
                             if flag1 == 1:
                                 smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
                                 smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], succN1[0]]
@@ -629,7 +629,7 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                                     smd11[v1, v2, n1, n2] += x2[v1, gamma, precN1[0], n1] * ak2ij[
                                         v1, precN1[0], succN1[0]]
                             if flag2 == 0:
-                                smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]]
+                                smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]]
                     # in v1: n2 in succN1
                     elif n2 in succN1:
                         smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
@@ -645,20 +645,20 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
 
                         flag1 = 0
                         flag2 = 0
-                        for arc1 in rotte[v1]:
-                            if arc1[0] == n1:
+                        for arc in rotte[v1]:
+                            if arc[0] == n1:
                                 flag1 = 1
-                            if arc1[0] == precN1[0]:
+                            if arc[0] == precN1[0]:
                                 flag2 = 1
-                            if arc1[0] == succN1[0] and arc1[0] != n2:
+                            if arc[0] == succN1[0] and arc[0] != n2:
                                 flag2 = 0
-                            if arc1[0] == n2:
+                            if arc[0] == n2:
                                 break
 
                             if flag1 == 0:
-                                smd11[v1, v2, n1, n2] -= x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc1[0], arc1[1]]
+                                smd11[v1, v2, n1, n2] -= x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc[0], arc[1]]
                             if flag2 == 0:
-                                smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]]
+                                smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]]
 
                 else:
                     # v1: se n1 ha successori
@@ -684,14 +684,14 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                     # eliminare costo arco (precN1, n1)
                     smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
                     # ak2ij
-                    for arc1 in rotte[v1]:
+                    for arc in rotte[v1]:
                         # (n1, succN1[0])
-                        if arc1[1] == n1:
+                        if arc[1] == n1:
                             break
                         # aggiungere costo pallet n2 ai precN1
-                        smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc1[0], arc1[1]])
+                        smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
                         # eliminare costo pallet n1 dai precN1
-                        smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc1[0], arc1[1]])
+                        smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc[0], arc[1]])
                     smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, precN1[0], n2])
                     smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
 
@@ -705,16 +705,16 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
 
                         flag1 = 0
                         flag2 = 0
-                        for arc2 in rotte[v2]:
-                            if arc2[0] == n2:
+                        for arc in rotte[v2]:
+                            if arc[0] == n2:
                                 flag1 = 1
-                            if arc2[0] == n1:
+                            if arc[0] == n1:
                                 flag2 = 1
-                            if arc2[0] == succN2[0]:
+                            if arc[0] == succN2[0]:
                                 break
 
                             if flag1 == 0:
-                                smd11[v1, v2, n1, n2] -= x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc2[0], arc2[1]]
+                                smd11[v1, v2, n1, n2] -= x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]]
                             if flag1 == 1:
                                 smd11[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
                                 smd11[v1, v2, n1, n2] += nik2ij[v2, precN2[0], succN2[0]]
@@ -724,7 +724,7 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                                     smd11[v1, v2, n1, n2] += x2[v2, gamma, precN2[0], n2] * ak2ij[
                                         v2, precN2[0], succN2[0]]
                             if flag2 == 0:
-                                smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc2[0], arc2[1]]
+                                smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc[0], arc[1]]
                     # in v2: n1 in succN2
                     elif n1 in succN2:
                         smd11[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
@@ -740,20 +740,20 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
 
                         flag1 = 0
                         flag2 = 0
-                        for arc2 in rotte[v2]:
-                            if arc2[0] == n2:
+                        for arc in rotte[v2]:
+                            if arc[0] == n2:
                                 flag1 = 1
-                            if arc2[0] == precN2[0]:
+                            if arc[0] == precN2[0]:
                                 flag2 = 1
-                            if arc2[0] == succN2[0] and arc2[0] != n1:
+                            if arc[0] == succN2[0] and arc[0] != n1:
                                 flag2 = 0
-                            if arc2[0] == n1:
+                            if arc[0] == n1:
                                 break
 
                             if flag1 == 0:
-                                smd11[v1, v2, n1, n2] -= x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc2[0], arc2[1]]
+                                smd11[v1, v2, n1, n2] -= x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]]
                             if flag2 == 0:
-                                smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc2[0], arc2[1]]
+                                smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc[0], arc[1]]
 
                 else:
 
@@ -780,14 +780,14 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                     # eliminare costo arco (precN2, n2)
                     smd11[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
                     # ak2ij
-                    for arc2 in rotte[v2]:
+                    for arc in rotte[v2]:
                         # (n2, succN2[0])
-                        if arc2[1] == n2:
+                        if arc[1] == n2:
                             break
                         # aggiungere costo pallet n1 ai precN2
-                        smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc2[0], arc2[1]])
+                        smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc[0], arc[1]])
                         # eliminare costo pallet n2 dai precN2
-                        smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc2[0], arc2[1]])
+                        smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]])
                     smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, precN2[0], n1])
                     smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
 
@@ -967,9 +967,6 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
     itMAX = len(heapSMD)
     itNonAmmissibili = 0
 
-    # lista di tuple: [(cliente, veicolo), ...]
-    clienteVeicolo = getClienteVeicolo(rotte)
-
     while heapSMD[0] < 0 and itNonAmmissibili < itMAX:
 
         itNonAmmissibili += 1
@@ -1009,33 +1006,33 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                 #
                 if n2 in [c[1] for c in rotte[v1]] and v1 != v2 and n1 != n2:
                     # v1
-                    for arc1 in rotte[v1]:
-                        if arc1[0] == n1:
+                    for arc in rotte[v1]:
+                        if arc[0] == n1:
                             break
-                        x2TMP[v1, n2, arc1[0], arc1[1]] += numeroPallet
+                        x2TMP[v1, n2, arc[0], arc[1]] += numeroPallet
 
                     # v2
                     if numeroPallet == numeroTotPallet:
                         w2TMP[v2, precN2[0], n2] = 0
                     # prima di precN2[0]
                     flag = 0
-                    for arc2 in rotte[v2]:
+                    for arc in rotte[v2]:
                         # precN2[0] - n2
-                        if arc2[1] == n2:
+                        if arc[1] == n2:
                             flag = 1
                         # n2 - succN2[0]
-                        if arc2[0] == n2:
+                        if arc[0] == n2:
                             flag = 2
                         # dopo succN2[0]
-                        if arc2[0] == succN2[0]:
+                        if arc[0] == succN2[0]:
                             break
 
                         # prima di precN2[0]
                         if flag == 0:
-                            x2TMP[v2, n2, arc2[0], arc2[1]] -= numeroPallet
+                            x2TMP[v2, n2, arc[0], arc[1]] -= numeroPallet
                         # precN2[0] - n2
                         if flag == 1:
-                            x2TMP[v2, n2, arc2[0], arc2[1]] -= numeroPallet
+                            x2TMP[v2, n2, arc[0], arc[1]] -= numeroPallet
 
                         # n2 - succN2[0]
                         if flag == 2:
@@ -1064,12 +1061,12 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                         # ak2ij
                         flag = 0
-                        for arc1 in rotte[v1]:
-                            if arc1[0] == precN2[0]:
+                        for arc in rotte[v1]:
+                            if arc[0] == precN2[0]:
                                 flag = 1
-                            if arc1[0] == n2:
+                            if arc[0] == n2:
                                 flag = 2
-                            if arc1[0] == n1:
+                            if arc[0] == n1:
                                 flag = 3
 
                             if flag == 1:
@@ -1099,18 +1096,18 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                         # ak2ij
                         # prima di n1
                         flag = 0
-                        for arc1 in rotte[v1]:
+                        for arc in rotte[v1]:
                             # (n1, succN1)
-                            if arc1[0] == n1:
+                            if arc[0] == n1:
                                 flag = 1
                             # (succN1, ...)
-                            if arc1[0] == succN1[0]:
+                            if arc[0] == succN1[0]:
                                 flag = 2
                             # (n2, succN2)
-                            if arc1[0] == n2:
+                            if arc[0] == n2:
                                 flag = 3
                             # (succN2, ...)
-                            if arc1[0] == succN2[0]:
+                            if arc[0] == succN2[0]:
                                 break
 
                             # (n1, succN1)
@@ -1123,7 +1120,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                                         x2TMP[v1, gamma, n2, succN1[0]] = x2[v1, gamma, n1, succN1[0]]
                             # (succN1, ...)
                             if flag == 2:
-                                x2TMP[v1, n2, arc1[0], arc1[1]] = 0
+                                x2TMP[v1, n2, arc[0], arc[1]] = 0
                             # (n2, succN2)
                             if flag == 3:
                                 w2TMP[v1, precN2[0], n2] = 1
@@ -1147,21 +1144,21 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                         # prima di n2
                         flag = 0
-                        for arc1 in rotte[v1]:
+                        for arc in rotte[v1]:
                             # (precN2, n2)
-                            if arc1[1] == n2:
+                            if arc[1] == n2:
                                 flag = 1
                             # (n2, succN2)
-                            if arc1[0] == n2:
+                            if arc[0] == n2:
                                 flag = 2
                             # (succN2, ...)
-                            if arc1[0] == succN2[0]:
+                            if arc[0] == succN2[0]:
                                 flag = 3
                             # (n1, succN1)
-                            if arc1[0] == n1:
+                            if arc[0] == n1:
                                 flag = 4
                             # (succN1, ...)
-                            if arc1[0] == succN1[0]:
+                            if arc[0] == succN1[0]:
                                 break
 
                             # (precN2, n2)
@@ -1175,7 +1172,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                                     x2TMP[v1, gamma, n2, succN2[0]] = 0
                             # (succN2, ...)
                             if flag == 3:
-                                x2TMP[v1, n2, arc1[0], arc1[1]] = x2[v1, n2, precN2[0], n2]
+                                x2TMP[v1, n2, arc[0], arc[1]] = x2[v1, n2, precN2[0], n2]
                             # (n1, succN1)
                             if flag == 4:
                                 w2TMP[v1, n1, succN1[0]] = 0
@@ -1205,17 +1202,17 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                     if succN1[0] == -1:
                         x2TMP[v1, n2, n1, n2] = x2[v2, n2, precN2[0], n2]
                     flag = 0
-                    for arc1 in rotte[v1]:
+                    for arc in rotte[v1]:
                         # n1, n2
-                        if arc1[0] == n1:
+                        if arc[0] == n1:
                             flag = 1
                         # dopo n2 -> non vengono modificati
-                        if arc1[0] == succN1[0]:
+                        if arc[0] == succN1[0]:
                             break
 
                         # prima di n1
                         if flag == 0:
-                            x2TMP[v1, n2, arc1[0], arc1[1]] = x2[v2, n2, precN2[0], n2]
+                            x2TMP[v1, n2, arc[0], arc[1]] = x2[v2, n2, precN2[0], n2]
                         # n1, n2
                         if flag == 1:
                             x2TMP[v1, n2, n1, n2] = x2[v2, n2, precN2[0], n2]
@@ -1240,20 +1237,20 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                     # ak2ijsuccN2
                     # prima di precN2[0]
                     flag = 0
-                    for arc2 in rotte[v2]:
+                    for arc in rotte[v2]:
                         # precN2[0], n2
-                        if arc2[0] == precN2[0]:
+                        if arc[0] == precN2[0]:
                             flag = 1
                         # n2, succN2[0]
-                        if arc2[0] == n2:
+                        if arc[0] == n2:
                             flag = 2
                         # dopo succN2[0] -> non vengono modificati
-                        if arc2[0] == succN2[0]:
+                        if arc[0] == succN2[0]:
                             break
 
                         # prima di precN2[0]
                         if flag == 0:
-                            x2TMP[v2, n2, arc2[0], arc2[1]] = x2[v2, n2, precN2[0], n2]
+                            x2TMP[v2, n2, arc[0], arc[1]] = x2[v2, n2, precN2[0], n2]
                         # precN2[0], n2
                         if flag == 1:
                             x2TMP[v2, n2, precN2[0], n2] = 0
@@ -1386,16 +1383,16 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                         flag1 = 0
                         flag2 = 0
-                        for arc1 in rotte[v1]:
-                            if arc1[0] == n1:
+                        for arc in rotte[v1]:
+                            if arc[0] == n1:
                                 flag1 = 1
-                            if arc1[0] == n2:
+                            if arc[0] == n2:
                                 flag2 = 1
-                            if arc1[0] == succN1[0]:
+                            if arc[0] == succN1[0]:
                                 break
 
                             if flag1 == 0:
-                                x2TMP[v1, n1, arc1[0], arc1[1]] = 0
+                                x2TMP[v1, n1, arc[0], arc[1]] = 0
                             if flag1 == 1:
                                 w2TMP[v1, n1, succN1[0]] = 0
                                 w2TMP[v1, precN1[0], succN1[0]] = 1
@@ -1404,7 +1401,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                                     x2TMP[v1, gamma, n1, succN1[0]] = 0
                                     x2TMP[v1, gamma, precN1[0], succN1[0]] = x2[v1, gamma, precN1[0], n1]
                             if flag2 == 0:
-                                x2TMP[v1, n2, arc1[0], arc1[1]] += x2[v2, n2, precN2[0], n2]
+                                x2TMP[v1, n2, arc[0], arc[1]] += x2[v2, n2, precN2[0], n2]
                     # in v1: n2 in succN1
                     elif n2 in succN1:
                         w2TMP[v1, precN1[0], n1] = 0
@@ -1420,20 +1417,20 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                         flag1 = 0
                         flag2 = 0
-                        for arc1 in rotte[v1]:
-                            if arc1[0] == n1:
+                        for arc in rotte[v1]:
+                            if arc[0] == n1:
                                 flag1 = 1
-                            if arc1[0] == precN1[0]:
+                            if arc[0] == precN1[0]:
                                 flag2 = 1
-                            if arc1[0] == succN1[0] and arc1[0] != n2:
+                            if arc[0] == succN1[0] and arc[0] != n2:
                                 flag2 = 0
-                            if arc1[0] == n2:
+                            if arc[0] == n2:
                                 break
 
                             if flag1 == 0:
-                                x2TMP[v1, n1, arc1[0], arc1[1]] = 0
+                                x2TMP[v1, n1, arc[0], arc[1]] = 0
                             if flag2 == 0:
-                                x2TMP[v1, n2, arc1[0], arc1[1]] += x2[v2, n2, precN2[0], n2]
+                                x2TMP[v1, n2, arc[0], arc[1]] += x2[v2, n2, precN2[0], n2]
 
                 else:
                     # v1: se n1 ha successori
@@ -1456,14 +1453,14 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                     # eliminare arco (precN1, n1)
                     w2TMP[v1, precN1[0], n1] = 0
                     # ak2ij
-                    for arc1 in rotte[v1]:
+                    for arc in rotte[v1]:
                         # (n1, succN1[0])
-                        if arc1[1] == n1:
+                        if arc[1] == n1:
                             break
                         # aggiungere pallet n2 ai precN1
-                        x2TMP[v2, n2, arc1[0], arc1[1]] = palletN2
+                        x2TMP[v2, n2, arc[0], arc[1]] = palletN2
                         # eliminare pallet n1 dai precN1
-                        x2TMP[v1, n1, arc1[0], arc1[1]] = 0
+                        x2TMP[v1, n1, arc[0], arc[1]] = 0
                     x2TMP[v2, n2, precN1[0], n2] = palletN2
                     x2TMP[v1, n1, precN1[0], n1] = 0
 
@@ -1477,16 +1474,16 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                         flag1 = 0
                         flag2 = 0
-                        for arc2 in rotte[v2]:
-                            if arc2[0] == n2:
+                        for arc in rotte[v2]:
+                            if arc[0] == n2:
                                 flag1 = 1
-                            if arc2[0] == n1:
+                            if arc[0] == n1:
                                 flag2 = 1
-                            if arc2[0] == succN2[0]:
+                            if arc[0] == succN2[0]:
                                 break
 
                             if flag1 == 0:
-                                x2TMP[v2, n2, arc2[0], arc2[1]] = 0
+                                x2TMP[v2, n2, arc[0], arc[1]] = 0
                             if flag1 == 1:
                                 w2TMP[v2, n2, succN2[0]] = 0
                                 w2TMP[v2, precN2[0], succN2[0]] = 1
@@ -1495,7 +1492,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                                     x2TMP[v2, gamma, n2, succN2[0]] = 0
                                     x2TMP[v2, gamma, precN2[0], succN2[0]] = x2[v2, gamma, precN2[0], n2]
                             if flag2 == 0:
-                                x2TMP[v2, n1, arc2[0], arc2[1]] += x2[v1, n1, precN1[0], n1]
+                                x2TMP[v2, n1, arc[0], arc[1]] += x2[v1, n1, precN1[0], n1]
 
                     # in v2: n1 in succN2
                     elif n1 in succN2:
@@ -1512,20 +1509,20 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                         flag1 = 0
                         flag2 = 0
-                        for arc2 in rotte[v2]:
-                            if arc2[0] == n2:
+                        for arc in rotte[v2]:
+                            if arc[0] == n2:
                                 flag1 = 1
-                            if arc2[0] == precN2[0]:
+                            if arc[0] == precN2[0]:
                                 flag2 = 1
-                            if arc2[0] == succN2[0] and arc2[0] != n1:
+                            if arc[0] == succN2[0] and arc[0] != n1:
                                 flag2 = 0
-                            if arc2[0] == n1:
+                            if arc[0] == n1:
                                 break
 
                             if flag1 == 0:
-                                x2TMP[v2, n2, arc2[0], arc2[1]] = 0
+                                x2TMP[v2, n2, arc[0], arc[1]] = 0
                             if flag2 == 0:
-                                x2TMP[v2, n1, arc2[0], arc2[1]] += x2[v1, n1, precN1[0], n1]
+                                x2TMP[v2, n1, arc[0], arc[1]] += x2[v1, n1, precN1[0], n1]
 
                 else:
                     # v2: se n2 ha successori
@@ -1547,14 +1544,14 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                     w2TMP[v2, precN2[0], n1] = 1
                     # eliminare arco (precN2, n2)
                     w2TMP[v2, precN2[0], n2] = 0
-                    for arc2 in rotte[v2]:
+                    for arc in rotte[v2]:
                         # (n2, succN2[0])
-                        if arc2[1] == n2:
+                        if arc[1] == n2:
                             break
                         # aggiungere pallet n1 ai precN2
-                        x2TMP[v1, n1, arc2[0], arc2[1]] = palletN1
+                        x2TMP[v1, n1, arc[0], arc[1]] = palletN1
                         # eliminare pallet n2 dai precN2
-                        x2TMP[v2, n2, arc2[0], arc2[1]] = 0
+                        x2TMP[v2, n2, arc[0], arc[1]] = 0
                     x2TMP[v1, n1, precN2[0], n1] = palletN1
                     x2TMP[v2, n2, precN2[0], n2] = 0
 
