@@ -849,16 +849,16 @@ def trovaPrecSuccList(rotta, nodo):
 
 
 def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
+    print("START findSolutionBase()")
+
     # soluzione alternativa
     # Gamma.reverse()
-    #shuffle(Gamma)
-    if s == 2:
-        Gamma = [6, 8 ,3 ,5, 4, 7]
-    # K2.reverse()
-    #shuffle(K2)
-        K2 = [8, 7, 3]
+    # shuffle(Gamma)
+    print("Gamma: ", Gamma)
 
-    print("START findSolutionBase()")
+    # K2.reverse()
+    # shuffle(K2)
+    print("K2: ", K2)
 
     x2TMP = x2.copy()
     w2TMP = w2.copy()
