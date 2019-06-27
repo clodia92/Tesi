@@ -860,6 +860,10 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     shuffle(K2)
     print("K2: ", K2)
 
+    # if s==1:
+    #     Gamma = [7, 4, 5, 8, 6, 3, 9]
+    #     K2 = [6, 5, 4]
+
     x2TMP = x2.copy()
     w2TMP = w2.copy()
 
@@ -1487,7 +1491,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                             if flag1 == 1:
                                 w2TMP[v2, n2, succN2[0]] = 0
                                 w2TMP[v2, precN2[0], succN2[0]] = 1
-                                for gamma in succN1:
+                                for gamma in succN2:
                                     x2TMP[v2, gamma, precN2[0], n2] = 0
                                     x2TMP[v2, gamma, n2, succN2[0]] = 0
                                     x2TMP[v2, gamma, precN2[0], succN2[0]] = x2[v2, gamma, precN2[0], n2]
