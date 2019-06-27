@@ -718,7 +718,7 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                             if flag1 == 1:
                                 smd11[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
                                 smd11[v1, v2, n1, n2] += nik2ij[v2, precN2[0], succN2[0]]
-                                for gamma in succN1:
+                                for gamma in succN2:
                                     smd11[v1, v2, n1, n2] -= x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2]
                                     smd11[v1, v2, n1, n2] -= x2[v2, gamma, precN2[0], n2] * ak2ij[v2, n2, succN2[0]]
                                     smd11[v1, v2, n1, n2] += x2[v2, gamma, precN2[0], n2] * ak2ij[
@@ -853,11 +853,11 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 
     # soluzione alternativa
     # Gamma.reverse()
-    # shuffle(Gamma)
+    shuffle(Gamma)
     print("Gamma: ", Gamma)
 
     # K2.reverse()
-    # shuffle(K2)
+    shuffle(K2)
     print("K2: ", K2)
 
     x2TMP = x2.copy()
