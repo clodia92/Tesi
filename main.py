@@ -144,7 +144,7 @@ if __name__ == "__main__":
         dictSolutions[s] = []
 
         # tabu list per ogni satellite. Vengono riportati l'indice della soluzione e la mossa che l'ha determinata
-        # indiece padre o indice figlio??
+        # indice padre o indice figlio??
         tabuList[s] = []
 
         # generate variables for Model Three
@@ -164,6 +164,8 @@ if __name__ == "__main__":
         smd11 = {}  # dimensione: n!/2!(n-2)! (n: nodi)              <---  da rivedere
         # smd2opt = {}
 
+        bestSolutionIndice = -1
+
         if resultSolutionBase:
             print("Soluzione di base trovata, costo: {}.".format(cost))
             # aggiungo la soluzione alle soluzioni
@@ -180,11 +182,14 @@ if __name__ == "__main__":
             # crea l'heap di smd10 e smd11
             heapq.heapify(heapSMD)
 
-            itMosse = 0
+            # contatore di mosse effettuate nel localSearch e nel tabuSearch
+            itMosseLS = 0
+            itMosseTS = 0
 
             # chiave della mossa precedente
-            oldKey = -1
+            oldKeyLocalSearch = -1
 
+            # utilizzare itMosse come termine del while?
             while True:
                 x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11, myProb.x2, myProb.w2,
                                                                            rotte, s, myProb.uk2,
@@ -196,7 +201,7 @@ if __name__ == "__main__":
 
                 if keyLocalSearch == -1 or costTMP > cost:
 
-                    print("Soluzione finale trovata, itMosse: {}, costo: {}.".format(itMosse, cost))
+                    print("Soluzione finale trovata, itMosseLS: {}, costo: {}.".format(itMosseLS, cost))
                     # print("rotte: {}".format(rotte))
                     print("time elapsed: {:.2f}s.".format(time.time() - start_time))
 
@@ -204,16 +209,27 @@ if __name__ == "__main__":
                     for solution in dictSolutions[s]:
                         print("costo: {}, rotte: {}, padre: {}, figli: {}".format(solution[0], solution[3], solution[4], solution[5]))
 
+                    # aggiornamento della bestSolution finora trovata
+                    bestSolutionIndice = len(dictSolutions[s]) - 1
+                    print("bestSolution:\ncosto: {}, rotte: {}".format(dictSolutions[s][bestSolutionIndice][0], dictSolutions[s][bestSolutionIndice][3]))
+
                     # LANCIARE TABU SEARCH
 
 
-                    # indiece padre o indice figlio??
-                    # gestire il caso di oldKey == -1
-                    tabuList[s].append((len(dictSolutions[s]), oldKey))
+                    # non è stato possibile applicare una mossa migliorativa alla soluzione di base
+                    if oldKeyLocalSearch == -1:
+                        print("Non è stata trovata una mossa migliorativa.")
+                    # Tabu Search
+                    else:
+                        heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte = tabuSearch(dictSolutions[s], bestSolutionIndice, tabuList[s], oldKeyLocalSearch, myProb.nik2ij, myProb.ak2ij, s)
+                        itMosseTS += 1
 
-                    break
+
+
+                    if itMosseLS+itMosseTS == 20:# or dictSolutions[s][-1][0] < dictSolutions[s][bestSolutionIndice][0]:
+                        break
                 else:
-                    itMosse += 1
+                    itMosseLS += 1
                     cost = costTMP
 
                     # aggiornare rotte dopo una mossa ammissibile
@@ -246,7 +262,7 @@ if __name__ == "__main__":
                     # crea l'heap di smd10 e di smd11
                     heapq.heapify(heapSMD)
 
-                    oldKey = keyLocalSearch
+                    oldKeyLocalSearch = keyLocalSearch
         else:
             # trovare un'altra soluzione
             print("Trova un'altra soluzione iniziale.")

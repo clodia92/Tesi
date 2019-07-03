@@ -853,11 +853,11 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 
     # soluzione alternativa
     # Gamma.reverse()
-    shuffle(Gamma)
+    #shuffle(Gamma)
     print("Gamma: ", Gamma)
 
     # K2.reverse()
-    shuffle(K2)
+    #shuffle(K2)
     print("K2: ", K2)
 
     # if s==1:
@@ -1697,3 +1697,42 @@ def updateRotteSmd11(rotte, keyLocalSearch):
     elif v1 != v2 and n1 == n2:
         # non viene effettuata nessuna modifica nelle rotte
         pass
+
+
+def tabuSearch(dictSolutionsDiS, bestSolutionIndice, tabuListDiS, oldKeyLocalSearch, nik2ij, ak2ij, s):
+    padreDiAttuale = dictSolutionsDiS[-1][4]
+
+    # aggiornamento della Tabu list
+    tabuListDiS.append((padreDiAttuale, oldKeyLocalSearch))
+
+    x2 = dictSolutionsDiS[padreDiAttuale][1]
+    w2 = dictSolutionsDiS[padreDiAttuale][2]
+    rotte = dictSolutionsDiS[padreDiAttuale][3]
+
+    # struttura che contiene tutte le mosse con relativi costi
+    # dizionari di smd con chiave move point
+    smd10 = {}
+    smd11 = {}
+    # vengono inizializzati gli SMD
+    inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s)
+    inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2)
+
+    # eliminare le mosse tabu dagli SMD
+    for mossaTabu in tabuListDiS:
+        print("mossaTabu: ", mossaTabu)
+        if mossaTabu[0] == padreDiAttuale:
+            # 1-0 Exchange
+            if len(mossaTabu[1]) == 5:
+                del smd10[mossaTabu[1]]
+            # 1-1 Exchange
+            elif len(mossaTabu[1]) == 4:
+                del smd11[mossaTabu[1]]
+
+    # crea la lista unica dei costi in cui verrà salvato l'heap
+    # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
+    heapSMD = list(smd10.values()) + list(smd11.values())
+    # crea l'heap di smd10 e smd11
+    heapq.heapify(heapSMD)
+
+    return heapSMD, smd10, smd11, x2, w2, rotte
+    pass
