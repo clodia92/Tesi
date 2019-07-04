@@ -215,13 +215,16 @@ if __name__ == "__main__":
 
                     # LANCIARE TABU SEARCH
 
-
                     # non è stato possibile applicare una mossa migliorativa alla soluzione di base
                     if oldKeyLocalSearch == -1:
                         print("Non è stata trovata una mossa migliorativa.")
                     # Tabu Search
                     else:
-                        heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte = tabuSearch(dictSolutions[s], bestSolutionIndice, tabuList[s], oldKeyLocalSearch, myProb.nik2ij, myProb.ak2ij, s)
+                        heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, padre = tabuSearch(dictSolutions[s], bestSolutionIndice, tabuList[s], oldKeyLocalSearch, myProb.nik2ij, myProb.ak2ij, s)
+                        if (6, 6, 6, 4, 3) in smd10:
+                            print("CI SONO!!!")
+                        else:
+                            print("NON CI SONO!!!")
                         itMosseTS += 1
 
 
@@ -251,7 +254,7 @@ if __name__ == "__main__":
                     inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
 
                     print("Soluzione migliore trovata, costo: {}.".format(cost))
-                    # print("rotte: {}".format(rotte))
+                    print("rotte: {}".format(rotte))
 
                     dictSolutions[s].append([cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padre, []])
                     dictSolutions[s][padre][5].append(len(dictSolutions[s])-1)

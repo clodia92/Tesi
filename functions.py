@@ -1270,6 +1270,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                 # verificare ammissibilità
                 if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
+                    print("rotte: {}".format(rotte))
                     print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(
                         itNonAmmissibili, minCostKey, smd10[minCostKey]))
                     # soluzione ammissibile trovata
@@ -1700,11 +1701,13 @@ def updateRotteSmd11(rotte, keyLocalSearch):
 
 
 def tabuSearch(dictSolutionsDiS, bestSolutionIndice, tabuListDiS, oldKeyLocalSearch, nik2ij, ak2ij, s):
+    print("\nSTART tabuSearch()")
     padreDiAttuale = dictSolutionsDiS[-1][4]
 
     # aggiornamento della Tabu list
     tabuListDiS.append((padreDiAttuale, oldKeyLocalSearch))
 
+    cost = dictSolutionsDiS[padreDiAttuale][0]
     x2 = dictSolutionsDiS[padreDiAttuale][1]
     w2 = dictSolutionsDiS[padreDiAttuale][2]
     rotte = dictSolutionsDiS[padreDiAttuale][3]
@@ -1716,6 +1719,8 @@ def tabuSearch(dictSolutionsDiS, bestSolutionIndice, tabuListDiS, oldKeyLocalSea
     # vengono inizializzati gli SMD
     inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s)
     inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2)
+
+    print("stampa tabuList: {}".format(tabuListDiS))
 
     # eliminare le mosse tabu dagli SMD
     for mossaTabu in tabuListDiS:
@@ -1734,5 +1739,5 @@ def tabuSearch(dictSolutionsDiS, bestSolutionIndice, tabuListDiS, oldKeyLocalSea
     # crea l'heap di smd10 e smd11
     heapq.heapify(heapSMD)
 
-    return heapSMD, smd10, smd11, x2, w2, rotte
+    return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale
     pass
