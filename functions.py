@@ -1,5 +1,6 @@
 from constraintsModelThree import *
 import heapq
+from copy import deepcopy
 from random import shuffle
 
 
@@ -971,6 +972,9 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
     itMAX = len(heapSMD)
     itNonAmmissibili = 0
 
+    x2TMP = x2.copy()
+    w2TMP = w2.copy()
+
     while heapSMD[0] < 0 and itNonAmmissibili < itMAX:
 
         itNonAmmissibili += 1
@@ -1707,10 +1711,10 @@ def tabuSearch(dictSolutionsDiS, bestSolutionIndice, tabuListDiS, oldKeyLocalSea
     # aggiornamento della Tabu list
     tabuListDiS.append((padreDiAttuale, oldKeyLocalSearch))
 
-    cost = dictSolutionsDiS[padreDiAttuale][0]
-    x2 = dictSolutionsDiS[padreDiAttuale][1]
-    w2 = dictSolutionsDiS[padreDiAttuale][2]
-    rotte = dictSolutionsDiS[padreDiAttuale][3]
+    cost = deepcopy(dictSolutionsDiS[padreDiAttuale][0])
+    x2 = deepcopy(dictSolutionsDiS[padreDiAttuale][1])
+    w2 = deepcopy(dictSolutionsDiS[padreDiAttuale][2])
+    rotte = deepcopy(dictSolutionsDiS[padreDiAttuale][3])
 
     # struttura che contiene tutte le mosse con relativi costi
     # dizionari di smd con chiave move point
@@ -1739,5 +1743,4 @@ def tabuSearch(dictSolutionsDiS, bestSolutionIndice, tabuListDiS, oldKeyLocalSea
     # crea l'heap di smd10 e smd11
     heapq.heapify(heapSMD)
 
-    return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale
-    pass
+    return heapSMD, smd10, smd11, x2, w2, rotte, cost, deepcopy(padreDiAttuale)

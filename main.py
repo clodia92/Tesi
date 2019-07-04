@@ -156,7 +156,7 @@ if __name__ == "__main__":
                                                                            myProb.A2, myProb.GammadiS[s], myProb.CdiS)
         cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij,
                            s)
-        costTMP = cost + 1
+        costNew = cost + 1
 
         # struttura che contiene tutte le mosse con relativi costi
         # dizionari di smd con chiave move point
@@ -196,10 +196,11 @@ if __name__ == "__main__":
                                                                            myProb.Pgac, myProb.PsGa, myProb.K2diS[s],
                                                                            myProb.A2,
                                                                            myProb.GammadiS[s], myProb.CdiS)
-                costTMP = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
+                costNew = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
                                       myProb.ak2ij, s)
 
-                if keyLocalSearch == -1 or costTMP > cost:
+                # DA VERIFICARE LE CONDIZIONI
+                if keyLocalSearch == -1 or costNew > cost:
 
                     print("Soluzione finale trovata, itMosseLS: {}, costo: {}.".format(itMosseLS, cost))
                     # print("rotte: {}".format(rotte))
@@ -221,19 +222,18 @@ if __name__ == "__main__":
                     # Tabu Search
                     else:
                         heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, padre = tabuSearch(dictSolutions[s], bestSolutionIndice, tabuList[s], oldKeyLocalSearch, myProb.nik2ij, myProb.ak2ij, s)
-                        if (6, 6, 6, 4, 3) in smd10:
-                            print("CI SONO!!!")
-                        else:
-                            print("NON CI SONO!!!")
+                        oldKeyLocalSearch = -1
                         itMosseTS += 1
 
 
 
-                    if itMosseLS+itMosseTS == 20:# or dictSolutions[s][-1][0] < dictSolutions[s][bestSolutionIndice][0]:
+                    #if itMosseLS+itMosseTS == 20:# or dictSolutions[s][-1][0] < dictSolutions[s][bestSolutionIndice][0]:
+                    if padre == -1:# and keyLocalSearch == -1:
                         break
+                # è stata trovata una mossa ammissibile
                 else:
                     itMosseLS += 1
-                    cost = costTMP
+                    cost = costNew
 
                     # aggiornare rotte dopo una mossa ammissibile
                     # 1-0 Exchange
