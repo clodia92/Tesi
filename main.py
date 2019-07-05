@@ -192,14 +192,17 @@ if __name__ == "__main__":
 
             # utilizzare itMosse come termine del while?
             while True:
-                x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11, myProb.x2, myProb.w2,
+                costTMP = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
+                                      myProb.ak2ij, s)
+
+                x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11, deepcopy(myProb.x2), deepcopy(myProb.w2),
                                                                            rotte, s, myProb.uk2,
                                                                            myProb.Pgac, myProb.PsGa, myProb.K2diS[s],
                                                                            myProb.A2,
                                                                            myProb.GammadiS[s], myProb.CdiS)
                 costNew = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
                                       myProb.ak2ij, s)
-                print("localSearch,key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
+                print("localSearch,key: {} cost: {}, costNew: {}, costTMP: {}".format(keyLocalSearch, cost, costNew, costTMP))
 
                 if keyLocalSearch==-1:
                     if x2TMP==myProb.x2:
