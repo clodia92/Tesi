@@ -138,13 +138,13 @@ if __name__ == "__main__":
         print("\n\n\nSTART satellite: {}".format(s))
         start_time = time.time()
 
-        # lista delle soluzioni trovate: (cost, x2, w2, rotte, padre, figli)
+        # lista delle soluzioni trovate: (cost, x2, w2, rotte, padre, figli, mossaDiArrivo)
         # padre: indice alla soluzione di partenze in solutions
         # figli: lista di indici alle soluzioni ricavate in solutions
+        # mossaDiArrivo: mossa che ha portato all'attuale soluzione
         dictSolutions[s] = []
 
         # tabu list per ogni satellite. Vengono riportati l'indice della soluzione e la mossa che l'ha determinata
-        # indice padre o indice figlio??
         tabuList[s] = []
 
         # generate variables for Model Three
@@ -171,7 +171,7 @@ if __name__ == "__main__":
             print("Soluzione di base trovata, costo: {}.".format(cost))
             # aggiungo la soluzione alle soluzioni
             padre = -1
-            dictSolutions[s].append((cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padre, []))
+            dictSolutions[s].append((cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padre, [],-1))
             padre = len(dictSolutions[s])-1
 
             # vengono inizializzati gli SMD
@@ -199,7 +199,13 @@ if __name__ == "__main__":
                                                                            myProb.GammadiS[s], myProb.CdiS)
                 costNew = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
                                       myProb.ak2ij, s)
-                print("localSearch, cost: {}, costNew: {}".format(cost, costNew))
+                print("localSearch,key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
+
+                if keyLocalSearch==-1:
+                    if x2TMP==myProb.x2:
+                        print("ok")
+                    else:
+                        print("no")
 
                 # effettua mossa migliorativa
                 if keyLocalSearch != -1 and costNew < cost:
@@ -215,8 +221,8 @@ if __name__ == "__main__":
                         updateRotteSmd11(rotte, keyLocalSearch)
 
                     # aggiornare x2 e w2 dopo una mossa ammissibile
-                    myProb.x2 = x2TMP.copy()
-                    myProb.w2 = w2TMP.copy()
+                    myProb.x2 = deepcopy(x2TMP)
+                    myProb.w2 = deepcopy(w2TMP)
 
                     # aggiornare SMD dopo una mossa ammissibile
                     smd10.clear()
@@ -228,7 +234,7 @@ if __name__ == "__main__":
                     print("rotte: {}".format(rotte))
 
                     dictSolutions[s].append(
-                        [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padre, []])
+                        [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padre, [], keyLocalSearch])
                     dictSolutions[s][padre][5].append(len(dictSolutions[s]) - 1)
                     padre = len(dictSolutions[s]) - 1
 

@@ -865,8 +865,8 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     #     Gamma = [7, 4, 5, 8, 6, 3, 9]
     #     K2 = [6, 5, 4]
 
-    x2TMP = x2.copy()
-    w2TMP = w2.copy()
+    x2TMP = deepcopy(x2)
+    w2TMP = deepcopy(w2)
 
     # dizionario che contiene i pallet richiesti dai clienti di s
     PGa = {}
@@ -958,8 +958,8 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     # verifica dell'ammissibilità della soluzione
     if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
         # soluzione ammissibile trovata
-        x2 = x2TMP.copy()
-        w2 = w2TMP.copy()
+        x2 = deepcopy(x2TMP)
+        w2 = deepcopy(w2TMP)
 
         return True, x2, w2, rotte
     else:
@@ -972,8 +972,8 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
     itMAX = len(heapSMD)
     itNonAmmissibili = 0
 
-    x2TMP = x2.copy()
-    w2TMP = w2.copy()
+    x2TMP = deepcopy(x2)
+    w2TMP = deepcopy(w2)
 
     while heapSMD[0] < 0 and itNonAmmissibili < itMAX:
 
@@ -994,8 +994,8 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
         precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
         precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
-        x2TMP = x2.copy()
-        w2TMP = w2.copy()
+        x2TMP = deepcopy(x2)
+        w2TMP = deepcopy(w2)
 
         # 1-0 Exchange
         if len(minCostKey) == 5:
@@ -1713,6 +1713,11 @@ def tabuSearch(dictSolutionsDiS, bestSolutionIndice, tabuListDiS, oldKeyLocalSea
     if oldKeyLocalSearch != -1:
         # aggiornamento della Tabu list
         tabuListDiS.append((padreDiAttuale, oldKeyLocalSearch))
+    else:
+        tabuListDiS.append((dictSolutionsDiS[padreDiAttuale][4], dictSolutionsDiS[padreDiAttuale][6]))
+        padreDiAttuale=dictSolutionsDiS[padreDiAttuale][4]
+
+
 
     cost = deepcopy(dictSolutionsDiS[padreDiAttuale][0])
     x2 = deepcopy(dictSolutionsDiS[padreDiAttuale][1])
