@@ -1585,7 +1585,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
     # non è stata trovata nessuna mossa migliorativa
     print("rotte: {}".format(rotte))
     print("localSearch FALSE, mossa: -1.")
-    return x2TMP, w2TMP, -1, False
+    return x2, w2, -1, False
 
 
 # aggiorna le rotte
