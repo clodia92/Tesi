@@ -1274,7 +1274,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                 # verificare ammissibilità
                 if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
-                    print("rotte: {}".format(rotte))
+                    # print("rotte: {}".format(rotte))
                     print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(
                         itNonAmmissibili, minCostKey, smd10[minCostKey]))
                     # soluzione ammissibile trovata
@@ -1576,13 +1576,15 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
             # verificare ammissibilità
             if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
-                print(
-                    "localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
+                print("rotte: {}".format(rotte))
+                print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
                                                                                                       minCostKey, smd11[
                                                                                                           minCostKey]))
                 # soluzione ammissibile trovata
                 return x2TMP, w2TMP, minCostKey, True
-
+    # non è stata trovata nessuna mossa migliorativa
+    print("rotte: {}".format(rotte))
+    print("localSearch FALSE, mossa: -1.")
     return x2TMP, w2TMP, -1, False
 
 
@@ -1708,8 +1710,9 @@ def tabuSearch(dictSolutionsDiS, bestSolutionIndice, tabuListDiS, oldKeyLocalSea
     print("\nSTART tabuSearch()")
     padreDiAttuale = dictSolutionsDiS[-1][4]
 
-    # aggiornamento della Tabu list
-    tabuListDiS.append((padreDiAttuale, oldKeyLocalSearch))
+    if oldKeyLocalSearch != -1:
+        # aggiornamento della Tabu list
+        tabuListDiS.append((padreDiAttuale, oldKeyLocalSearch))
 
     cost = deepcopy(dictSolutionsDiS[padreDiAttuale][0])
     x2 = deepcopy(dictSolutionsDiS[padreDiAttuale][1])
@@ -1728,7 +1731,7 @@ def tabuSearch(dictSolutionsDiS, bestSolutionIndice, tabuListDiS, oldKeyLocalSea
 
     # eliminare le mosse tabu dagli SMD
     for mossaTabu in tabuListDiS:
-        print("mossaTabu: ", mossaTabu)
+        print("mossaTabu deleted: ", mossaTabu)
         if mossaTabu[0] == padreDiAttuale:
             # 1-0 Exchange
             if len(mossaTabu[1]) == 5:
