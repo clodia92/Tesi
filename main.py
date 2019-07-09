@@ -192,8 +192,6 @@ if __name__ == "__main__":
 
             # utilizzare itMosse come termine del while?
             while True:
-                costTMP = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
-                                      myProb.ak2ij, s)
 
                 x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11, deepcopy(myProb.x2), deepcopy(myProb.w2),
                                                                            rotte, s, myProb.uk2,
@@ -202,13 +200,10 @@ if __name__ == "__main__":
                                                                            myProb.GammadiS[s], myProb.CdiS)
                 costNew = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
                                       myProb.ak2ij, s)
-                print("localSearch,key: {} cost: {}, costNew: {}, costTMP: {}".format(keyLocalSearch, cost, costNew, costTMP))
+                # indiceDelpadre = dictSolutions[s][len(dictSolutions[s])-1][4]
+                # padre = dictSolutions[s][indiceDelpadre][4]
 
-                if keyLocalSearch==-1:
-                    if x2TMP==myProb.x2:
-                        print("ok")
-                    else:
-                        print("no")
+                print("localSearch,key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
 
                 # effettua mossa migliorativa
                 if keyLocalSearch != -1 and costNew < cost:
@@ -250,6 +245,7 @@ if __name__ == "__main__":
 
                 # non esiste mossa migliorativa
                 elif keyLocalSearch == -1 and costNew == cost:
+                    #padre = len(dictSolutions[s]) - 1
                     # applica Tabu Search
                     if padre != -1:
                         print("Soluzione minimo locale trovata, itMosseLS: {}, costo: {}.".format(itMosseLS, cost))

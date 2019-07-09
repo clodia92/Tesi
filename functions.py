@@ -861,9 +861,9 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     #shuffle(K2)
     print("K2: ", K2)
 
-    if s==1:
-        Gamma = [5, 4, 3, 8, 7, 6]
-        K2 = [7, 8]
+    # if s==1:
+    #     Gamma = [5, 4, 3, 8, 7, 6]
+    #     K2 = [7, 8]
 
     x2TMP = deepcopy(x2)
     w2TMP = deepcopy(w2)
@@ -1751,4 +1751,4 @@ def tabuSearch(dictSolutionsDiS, bestSolutionIndice, tabuListDiS, oldKeyLocalSea
     # crea l'heap di smd10 e smd11
     heapq.heapify(heapSMD)
 
-    return heapSMD, smd10, smd11, x2, w2, rotte, cost, deepcopy(padreDiAttuale)
+    return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale
