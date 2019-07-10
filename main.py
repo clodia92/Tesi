@@ -172,7 +172,7 @@ if __name__ == "__main__":
             # lista dei padri della soluzione
             padri = [-1]
             # aggiungo la soluzione alle soluzioni
-            dictSolutions[s].append((cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [],-1))
+            dictSolutions[s].append((cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [], [-1]))
             padri = [len(dictSolutions[s])-1]
             # indice della soluzione attuale che genera un figlio con il local search
             soluzionePrecedente = 0
@@ -195,7 +195,7 @@ if __name__ == "__main__":
 
             # utilizzare itMosse come termine del while?
             while True:
-
+                print("\n", soluzionePrecedente)
                 x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11, deepcopy(myProb.x2), deepcopy(myProb.w2),
                                                                            rotte, s, myProb.uk2,
                                                                            myProb.Pgac, myProb.PsGa, myProb.K2diS[s],
@@ -244,13 +244,15 @@ if __name__ == "__main__":
                             dictSolutions[s][indiceSoluzionePresente][4].append(soluzionePrecedente)
                             # aggiornamento dei figli del padre della nuova soluzione
                             dictSolutions[s][soluzionePrecedente][5].append(indiceSoluzionePresente)
+                            # aggiornamento delle mosse di arrivo della nuova soluzione
+                            dictSolutions[s][indiceSoluzionePresente][6].append(keyLocalSearch)
 
                             soluzionePrecedente = indiceSoluzionePresente
                         # se la rotta non è uguale ad una soluzione precedente
                         else:
                             dictSolutions[s].append(
                                 [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [],
-                                 keyLocalSearch])
+                                 [keyLocalSearch]])
                             for padreSingolo in padri:
                                 dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
                             padri = [len(dictSolutions[s]) - 1]
@@ -258,7 +260,7 @@ if __name__ == "__main__":
                     # non esiste una soluzione con lo stesso costo
                     else:
                         dictSolutions[s].append(
-                            [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [], keyLocalSearch])
+                            [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [], [keyLocalSearch]])
                         for padreSingolo in padri:
                             dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
                         padri = [len(dictSolutions[s]) - 1]
@@ -282,8 +284,8 @@ if __name__ == "__main__":
 
                         print("dictSolutions[{}]:".format(s))
                         for solution in dictSolutions[s]:
-                            print("costo: {}, rotte: {}, padre: {}, figli: {}".format(solution[0], solution[3],
-                                                                                      solution[4], solution[5]))
+                            print("costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(solution[0], solution[3],
+                                                                                      solution[4], solution[5], solution[6]))
 
                         # aggiornamento della bestSolution finora trovata
                         if costNew < dictSolutions[s][bestSolutionIndice][0]:
@@ -292,10 +294,11 @@ if __name__ == "__main__":
                                                                            dictSolutions[s][bestSolutionIndice][3]))
 
                         # Tabu Search
-                        # restituire anche padri?
+                        print("\n", soluzionePrecedente)
                         heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, soluzionePrecedente, padri = tabuSearch(
                             dictSolutions[s], soluzionePrecedente, tabuList[s], oldKeyLocalSearch, myProb.nik2ij,
                             myProb.ak2ij, s)
+                        print("\n", soluzionePrecedente)
                         oldKeyLocalSearch = -1
                         itMosseTS += 1
 

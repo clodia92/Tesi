@@ -968,7 +968,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 
 
 def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
-    print("\nSTART localSearch()")
+    print("START localSearch()")
     itMAX = len(heapSMD)
     itNonAmmissibili = 0
 
@@ -1707,20 +1707,23 @@ def updateRotteSmd11(rotte, keyLocalSearch):
 
 
 def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSearch, nik2ij, ak2ij, s):
-    print("\nSTART tabuSearch()")
+    print("START tabuSearch()")
     padriDiAttuale = dictSolutionsDiS[soluzionePrecedente][4]
     padreDiAttuale = padriDiAttuale[-1]
 
     if oldKeyLocalSearch != -1:
         # aggiornamento della Tabu list
-        for padre in padriDiAttuale:
-            tabuListDiS.append((padre, oldKeyLocalSearch))
+        # for padre in padriDiAttuale:
+        #     tabuListDiS.append((padre, oldKeyLocalSearch))
+        tabuListDiS.append((padreDiAttuale, oldKeyLocalSearch))
+    # non è stata trovata una nuova soluzione dopo aver effettuato una volta il tabu search
     else:
-        padriDiAttualeTMP = []
-        for padre in padriDiAttuale:
-            tabuListDiS.append((dictSolutionsDiS[padre][4], dictSolutionsDiS[padre][6]))
-            padriDiAttualeTMP.append(dictSolutionsDiS[padre][4])
-        padriDiAttuale = padriDiAttualeTMP
+        # for padre in padriDiAttuale:
+        #     tabuListDiS.append((dictSolutionsDiS[padre][4][-1], dictSolutionsDiS[padre][6][-1]))
+        #     padriDiAttualeTMP.append(dictSolutionsDiS[padre][4])
+        tabuListDiS.append((dictSolutionsDiS[padreDiAttuale][4][-1], dictSolutionsDiS[padreDiAttuale][6][-1]))
+        #padriDiAttuale.clear()
+        padriDiAttuale = deepcopy(dictSolutionsDiS[padreDiAttuale][4])
         padreDiAttuale = padriDiAttuale[-1]
 
     cost = deepcopy(dictSolutionsDiS[padreDiAttuale][0])
