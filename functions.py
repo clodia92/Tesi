@@ -1708,7 +1708,7 @@ def updateRotteSmd11(rotte, keyLocalSearch):
 
 def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSearch, nik2ij, ak2ij, s):
     print("START tabuSearch()")
-    padriDiAttuale = dictSolutionsDiS[soluzionePrecedente][4]
+    padriDiAttuale = deepcopy(dictSolutionsDiS[soluzionePrecedente][4])
     padreDiAttuale = padriDiAttuale[-1]
 
     if oldKeyLocalSearch != -1:
