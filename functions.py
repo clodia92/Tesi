@@ -1723,8 +1723,6 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
         padriDiAttuale = padriDiAttualeTMP
         padreDiAttuale = padriDiAttuale[-1]
 
-
-
     cost = deepcopy(dictSolutionsDiS[padreDiAttuale][0])
     x2 = deepcopy(dictSolutionsDiS[padreDiAttuale][1])
     w2 = deepcopy(dictSolutionsDiS[padreDiAttuale][2])
@@ -1757,4 +1755,4 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
     # crea l'heap di smd10 e smd11
     heapq.heapify(heapSMD)
 
-    return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale# padriDiAttuale
+    return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale, padriDiAttuale

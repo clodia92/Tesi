@@ -169,10 +169,12 @@ if __name__ == "__main__":
 
         if resultSolutionBase:
             print("Soluzione di base trovata, costo: {}.".format(cost))
-            # aggiungo la soluzione alle soluzioni
+            # lista dei padri della soluzione
             padri = [-1]
+            # aggiungo la soluzione alle soluzioni
             dictSolutions[s].append((cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [],-1))
             padri = [len(dictSolutions[s])-1]
+            # indice della soluzione attuale che genera un figlio con il local search
             soluzionePrecedente = 0
 
             # vengono inizializzati gli SMD
@@ -291,7 +293,7 @@ if __name__ == "__main__":
 
                         # Tabu Search
                         # restituire anche padri?
-                        heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, soluzionePrecedente = tabuSearch(
+                        heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, soluzionePrecedente, padri = tabuSearch(
                             dictSolutions[s], soluzionePrecedente, tabuList[s], oldKeyLocalSearch, myProb.nik2ij,
                             myProb.ak2ij, s)
                         oldKeyLocalSearch = -1
