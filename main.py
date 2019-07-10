@@ -138,8 +138,8 @@ if __name__ == "__main__":
         print("\n\n\nSTART satellite: {}".format(s))
         start_time = time.time()
 
-        # lista delle soluzioni trovate: (cost, x2, w2, rotte, padre, figli, mossaDiArrivo)
-        # padre: indice alla soluzione di partenze in solutions
+        # lista delle soluzioni trovate: (cost, x2, w2, rotte, padri, figli, mossaDiArrivo)
+        # padri: lista di indici alle soluzioni di partenza in solutions
         # figli: lista di indici alle soluzioni ricavate in solutions
         # mossaDiArrivo: mossa che ha portato all'attuale soluzione
         dictSolutions[s] = []
@@ -170,9 +170,10 @@ if __name__ == "__main__":
         if resultSolutionBase:
             print("Soluzione di base trovata, costo: {}.".format(cost))
             # aggiungo la soluzione alle soluzioni
-            padre = -1
-            dictSolutions[s].append((cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padre, [],-1))
-            padre = len(dictSolutions[s])-1
+            padri = [-1]
+            dictSolutions[s].append((cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [],-1))
+            padri = [len(dictSolutions[s])-1]
+            soluzionePrecedente = 0
 
             # vengono inizializzati gli SMD
             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
@@ -200,10 +201,8 @@ if __name__ == "__main__":
                                                                            myProb.GammadiS[s], myProb.CdiS)
                 costNew = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
                                       myProb.ak2ij, s)
-                # indiceDelpadre = dictSolutions[s][len(dictSolutions[s])-1][4]
-                # padre = dictSolutions[s][indiceDelpadre][4]
 
-                print("localSearch,key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
+                print("localSearch, key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
 
                 # effettua mossa migliorativa
                 if keyLocalSearch != -1 and costNew < cost:
@@ -231,10 +230,37 @@ if __name__ == "__main__":
                     print("Soluzione migliore trovata, costo: {}.".format(cost))
                     print("rotte: {}".format(rotte))
 
-                    dictSolutions[s].append(
-                        [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padre, [], keyLocalSearch])
-                    dictSolutions[s][padre][5].append(len(dictSolutions[s]) - 1)
-                    padre = len(dictSolutions[s]) - 1
+                    listaCosti = [item[0] for item in dictSolutions[s]]
+
+                    # se esiste già una soluzione con lo stesso costo
+                    if cost in listaCosti:
+                        indiceSoluzionePresente = listaCosti.index(cost)
+
+                        # se la rotta è uguale ad una soluzione precedente
+                        if dictSolutions[s][indiceSoluzionePresente][3] == rotte:
+                            # aggiornamento del padre della nuova soluzione
+                            dictSolutions[s][indiceSoluzionePresente][4].append(soluzionePrecedente)
+                            # aggiornamento dei figli del padre della nuova soluzione
+                            dictSolutions[s][soluzionePrecedente][5].append(indiceSoluzionePresente)
+
+                            soluzionePrecedente = indiceSoluzionePresente
+                        # se la rotta non è uguale ad una soluzione precedente
+                        else:
+                            dictSolutions[s].append(
+                                [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [],
+                                 keyLocalSearch])
+                            for padreSingolo in padri:
+                                dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
+                            padri = [len(dictSolutions[s]) - 1]
+                            soluzionePrecedente = len(dictSolutions[s]) - 1
+                    # non esiste una soluzione con lo stesso costo
+                    else:
+                        dictSolutions[s].append(
+                            [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [], keyLocalSearch])
+                        for padreSingolo in padri:
+                            dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
+                        padri = [len(dictSolutions[s]) - 1]
+                        soluzionePrecedente = len(dictSolutions[s]) - 1
 
                     # crea la lista unica dei costi in cui verrà salvato l'heap
                     heapSMD = list(smd10.values()) + list(smd11.values())
@@ -245,9 +271,9 @@ if __name__ == "__main__":
 
                 # non esiste mossa migliorativa
                 elif keyLocalSearch == -1 and costNew == cost:
-                    #padre = len(dictSolutions[s]) - 1
                     # applica Tabu Search
-                    if padre != -1:
+                    if padri != [-1]:
+                    # if soluzionePrecedente -1 oppure 0 DA VERIFICARE
                         print("Soluzione minimo locale trovata, itMosseLS: {}, costo: {}.".format(itMosseLS, cost))
                         # print("rotte: {}".format(rotte))
                         print("time elapsed: {:.2f}s.".format(time.time() - start_time))
@@ -264,8 +290,9 @@ if __name__ == "__main__":
                                                                            dictSolutions[s][bestSolutionIndice][3]))
 
                         # Tabu Search
-                        heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, padre = tabuSearch(
-                            dictSolutions[s], bestSolutionIndice, tabuList[s], oldKeyLocalSearch, myProb.nik2ij,
+                        # restituire anche padri?
+                        heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, soluzionePrecedente = tabuSearch(
+                            dictSolutions[s], soluzionePrecedente, tabuList[s], oldKeyLocalSearch, myProb.nik2ij,
                             myProb.ak2ij, s)
                         oldKeyLocalSearch = -1
                         itMosseTS += 1

@@ -1706,16 +1706,22 @@ def updateRotteSmd11(rotte, keyLocalSearch):
         pass
 
 
-def tabuSearch(dictSolutionsDiS, bestSolutionIndice, tabuListDiS, oldKeyLocalSearch, nik2ij, ak2ij, s):
+def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSearch, nik2ij, ak2ij, s):
     print("\nSTART tabuSearch()")
-    padreDiAttuale = dictSolutionsDiS[-1][4]
+    padriDiAttuale = dictSolutionsDiS[soluzionePrecedente][4]
+    padreDiAttuale = padriDiAttuale[-1]
 
     if oldKeyLocalSearch != -1:
         # aggiornamento della Tabu list
-        tabuListDiS.append((padreDiAttuale, oldKeyLocalSearch))
+        for padre in padriDiAttuale:
+            tabuListDiS.append((padre, oldKeyLocalSearch))
     else:
-        tabuListDiS.append((dictSolutionsDiS[padreDiAttuale][4], dictSolutionsDiS[padreDiAttuale][6]))
-        padreDiAttuale=dictSolutionsDiS[padreDiAttuale][4]
+        padriDiAttualeTMP = []
+        for padre in padriDiAttuale:
+            tabuListDiS.append((dictSolutionsDiS[padre][4], dictSolutionsDiS[padre][6]))
+            padriDiAttualeTMP.append(dictSolutionsDiS[padre][4])
+        padriDiAttuale = padriDiAttualeTMP
+        padreDiAttuale = padriDiAttuale[-1]
 
 
 
@@ -1751,4 +1757,4 @@ def tabuSearch(dictSolutionsDiS, bestSolutionIndice, tabuListDiS, oldKeyLocalSea
     # crea l'heap di smd10 e smd11
     heapq.heapify(heapSMD)
 
-    return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale
+    return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale# padriDiAttuale
