@@ -248,6 +248,7 @@ if __name__ == "__main__":
                             dictSolutions[s][indiceSoluzionePresente][6].append(keyLocalSearch)
 
                             soluzionePrecedente = indiceSoluzionePresente
+                            pass
                         # se la rotta non è uguale ad una soluzione precedente
                         else:
                             dictSolutions[s].append(
@@ -266,13 +267,24 @@ if __name__ == "__main__":
                         padri = [len(dictSolutions[s]) - 1]
                         soluzionePrecedente = len(dictSolutions[s]) - 1
 
+                    # eliminare le mosse tabu dagli SMD
+                    for mossaTabu in tabuList[s]:
+                        print("mossaTabu deleted: ", mossaTabu)
+                        if mossaTabu[0] == soluzionePrecedente:
+                            # 1-0 Exchange
+                            if len(mossaTabu[1]) == 5:
+                                del smd10[mossaTabu[1]]
+                            # 1-1 Exchange
+                            elif len(mossaTabu[1]) == 4:
+                                del smd11[mossaTabu[1]]
+
                     # crea la lista unica dei costi in cui verrà salvato l'heap
                     heapSMD = list(smd10.values()) + list(smd11.values())
                     # crea l'heap di smd10 e di smd11
                     heapq.heapify(heapSMD)
 
                     oldKeyLocalSearch = keyLocalSearch
-
+                    pass
                 # non esiste mossa migliorativa
                 elif keyLocalSearch == -1 and costNew == cost:
                     # applica Tabu Search
@@ -284,7 +296,7 @@ if __name__ == "__main__":
 
                         print("dictSolutions[{}]:".format(s))
                         for solution in dictSolutions[s]:
-                            print("costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(solution[0], solution[3],
+                            print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution),solution[0], solution[3],
                                                                                       solution[4], solution[5], solution[6]))
 
                         # aggiornamento della bestSolution finora trovata
