@@ -1711,25 +1711,22 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
     padriDiAttuale = deepcopy(dictSolutionsDiS[soluzionePrecedente][4])
     padreDiAttuale = padriDiAttuale[-1]
 
-    if oldKeyLocalSearch != -1:
-        # aggiornamento della Tabu list
-        # for padre in padriDiAttuale:
-        #     tabuListDiS.append((padre, oldKeyLocalSearch))
-        tabuListDiS.append((padreDiAttuale, oldKeyLocalSearch))
-    # non è stata trovata una nuova soluzione dopo aver effettuato una volta il tabu search
-    else:
-        # for padre in padriDiAttuale:
-        #     tabuListDiS.append((dictSolutionsDiS[padre][4][-1], dictSolutionsDiS[padre][6][-1]))
-        #     padriDiAttualeTMP.append(dictSolutionsDiS[padre][4])
-        tabuListDiS.append((dictSolutionsDiS[padreDiAttuale][4][-1], dictSolutionsDiS[padreDiAttuale][6][-1]))
-        #padriDiAttuale.clear()
-        padriDiAttuale = deepcopy(dictSolutionsDiS[padreDiAttuale][4])
-        padreDiAttuale = padriDiAttuale[-1]
-
     cost = deepcopy(dictSolutionsDiS[padreDiAttuale][0])
     x2 = deepcopy(dictSolutionsDiS[padreDiAttuale][1])
     w2 = deepcopy(dictSolutionsDiS[padreDiAttuale][2])
     rotte = deepcopy(dictSolutionsDiS[padreDiAttuale][3])
+
+    if oldKeyLocalSearch != -1:
+        # aggiornamento della Tabu list
+        tabuListDiS.append((padreDiAttuale, deepcopy(oldKeyLocalSearch)))
+    # non è stata trovata una nuova soluzione dopo aver effettuato una volta il tabu search
+    else:
+        tabuListDiS.append((padreDiAttuale, deepcopy(dictSolutionsDiS[soluzionePrecedente][6][-1])))
+        #padriDiAttuale.clear()
+        #padriDiAttuale = deepcopy(dictSolutionsDiS[padreDiAttuale][4])
+        #padreDiAttuale = padriDiAttuale[-1]
+
+
 
     # struttura che contiene tutte le mosse con relativi costi
     # dizionari di smd con chiave move point

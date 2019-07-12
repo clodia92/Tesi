@@ -134,6 +134,7 @@ if __name__ == "__main__":
     tabuList = {}
 
     # ogni rotta viene calcolata per ogni satellite separatamente
+    myProb.Sneg = [1]
     for s in myProb.Sneg:
         print("\n\n\nSTART satellite: {}".format(s))
         start_time = time.time()
@@ -252,7 +253,7 @@ if __name__ == "__main__":
                         # se la rotta non è uguale ad una soluzione precedente
                         else:
                             dictSolutions[s].append(
-                                [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [],
+                                [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), deepcopy(padri), [],
                                  [keyLocalSearch]])
                             for padreSingolo in padri:
                                 dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
@@ -261,7 +262,7 @@ if __name__ == "__main__":
                     # non esiste una soluzione con lo stesso costo
                     else:
                         dictSolutions[s].append(
-                            [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [], [keyLocalSearch]])
+                            [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), deepcopy(padri), [], [keyLocalSearch]])
                         for padreSingolo in padri:
                             dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
                         padri = [len(dictSolutions[s]) - 1]
@@ -312,6 +313,7 @@ if __name__ == "__main__":
                             myProb.ak2ij, s)
                         print("\n", soluzionePrecedente)
                         oldKeyLocalSearch = -1
+                        #oldKeyLocalSearch = dictSolutions[s][soluzionePrecedente][6][-1]
                         itMosseTS += 1
 
                     # condizione di uscita
