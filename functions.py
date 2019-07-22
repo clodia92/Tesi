@@ -2,6 +2,8 @@ from constraintsModelThree import *
 import heapq
 from copy import deepcopy
 from random import shuffle
+import pathlib
+import os
 
 
 # generate variables for Model Three
@@ -1756,3 +1758,22 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
     heapq.heapify(heapSMD)
 
     return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale, padriDiAttuale
+
+
+def writeOutput(nomeFileInput, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS):
+    # creazione cartella
+    # outputFolderName = "output"
+    # outputFolderPath = Path(outputFolderName)
+
+    pathlib.Path('output').mkdir(parents=True, exist_ok=True)
+
+    filename = pathlib.Path("output/" + nomeFileInput + "_1")
+    # per creare file con numero che va ad aumentare:
+    # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
+
+    filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
+
+    file = open(filename, 'a')
+    file.write("test")
+
+    file.close()

@@ -127,6 +127,8 @@ if __name__ == "__main__":
     print("Start Prob3: ")
     myProb = Prob3("2_2_100_0_20")
 
+    writeOutput(myProb.nomeFile, 0, 0, 0, 0, 0)
+
     # dizionario delle soluzioni per ogni satellite
     dictSolutions = {}
 
@@ -290,7 +292,6 @@ if __name__ == "__main__":
                     if dictSolutions[s][soluzionePrecedente][4] != [-1]:
                         print("Soluzione minimo locale trovata, itMosseLS: {}, costo: {}.".format(itMosseLS, cost))
                         # print("rotte: {}".format(rotte))
-                        print("time elapsed: {:.2f}s.".format(time.time() - start_time))
 
                         # print("dictSolutions[{}]:".format(s))
                         # for solution in dictSolutions[s]:
@@ -318,6 +319,13 @@ if __name__ == "__main__":
 
                         print("\n\n\nLa soluzione migliore trovata, itMosseLS: {}, itMosseTS: {}, costo: {}.".format(itMosseLS, itMosseTS, dictSolutions[s][bestSolutionIndice][0]))
                         print("{} -> costo: {}, rotte: {}".format(bestSolutionIndice, dictSolutions[s][bestSolutionIndice][0], dictSolutions[s][bestSolutionIndice][3]))
+
+                        timeElapsed = time.time() - start_time
+                        print("time elapsed: {:.2f}s.".format(timeElapsed))
+
+                        # creazione file output
+                        writeOutput(myProb.nomeFile, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS)
+
                         break
         else:
             # trovare un'altra soluzione
