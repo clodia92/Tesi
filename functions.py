@@ -1740,7 +1740,7 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
 
     # eliminare le mosse tabu dagli SMD
     for mossaTabu in tabuListDiS:
-        print("mossaTabu deleted: ", mossaTabu)
+        # print("mossaTabu deleted: ", mossaTabu)
         if mossaTabu[0] == padreDiAttuale:
             # 1-0 Exchange
             if len(mossaTabu[1]) == 5:
