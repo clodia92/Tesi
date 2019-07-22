@@ -262,11 +262,14 @@ if __name__ == "__main__":
                     # non esiste una soluzione con lo stesso costo
                     else:
                         dictSolutions[s].append(
-                            [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), deepcopy(padri), [], [keyLocalSearch]])
+                            [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), [soluzionePrecedente], [], [keyLocalSearch]])
                         for padreSingolo in padri:
                             dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
                         padri = [len(dictSolutions[s]) - 1]
                         soluzionePrecedente = len(dictSolutions[s]) - 1
+
+                    print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(soluzionePrecedente, dictSolutions[s][soluzionePrecedente][0], dictSolutions[s][soluzionePrecedente][3],
+                                dictSolutions[s][soluzionePrecedente][4], dictSolutions[s][soluzionePrecedente][5], dictSolutions[s][soluzionePrecedente][6]))
 
                     # eliminare le mosse tabu dagli SMD
                     for mossaTabu in tabuList[s]:
@@ -392,6 +395,8 @@ if __name__ == "__main__":
         else:
             # trovare un'altra soluzione
             print("Trova un'altra soluzione iniziale.")
+
+            #caso
 
 ########################### FUNZIONI UTILI DELL'HEAP ###########################
 # restituisce la chiave del valore minore (primo elemento)
