@@ -850,7 +850,7 @@ def trovaPrecSuccList(rotta, nodo):
 
 
 def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
-    print("START findSolutionBase()")
+    print("\nSTART findSolutionBase()")
 
     # soluzione alternativa
     # Gamma.reverse()
@@ -968,7 +968,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 
 
 def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
-    print("START localSearch()")
+    print("\nSTART localSearch()")
     itMAX = len(heapSMD)
     itNonAmmissibili = 0
 
@@ -1576,14 +1576,14 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
             # verificare ammissibilità
             if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
-                print("rotte: {}".format(rotte))
+                # print("rotte: {}".format(rotte))
                 print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
                                                                                                       minCostKey, smd11[
                                                                                                           minCostKey]))
                 # soluzione ammissibile trovata
                 return x2TMP, w2TMP, minCostKey, True
     # non è stata trovata nessuna mossa migliorativa
-    print("rotte: {}".format(rotte))
+    # print("rotte: {}".format(rotte))
     print("localSearch FALSE, mossa: -1.")
     return x2, w2, -1, False
 
@@ -1707,7 +1707,7 @@ def updateRotteSmd11(rotte, keyLocalSearch):
 
 
 def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSearch, nik2ij, ak2ij, s):
-    print("START tabuSearch()")
+    print("\nSTART tabuSearch()")
     padriDiAttuale = deepcopy(dictSolutionsDiS[soluzionePrecedente][4])
     padreDiAttuale = padriDiAttuale[-1]
 
@@ -1736,7 +1736,7 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
     inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s)
     inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2)
 
-    print("stampa tabuList: {}".format(tabuListDiS))
+    # print("stampa tabuList: {}".format(tabuListDiS))
 
     # eliminare le mosse tabu dagli SMD
     for mossaTabu in tabuListDiS:

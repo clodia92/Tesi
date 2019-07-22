@@ -195,7 +195,6 @@ if __name__ == "__main__":
 
             # utilizzare itMosse come termine del while?
             while True:
-                print("\n", soluzionePrecedente)
                 x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11, deepcopy(myProb.x2), deepcopy(myProb.w2),
                                                                            rotte, s, myProb.uk2,
                                                                            myProb.Pgac, myProb.PsGa, myProb.K2diS[s],
@@ -204,7 +203,7 @@ if __name__ == "__main__":
                 costNew = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
                                       myProb.ak2ij, s)
 
-                print("localSearch, key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
+                #print("localSearch, key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
 
                 # effettua mossa migliorativa
                 if keyLocalSearch != -1 and costNew < cost:
@@ -230,7 +229,7 @@ if __name__ == "__main__":
                     inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
 
                     print("Soluzione migliore trovata, costo: {}.".format(cost))
-                    print("rotte: {}".format(rotte))
+                    # print("rotte: {}".format(rotte))
 
                     listaCosti = [item[0] for item in dictSolutions[s]]
 
@@ -267,9 +266,6 @@ if __name__ == "__main__":
                         padri = [len(dictSolutions[s]) - 1]
                         soluzionePrecedente = len(dictSolutions[s]) - 1
 
-                    print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(soluzionePrecedente, dictSolutions[s][soluzionePrecedente][0], dictSolutions[s][soluzionePrecedente][3],
-                                dictSolutions[s][soluzionePrecedente][4], dictSolutions[s][soluzionePrecedente][5], dictSolutions[s][soluzionePrecedente][6]))
-
                     # eliminare le mosse tabu dagli SMD
                     for mossaTabu in tabuList[s]:
                         # print("mossaTabu deleted: ", mossaTabu)
@@ -292,15 +288,14 @@ if __name__ == "__main__":
                 elif keyLocalSearch == -1 and costNew == cost:
                     # applica Tabu Search
                     if dictSolutions[s][soluzionePrecedente][4] != [-1]:
-                    # if soluzionePrecedente -1 oppure 0 DA VERIFICARE
                         print("Soluzione minimo locale trovata, itMosseLS: {}, costo: {}.".format(itMosseLS, cost))
                         # print("rotte: {}".format(rotte))
                         print("time elapsed: {:.2f}s.".format(time.time() - start_time))
 
-                        print("dictSolutions[{}]:".format(s))
-                        for solution in dictSolutions[s]:
-                            print("{:>3} -> costo: {:<20}, rotte: {:<75}, padri: {:<20}, figli: {:<20}, mosse: {:<50}".format(dictSolutions[s].index(solution), solution[0], solution[3],
-                                                                                      solution[4], solution[5], solution[6]))
+                        # print("dictSolutions[{}]:".format(s))
+                        # for solution in dictSolutions[s]:
+                        #    print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution), solution[0], solution[3],
+                        #                                                              solution[4], solution[5], solution[6]))
 
                         # aggiornamento della bestSolution finora trovata
                         if costNew < dictSolutions[s][bestSolutionIndice][0]:
@@ -309,20 +304,20 @@ if __name__ == "__main__":
                                                                            dictSolutions[s][bestSolutionIndice][3]))
 
                         # Tabu Search
-                        print("\n", soluzionePrecedente)
                         heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, soluzionePrecedente, padri = tabuSearch(
                             dictSolutions[s], soluzionePrecedente, tabuList[s], oldKeyLocalSearch, myProb.nik2ij,
                             myProb.ak2ij, s)
-                        print("\n", soluzionePrecedente)
                         oldKeyLocalSearch = -1
-                        #oldKeyLocalSearch = dictSolutions[s][soluzionePrecedente][6][-1]
                         itMosseTS += 1
 
                     # condizione di uscita
                     else:
+                        print("dictSolutions[{}]:".format(s))
+                        for solution in dictSolutions[s]:
+                           print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution), solution[0], solution[3], solution[4], solution[5], solution[6]))
+
                         print("\n\n\nLa soluzione migliore trovata, itMosseLS: {}, itMosseTS: {}, costo: {}.".format(itMosseLS, itMosseTS, dictSolutions[s][bestSolutionIndice][0]))
                         print("{} -> costo: {}, rotte: {}".format(bestSolutionIndice, dictSolutions[s][bestSolutionIndice][0], dictSolutions[s][bestSolutionIndice][3]))
-                        #print("rotte: {}".format(dictSolutions[s][bestSolutionIndice][3]))
                         break
         else:
             # trovare un'altra soluzione
