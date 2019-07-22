@@ -134,7 +134,6 @@ if __name__ == "__main__":
     tabuList = {}
 
     # ogni rotta viene calcolata per ogni satellite separatamente
-    myProb.Sneg = [1]
     for s in myProb.Sneg:
         print("\n\n\nSTART satellite: {}".format(s))
         start_time = time.time()
@@ -292,7 +291,7 @@ if __name__ == "__main__":
                 # non esiste mossa migliorativa
                 elif keyLocalSearch == -1 and costNew == cost:
                     # applica Tabu Search
-                    if padri != [-1]:
+                    if dictSolutions[s][soluzionePrecedente][4] != [-1]:
                     # if soluzionePrecedente -1 oppure 0 DA VERIFICARE
                         print("Soluzione minimo locale trovata, itMosseLS: {}, costo: {}.".format(itMosseLS, cost))
                         # print("rotte: {}".format(rotte))
@@ -300,7 +299,7 @@ if __name__ == "__main__":
 
                         print("dictSolutions[{}]:".format(s))
                         for solution in dictSolutions[s]:
-                            print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution),solution[0], solution[3],
+                            print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution), solution[0], solution[3],
                                                                                       solution[4], solution[5], solution[6]))
 
                         # aggiornamento della bestSolution finora trovata
@@ -321,8 +320,9 @@ if __name__ == "__main__":
 
                     # condizione di uscita
                     else:
-                        print("Soluzione finale trovata, itMosseLS: {}, itMosseTS: {}, costo: {}.".format(itMosseLS, itMosseTS, dictSolutions[s][bestSolutionIndice][0]))
-                        print("rotte: {}".format(dictSolutions[s][bestSolutionIndice][3]))
+                        print("\n\n\nLa soluzione migliore trovata, itMosseLS: {}, itMosseTS: {}, costo: {}.".format(itMosseLS, itMosseTS, dictSolutions[s][bestSolutionIndice][0]))
+                        print("{} -> costo: {}, rotte: {}".format(bestSolutionIndice, dictSolutions[s][bestSolutionIndice][0], dictSolutions[s][bestSolutionIndice][3]))
+                        #print("rotte: {}".format(dictSolutions[s][bestSolutionIndice][3]))
                         break
 
                 # # DA VERIFICARE LE CONDIZIONI
