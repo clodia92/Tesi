@@ -127,8 +127,6 @@ if __name__ == "__main__":
     print("Start Prob3: ")
     myProb = Prob3("2_4_100_0_15_capacita3")
 
-    writeOutput(myProb.nomeFile, 0, 0, 0, 0, 0)
-
     # dizionario delle soluzioni per ogni satellite
     dictSolutions = {}
 
@@ -315,7 +313,7 @@ if __name__ == "__main__":
                     else:
                         print("dictSolutions[{}]:".format(s))
                         for solution in dictSolutions[s]:
-                           print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution), solution[0], solution[3], solution[4], solution[5], solution[6]))
+                            print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution), solution[0], solution[3], solution[4], solution[5], solution[6]))
 
                         print("\n\n\nLa soluzione migliore trovata, itMosseLS: {}, itMosseTS: {}, costo: {}.".format(itMosseLS, itMosseTS, dictSolutions[s][bestSolutionIndice][0]))
                         print("{} -> costo: {}, rotte: {}".format(bestSolutionIndice, dictSolutions[s][bestSolutionIndice][0], dictSolutions[s][bestSolutionIndice][3]))
@@ -324,7 +322,7 @@ if __name__ == "__main__":
                         print("time elapsed: {:.2f}s.".format(timeElapsed))
 
                         # creazione file output
-                        writeOutput(myProb.nomeFile, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS)
+                        writeOutput(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS)
 
                         break
         else:

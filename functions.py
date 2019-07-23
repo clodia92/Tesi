@@ -1760,10 +1760,9 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
     return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale, padriDiAttuale
 
 
-def writeOutput(nomeFileInput, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS):
+def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS):
     # creazione cartella
-    # outputFolderName = "output"
-    # outputFolderPath = Path(outputFolderName)
+    print("\nCreazione file.")
 
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
 
@@ -1774,6 +1773,16 @@ def writeOutput(nomeFileInput, dictSolutions, bestSolutionIndice, timeElapsed, i
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     file = open(filename, 'a')
-    file.write("test")
+    file.write("s: {}".format(s))
+    file.write("\ndictSolutions[{}]:".format(s))
+    for solution in dictSolutions[s]:
+        file.write("\n{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution),
+                                                                                   solution[0], solution[3],
+                                                                                   solution[4], solution[5],
+                                                                                   solution[6]))
+    file.write("\nbestSolutionIndice: {}".format(bestSolutionIndice))
+    file.write("\nitMosseLS: {}, itMosseTS: {}".format(itMosseLS, itMosseTS))
+    file.write("\ntime elapsed: {:.2f}s.\n\n\n".format(timeElapsed))
+
 
     file.close()
