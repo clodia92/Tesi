@@ -1,45 +1,4 @@
-# # generate Objective Function for model Three
-# def buildOFThree(K2diS, GammadiS, w2, aks, A2, nik2ij, x2, ak2ij, sat):
-#           
-#     print "BuildOF Three"
-#   
-#     myObjFunction = pulp.LpAffineExpression()
-#         
-#     mySumVariable = {}
-#     
-#     # for all vehicles in the "s" satellite
-#     for k in K2diS[sat]:
-#         #print("K2diS[1] = ", K2diS[sat])
-#         # for all customers in the "s" satellite
-#         for j in GammadiS[sat]:
-#             #print("GammadiS[1]", GammadiS[sat])
-#                 
-#             mySumVariable[w2[(k,sat,j)]] = aks[(k,sat)]                
-#             pass
-#             
-#         # for all arcs in A2
-#         for i,j in A2:
-#             #print("A2", A2)
-#                 
-#             if i != j:
-#                 
-#                 mySumVariable[w2[(k,i,j)]] = nik2ij[(k,i,j)]
-#                 
-#                 # for all customers in the "s" satellite
-#                 for ga in GammadiS[sat]:
-#                     #print("GammadiS[1]", GammadiS[sat])
-#                                     
-#                     mySumVariable[x2[(k,ga,i,j)]] = ak2ij[(k,i,j)]  
-#                     pass                  
-#                 pass                
-#             pass            
-#         pass
-#    
-#     myObjFunction += pulp.LpAffineExpression(mySumVariable)
-#     
-#     return myObjFunction
-
-# generate Objective Function for model Three  
+# generate Objective Function for model Three
 def computeCost(x2, w2, K2diS, GammadiS, A2, nik2ij, ak2ij, sat):
     myObjFunction = 0
 
