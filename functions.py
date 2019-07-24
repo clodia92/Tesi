@@ -1786,5 +1786,4 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
     file.write("\nitMosseLS: {}, itMosseTS: {}".format(itMosseLS, itMosseTS))
     file.write("\ntime elapsed: {:.2f}s.\n\n\n".format(timeElapsed))
 
-
     file.close()
