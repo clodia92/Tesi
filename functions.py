@@ -1,4 +1,5 @@
 from constraintsModelThree import *
+
 import heapq
 from copy import deepcopy
 from random import shuffle
@@ -36,6 +37,8 @@ def generateVariablesModelThree(x2, w2, K2diS, GammadiS, A2, sat):
         pass
     pass  # end of generateVariablesModelThree
 
+
+# inizializza x2 e w2 in base alla soluzione iniziale
 
 def assignx2w2(x2, w2, trasportoPalletDiGamma, rotte):
     for k in rotte:
