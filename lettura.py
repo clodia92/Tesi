@@ -99,7 +99,6 @@ class readFile:
         self.A2toPark = []
 
         with open(nomeFile + ".csv") as csvfile:
-            # with open(nomeFile) as csvfile:
             spamreader = csv.reader(csvfile, delimiter=",")
             for row in spamreader:
 
@@ -290,11 +289,10 @@ class readFile:
                     pass
 
                     # if(row[0] == "cust"):
-                    #                     row.pop(0)
-                    #                     for i in xrange(self.NumberOfSatellitesPark):
-                    #                         self.pisPark[i+1] = int(row[i])
-                    #                     #print ("pisPark = ", self.pisPark)
-                    # print()
+                    #    row.pop(0)
+                    #    for i in xrange(self.NumberOfSatellitesPark):
+                    #       self.pisPark[i+1] = int(row[i])
+                    #    #print ("pisPark = ", self.pisPark)
                     pass
 
                 # soluzione Subproblem Prob2
@@ -330,6 +328,7 @@ class readFile:
                         pass
                     pass
 
+                # lettura container assegnati ad ogni satellite
                 if (row[0].startswith("C")):
                     myKey = int(''.join(filter(str.isdigit, row[0])))
                     row.pop(0)

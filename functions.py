@@ -3,8 +3,6 @@ import heapq
 from copy import deepcopy
 from random import shuffle
 import pathlib
-import os
-
 
 # generate variables for Model Three
 def generateVariablesModelThree(x2, w2, K2diS, GammadiS, A2, sat):
@@ -63,6 +61,16 @@ def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, Cd
         return False
 
 
+# inizializzazione del smd10
+# 1-0 Exchange
+# p pallet del cliente n2 della rotta v2 vengono spostati dopo il cliente n1 della rotta v1
+#
+# smd10: dizionario che contiene la mossa con relativa variazione di costo
+# rotte: rotta a cui vengono applicate le mosse
+# nik2ij: costo di instradamento del veicolo k∈K2 che attraversa l’arco (i,j)∈A2 nel secondo livello.
+# ak2ij: costo di trasporto del pallet con destinazione γ∈Γ che attraversa l’arco (i,j)∈A2 con il veicolo k∈K2
+# x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
+# s: satellite
 def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
     # lista di tuple: [(cliente, veicolo), ...]
     clienteVeicolo = getClienteVeicolo(rotte)
@@ -488,6 +496,15 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         # dopo succN2[0] -> non vengono modificati
 
 
+# inizializzazione del smd11
+# 1-1 Exchange
+# il cliente n1 della rotta v1 viene invertito con il cliente n2 della rotta v2
+#
+# smd11: dizionario che contiene la mossa con relativa variazione di costo
+# rotte: rotta a cui vengono applicate le mosse
+# nik2ij: costo di instradamento del veicolo k∈K2 che attraversa l’arco (i,j)∈A2 nel secondo livello.
+# ak2ij: costo di trasporto del pallet con destinazione γ∈Γ che attraversa l’arco (i,j)∈A2 con il veicolo k∈K2
+# x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
 def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
     # lista di tuple: (cliente, veicolo)
     clienteVeicolo = getClienteVeicolo(rotte)
