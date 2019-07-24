@@ -907,6 +907,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
         if (PGa[Gamma[posG]] > 0):
             # consegna a gamma
             # gamma non viene splittato
+            # lo spazio della rotta è sufficiente per ospitare tutti i pallet di gamma
             if (PGa[Gamma[posG]] <= (uk2diS[K2[posV]] - palletTrasportatiDiK2[posV])):
                 # aggiorno le rotte
                 if K2[posV] in trasportoPalletDiGamma:
@@ -925,7 +926,8 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
                 palletTrasportatiDiK2[posV] += PGa[Gamma[posG]]
                 PGa[Gamma[posG]] = 0
             # gamma viene splittato
-            else:
+            # la rotta non ha raggiunto il limite di capienza
+            elif uk2diS[K2[posV]] != palletTrasportatiDiK2[posV]:
                 # aggiorno le rotte
                 if K2[posV] in trasportoPalletDiGamma:
                     trasportoPalletDiGamma[K2[posV]] += [
