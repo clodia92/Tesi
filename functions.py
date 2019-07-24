@@ -1783,6 +1783,17 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
                                                                                    solution[4], solution[5],
                                                                                    solution[6]))
     file.write("\nbestSolutionIndice: {}".format(bestSolutionIndice))
+    file.write("\n{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(bestSolutionIndice,
+                                                                                      dictSolutions[s][bestSolutionIndice][0], dictSolutions[s][bestSolutionIndice][3],
+                                                                                      dictSolutions[s][bestSolutionIndice][4], dictSolutions[s][bestSolutionIndice][5],
+                                                                                      dictSolutions[s][bestSolutionIndice][6]))
+    # pallet
+    trasportoPalletDiGamma = {}
+    for k in dictSolutions[s][bestSolutionIndice][3]:
+        trasportoPalletDiGamma[k] = []
+        for arc in dictSolutions[s][bestSolutionIndice][3][k]:
+            trasportoPalletDiGamma[k].append((arc[1], dictSolutions[s][bestSolutionIndice][1][k, arc[1], arc[0], arc[1]]))
+    file.write("\ntrasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
     file.write("\nitMosseLS: {}, itMosseTS: {}".format(itMosseLS, itMosseTS))
     file.write("\ntime elapsed: {:.2f}s.\n\n\n".format(timeElapsed))
 
