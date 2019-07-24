@@ -1788,7 +1788,7 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
 
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
 
-    filename = pathlib.Path("output/" + nomeFileInput + "_1")
+    filename = pathlib.Path("output/" + nomeFileInput)
     # per creare file con numero che va ad aumentare:
     # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
 
