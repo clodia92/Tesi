@@ -123,7 +123,7 @@ class Prob3:
 if __name__ == "__main__":
 
     print("Start Prob3: ")
-    myProb = Prob3("2_4_100_0_20")
+    myProb = Prob3("2_4_100_0_15_capacita3")
 
     # dizionario delle soluzioni per ogni satellite
     dictSolutions = {}
