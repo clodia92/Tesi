@@ -6,6 +6,13 @@ from random import shuffle
 import pathlib
 
 # generate variables for Model Three
+#
+# x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
+# w2: variabile di instradamento, che vale 1 se il veicolo k∈K2 attraversa l’arco (i,j)∈A2, altrimenti 0
+# K2diS: L’insieme di PCV selezionati assegnati al satellite s∈S dalla soluzione di Prob2
+# GammadiS: L’insieme di clienti γ∈Γ serviti dal satellite s∈S secondo la soluzione di Prob1
+# A2: insieme di archi che collegano clienti e satelliti tra di loro
+# sat: satellite
 def generateVariablesModelThree(x2, w2, K2diS, GammadiS, A2, sat):
     # generate Variables x2
     # for all vehicles (second echelon)
@@ -39,7 +46,11 @@ def generateVariablesModelThree(x2, w2, K2diS, GammadiS, A2, sat):
 
 
 # inizializza x2 e w2 in base alla soluzione iniziale
-
+#
+# x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
+# w2: variabile di instradamento, che vale 1 se il veicolo k∈K2 attraversa l’arco (i,j)∈A2, altrimenti 0
+# trasportoPalletDiGamma: dizionario delle rotte per ogni veicolo con relativi pallet
+# rotte: dizionario della lista ordinata di archi per ogni veicolo:
 def assignx2w2(x2, w2, trasportoPalletDiGamma, rotte):
     for k in rotte:
         for posArc, (arcI, arcJ) in enumerate(rotte[k]):
@@ -49,6 +60,17 @@ def assignx2w2(x2, w2, trasportoPalletDiGamma, rotte):
 
 
 # verifica se la soluzione è ammissibile restituendo True o False
+#
+# sat: satellite
+# x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
+# w2: variabile di instradamento, che vale 1 se il veicolo k∈K2 attraversa l’arco (i,j)∈A2, altrimenti 0
+# uk2: numero massimo di pallet che possono essere trasportati dal veicolo k∈K2 nel secondo livello
+# Pgac: l’insieme dei pallet nel container c con destinazione γ
+# PsGa: l’insieme di pallet con destinazione γ∈Γs trasportati al satellite s∈Sneg secondo la soluzione di Prob1
+# K2: l'insieme di PCV (veicoli del secondo livello)
+# A2: insieme di archi che collegano clienti e satelliti tra di loro
+# Gamma: l'insieme di clienti
+# CdiS: L’insieme di container c∈C trasportati verso il satellite s∈Sneg secondo la soluzione di Prob1
 def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     vincolo29 = BuildConstr29(Gamma, x2, K2, PsGa, sat)
     vincolo30 = BuildConstr30(Gamma, x2, K2, Pgac, CdiS, sat)
@@ -504,7 +526,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 # il cliente n1 della rotta v1 viene invertito con il cliente n2 della rotta v2
 #
 # smd11: dizionario che contiene la mossa con relativa variazione di costo
-# rotte: rotta a cui vengono applicate le mosse
+# rotte: dizionario dei percorsi dei veicoli assegnati ad un satellite
 # nik2ij: costo di instradamento del veicolo k∈K2 che attraversa l’arco (i,j)∈A2 nel secondo livello.
 # ak2ij: costo di trasporto del pallet con destinazione γ∈Γ che attraversa l’arco (i,j)∈A2 con il veicolo k∈K2
 # x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
@@ -827,7 +849,9 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                         v2, arc[0], arc[1]]
 
 
-# restituisce una lista di tuple [(cliente, veicolo), ...]
+# restituisce una lista di tuple clienteVeicolo: [(cliente, veicolo), ...]
+#
+# rotte: dizionario dei percorsi dei veicoli assegnati ad un satellite
 def getClienteVeicolo(rotte):
     veicoliDiCliente = {}
     clienteVeicolo = []
@@ -842,7 +866,10 @@ def getClienteVeicolo(rotte):
     return clienteVeicolo
 
 
-# restituisce due liste dei clienti precedenti e successivi al nodo
+# restituisce due liste precList e succList rispettivamente dei clienti precedenti e successivi al nodo
+#
+# rotta: lista del percorso di un determinato veicolo
+# nodo: cliente di cui si volgiono trovare i clienti precedenti e successivi
 def trovaPrecSuccList(rotta, nodo):
     precList = []
     succList = []
@@ -870,7 +897,22 @@ def trovaPrecSuccList(rotta, nodo):
             else:
                 return precList, succList
 
-
+# restituisce una soluzione iniziale ammissibile:
+# True/False: True se è stata trovata una soluzione ammissibile, altrimenti False
+# x2: aggiornato se è stata trovata una soluzione ammissibile, altrimenti invariato
+# w2: aggiornato se è stata trovata una soluzione ammissibile, altrimenti invariato
+# rotte: dizionario dei percorsi dei veicoli assegnati ad un satellite
+#
+# s: satellite
+# x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
+# w2: variabile di instradamento, che vale 1 se il veicolo k∈K2 attraversa l’arco (i,j)∈A2, altrimenti 0
+# uk2: numero massimo di pallet che possono essere trasportati dal veicolo k∈K2 nel secondo livello
+# Pgac: l’insieme dei pallet nel container c con destinazione γ
+# PsGa: l’insieme di pallet con destinazione γ∈Γs trasportati al satellite s∈Sneg secondo la soluzione di Prob1
+# K2: l'insieme di PCV (veicoli del secondo livello)
+# A2: insieme di archi che collegano clienti e satelliti tra di loro
+# Gamma: l'insieme di clienti
+# CdiS: L’insieme di container c∈C trasportati verso il satellite s∈Sneg secondo la soluzione di Prob1
 def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     print("\nSTART findSolutionBase()")
 
@@ -899,7 +941,8 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     # dizionario delle rotte per ogni veicolo con relativi pallet:
     # trasportoPalletDiGamma [ k ] = ( gamma1, pallet1) , ( gamma2, pallet2) , ( gamma3, pallet3) ....
     trasportoPalletDiGamma = {}
-    # dizionario della lista ordinata di archi per ogni veicolo: rotte[k]: [(s,i), (i,j), (j,...)]
+    # dizionario della lista ordinata di archi per ogni veicolo:
+    # rotte[k]: [(s,i), (i,j), (j,...)]
     rotte = {}
 
     # pallet totali che partono da s
@@ -990,7 +1033,22 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
         # soluzione non ammissibile
         return False, x2, w2, rotte
 
-
+#
+#
+# heapSMD:
+# smd10:
+# smd11:
+# x2:
+# w2:
+# rotte:
+# s:
+# uk2:
+# Pgac:
+# PsGa:
+# K2:
+# A2:
+# Gamma:
+# CdiS:
 def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     print("\nSTART localSearch()")
     itMAX = len(heapSMD)
@@ -1784,7 +1842,7 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
 
 def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS):
     # creazione cartella
-    print("\nCreazione file.")
+    print("\nOutput file.")
 
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
 
