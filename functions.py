@@ -1038,17 +1038,17 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 # heapSMD:
 # smd10:
 # smd11:
-# x2:
-# w2:
-# rotte:
-# s:
-# uk2:
-# Pgac:
-# PsGa:
-# K2:
-# A2:
-# Gamma:
-# CdiS:
+# x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
+# w2: variabile di instradamento, che vale 1 se il veicolo k∈K2 attraversa l’arco (i,j)∈A2, altrimenti 0
+# rotte: dizionario dei percorsi dei veicoli assegnati ad un satellite
+# s: satellite
+# uk2: numero massimo di pallet che possono essere trasportati dal veicolo k∈K2 nel secondo livello
+# Pgac: l’insieme dei pallet nel container c con destinazione γ
+# PsGa: l’insieme di pallet con destinazione γ∈Γs trasportati al satellite s∈Sneg secondo la soluzione di Prob1
+# K2: l'insieme di PCV (veicoli del secondo livello)
+# A2: insieme di archi che collegano clienti e satelliti tra di loro
+# Gamma: l'insieme di clienti
+# CdiS: L’insieme di container c∈C trasportati verso il satellite s∈Sneg secondo la soluzione di Prob1
 def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     print("\nSTART localSearch()")
     itMAX = len(heapSMD)
