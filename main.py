@@ -126,7 +126,7 @@ if __name__ == "__main__":
     myProb = Prob3("2_2_100_0_20")
 
     # iterazioni con diverse soluzioni iniziali
-    itNSIMax = 2
+    itNSIMax = 1
     itNSI = 0
 
     while itNSI < itNSIMax:

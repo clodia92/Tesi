@@ -1943,6 +1943,7 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
                 (arc[1], dictSolutions[s][bestSolutionIndice][1][k, arc[1], arc[0], arc[1]]))
     file.write("\ntrasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
     file.write("\nitMosseLS: {}, itMosseTS: {}".format(itMosseLS, itMosseTS))
+    file.write("\nnumero di soluzioni totali trovati: {}.".format(len(dictSolutions[s])))
     file.write("\ntime elapsed: {:.2f}s.\n\n\n".format(timeElapsed))
 
     file.close()
