@@ -125,8 +125,9 @@ if __name__ == "__main__":
     print("Start Prob3: ")
     myProb = Prob3("2_2_100_0_20")
 
-    # iterazioni con diverse soluzioni iniziali
-    itNSIMax = 1
+    # numero soluzioni iniziali
+    # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
+    itNSIMax = 5
     itNSI = 0
 
     while itNSI < itNSIMax:
