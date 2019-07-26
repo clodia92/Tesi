@@ -5,6 +5,7 @@ from copy import deepcopy
 from random import shuffle
 import pathlib
 
+
 # generate variables for Model Three
 #
 # x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
@@ -183,7 +184,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                                 if succN1[0] != -1:
                                     for gamma in succN1:
                                         smd10[v1, v2, n1, n2, numeroPallet] += (
-                                                    x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2])
+                                                x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2])
                                         smd10[v1, v2, n1, n2, numeroPallet] += (
                                                 x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
                                         smd10[v1, v2, n1, n2, numeroPallet] -= (
@@ -242,17 +243,17 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         # prima di precN2[0]
                         if flag == 0:
                             smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                        x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]])
+                                    x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]])
                         # precN2[0], n2
                         if flag == 1:
                             smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                        x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+                                    x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                             if succN2[0] != -1:
                                 for gamma in succN2:
                                     smd10[v1, v2, n1, n2, numeroPallet] += (
                                             x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
                                     smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                                x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+                                            x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                         # n2, succN2[0]
                         if flag == 2:
                             # rimozione del vecchio arco out n2
@@ -261,7 +262,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v2, precN2[0], succN2[0]]
                             for gamma in succN2:
                                 smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                            x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
+                                        x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
                         # dopo succN2[0] -> non vengono modificati
                     pass
 
@@ -460,18 +461,18 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         # prima di n1
                         if flag == 0:
                             smd10[v1, v2, n1, n2, numeroPallet] += (
-                                        x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
+                                    x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
                         # n1, n2
                         if flag == 1:
                             smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
                             if succN1[0] != -1:
                                 for gamma in succN1:
                                     smd10[v1, v2, n1, n2, numeroPallet] += (
-                                                x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2])
+                                            x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2])
                                     smd10[v1, v2, n1, n2, numeroPallet] += (
-                                                x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
+                                            x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
                                     smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                                x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
+                                            x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
                         # dopo n2 -> non vengono modificati
 
                     # v2
@@ -502,22 +503,22 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         # prima di precN2[0]
                         if flag == 0:
                             smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                        x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]])
+                                    x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]])
                         # precN2[0], n2
                         if flag == 1:
                             smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                        x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+                                    x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                             if succN2[0] != -1:
                                 for gamma in succN2:
                                     smd10[v1, v2, n1, n2, numeroPallet] += (
-                                                x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
+                                            x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
                                     smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                                x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+                                            x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                         # n2, succN2[0]
                         if flag == 2:
                             for gamma in succN2:
                                 smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                            x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
+                                        x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
                         # dopo succN2[0] -> non vengono modificati
 
 
@@ -595,37 +596,37 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                         smd11[v1, v2, n1, n2] -= nik2ij[v1, n2, succN2[0]]
                         smd11[v1, v2, n1, n2] += nik2ij[v1, n1, succN2[0]]
 
-                    flag=0
+                    flag = 0
                     for arc in rotte[v1]:
                         # (precN1, n1)
-                        if arc[0]==precN1[0]:
-                            flag=1
+                        if arc[0] == precN1[0]:
+                            flag = 1
                         # (n1, succN1)
-                        if arc[0]==n1:
-                            flag=2
+                        if arc[0] == n1:
+                            flag = 2
                         # (succN1, ...)
                         if arc[0] == succN1[0]:
-                            flag=3
+                            flag = 3
                         # (precN2, n2)
                         if arc[0] == precN2[0]:
-                            flag=4
+                            flag = 4
                         # (n2, succN2)
                         if arc[0] == n2:
-                            flag=5
+                            flag = 5
                         # (succN2, ...)
                         if arc[0] == succN2[0]:
                             break
 
                         # (precN1, n1)
                         if flag == 1:
-                            for gamma in [n1]+succN1:
+                            for gamma in [n1] + succN1:
                                 smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
                                 smd11[v1, v2, n1, n2] += x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2]
                         # (n1, succN1)
                         if flag == 2:
                             for gamma in succN1:
                                 smd11[v1, v2, n1, n2] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]]
-                                if gamma!=n2:
+                                if gamma != n2:
                                     smd11[v1, v2, n1, n2] += x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]]
                             smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v1, n2, succN1[0]]
                         # (succN1, ...)
@@ -897,6 +898,7 @@ def trovaPrecSuccList(rotta, nodo):
             else:
                 return precList, succList
 
+
 # restituisce una soluzione iniziale ammissibile:
 # True/False: True se è stata trovata una soluzione ammissibile, altrimenti False
 # x2: aggiornato se è stata trovata una soluzione ammissibile, altrimenti invariato
@@ -918,16 +920,17 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 
     # soluzione alternativa
     # Gamma.reverse()
-    #shuffle(Gamma)
-    print("Gamma: ", Gamma)
+    # shuffle(Gamma)
 
     # K2.reverse()
-    #shuffle(K2)
-    print("K2: ", K2)
+    # shuffle(K2)
 
-    # if s==1:
-    #     Gamma = [5, 4, 3, 8, 7, 6]
-    #     K2 = [7, 8]
+    #  if s==1:
+    #     #     Gamma = [5, 4, 3, 8, 7, 6]
+    #     #     K2 = [7, 8]
+
+    print("Gamma: ", Gamma)
+    print("K2: ", K2)
 
     x2TMP = deepcopy(x2)
     w2TMP = deepcopy(w2)
@@ -1006,7 +1009,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
                     rotte[K2[posV]] = [(s, Gamma[posG])]
 
                 palletDaConsegnare -= uk2diS[K2[posV]] - palletTrasportatiDiK2[posV]
-                palletTrasportatiDiK2PosV = palletTrasportatiDiK2[posV] # variabile temporanea
+                palletTrasportatiDiK2PosV = palletTrasportatiDiK2[posV]  # variabile temporanea
                 palletTrasportatiDiK2[posV] += PGa[Gamma[posG]]
                 PGa[Gamma[posG]] -= uk2diS[K2[posV]] - palletTrasportatiDiK2PosV
                 # full
@@ -1032,6 +1035,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     else:
         # soluzione non ammissibile
         return False, x2, w2, rotte
+
 
 # Local Search: ricerca l'ottimo locale tra le soluzioni ammissibili
 # x2: aggiornato se è stata trovata una soluzione ammissibile migliore, altrimenti invariato
@@ -1663,7 +1667,8 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
             # verificare ammissibilità
             if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
                 # print("rotte: {}".format(rotte))
-                print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
+                print(
+                    "localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
                                                                                                       minCostKey, smd11[
                                                                                                           minCostKey]))
                 # soluzione ammissibile trovata
@@ -1751,12 +1756,12 @@ def updateRotteSmd11(rotte, keyLocalSearch):
         else:
             index = rotte[v1].index((precN1[0], n1))
             rotte[v1][index] = (precN1[0], n2)
-            rotte[v1][index+1] = (n2, succN1[0])
+            rotte[v1][index + 1] = (n2, succN1[0])
 
             index = rotte[v1].index((precN2[0], n2))
             rotte[v1][index] = (precN2[0], n1)
             if succN2[0] != -1:
-                rotte[v1][index+1] = (n1, succN2[0])
+                rotte[v1][index + 1] = (n1, succN2[0])
 
     elif n1 != n2:
         # v1
@@ -1808,11 +1813,9 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
     # non è stata trovata una nuova soluzione dopo aver effettuato una volta il tabu search
     else:
         tabuListDiS.append((padreDiAttuale, deepcopy(dictSolutionsDiS[soluzionePrecedente][6][-1])))
-        #padriDiAttuale.clear()
-        #padriDiAttuale = deepcopy(dictSolutionsDiS[padreDiAttuale][4])
-        #padreDiAttuale = padriDiAttuale[-1]
-
-
+        # padriDiAttuale.clear()
+        # padriDiAttuale = deepcopy(dictSolutionsDiS[padreDiAttuale][4])
+        # padreDiAttuale = padriDiAttuale[-1]
 
     # struttura che contiene tutte le mosse con relativi costi
     # dizionari di smd con chiave move point
@@ -1860,21 +1863,84 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
     file.write("s: {}".format(s))
     file.write("\ndictSolutions[{}]:".format(s))
     for solution in dictSolutions[s]:
-        file.write("\n{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution),
+        file.write(
+            "\n{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution),
                                                                                    solution[0], solution[3],
                                                                                    solution[4], solution[5],
                                                                                    solution[6]))
     file.write("\nbestSolutionIndice: {}".format(bestSolutionIndice))
     file.write("\n{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(bestSolutionIndice,
-                                                                                      dictSolutions[s][bestSolutionIndice][0], dictSolutions[s][bestSolutionIndice][3],
-                                                                                      dictSolutions[s][bestSolutionIndice][4], dictSolutions[s][bestSolutionIndice][5],
-                                                                                      dictSolutions[s][bestSolutionIndice][6]))
+                                                                                      dictSolutions[s][
+                                                                                          bestSolutionIndice][0],
+                                                                                      dictSolutions[s][
+                                                                                          bestSolutionIndice][3],
+                                                                                      dictSolutions[s][
+                                                                                          bestSolutionIndice][4],
+                                                                                      dictSolutions[s][
+                                                                                          bestSolutionIndice][5],
+                                                                                      dictSolutions[s][
+                                                                                          bestSolutionIndice][6]))
     # pallet
     trasportoPalletDiGamma = {}
     for k in dictSolutions[s][bestSolutionIndice][3]:
         trasportoPalletDiGamma[k] = []
         for arc in dictSolutions[s][bestSolutionIndice][3][k]:
-            trasportoPalletDiGamma[k].append((arc[1], dictSolutions[s][bestSolutionIndice][1][k, arc[1], arc[0], arc[1]]))
+            trasportoPalletDiGamma[k].append(
+                (arc[1], dictSolutions[s][bestSolutionIndice][1][k, arc[1], arc[0], arc[1]]))
+    file.write("\ntrasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
+    file.write("\nitMosseLS: {}, itMosseTS: {}".format(itMosseLS, itMosseTS))
+    file.write("\ntime elapsed: {:.2f}s.\n\n\n".format(timeElapsed))
+
+    file.close()
+
+
+def writeOutput0Best(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS):
+    # creazione cartella
+    print("\nOutput file.")
+
+    pathlib.Path('output').mkdir(parents=True, exist_ok=True)
+
+    filename = pathlib.Path("output/" + nomeFileInput + "_0best")
+    # per creare file con numero che va ad aumentare:
+    # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
+
+    filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
+
+    file = open(filename, 'a')
+    file.write("s: {}".format(s))
+
+    # scrittura file dizionario di tutte le soluzioni ammissibili trovate
+    # file.write("\ndictSolutions[{}]:".format(s))
+    # for solution in dictSolutions[s]:
+    #     file.write("\n{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution),
+    #                                                                                solution[0], solution[3],
+    #                                                                                solution[4], solution[5],
+    #                                                                                solution[6]))
+
+    # scrittura file soluzione iniziale
+    file.write("\nsoluzione iniziale: {}".format(0))
+    file.write(
+        "\n{} -> \ncosto: {}, \nrotte: {}".format(0, dictSolutions[s][0][0], dictSolutions[s][0][3]))
+    # pallet
+    trasportoPalletDiGamma = {}
+    for k in dictSolutions[s][0][3]:
+        trasportoPalletDiGamma[k] = []
+        for arc in dictSolutions[s][0][3][k]:
+            trasportoPalletDiGamma[k].append(
+                (arc[1], dictSolutions[s][0][1][k, arc[1], arc[0], arc[1]]))
+    file.write("\ntrasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
+
+    # scrittura file soluzione finale
+    file.write("\nbestSolutionIndice: {}".format(bestSolutionIndice))
+    file.write("\n{} -> \ncosto: {}, \nrotte: {}".format(bestSolutionIndice, dictSolutions[s][bestSolutionIndice][0],
+                                                         dictSolutions[s][bestSolutionIndice][3]))
+    # pallet
+    trasportoPalletDiGamma = {}
+    for k in dictSolutions[s][bestSolutionIndice][3]:
+        trasportoPalletDiGamma[k] = []
+        for arc in dictSolutions[s][bestSolutionIndice][3][k]:
+            trasportoPalletDiGamma[k].append(
+                (arc[1], dictSolutions[s][bestSolutionIndice][1][k, arc[1], arc[0], arc[1]]))
     file.write("\ntrasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
     file.write("\nitMosseLS: {}, itMosseTS: {}".format(itMosseLS, itMosseTS))
     file.write("\ntime elapsed: {:.2f}s.\n\n\n".format(timeElapsed))
