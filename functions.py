@@ -920,10 +920,10 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 
     # soluzione alternativa
     # Gamma.reverse()
-    # shuffle(Gamma)
+    shuffle(Gamma)
 
     # K2.reverse()
-    # shuffle(K2)
+    shuffle(K2)
 
     #  if s==1:
     #     #     Gamma = [5, 4, 3, 8, 7, 6]
@@ -1894,13 +1894,13 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
     file.close()
 
 
-def writeOutput0Best(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS):
+def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS):
     # creazione cartella
-    print("\nOutput file.")
+    print("\nOutput file: start - best.")
 
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
 
-    filename = pathlib.Path("output/" + nomeFileInput + "_0best")
+    filename = pathlib.Path("output/" + nomeFileInput + "_StartBest")
     # per creare file con numero che va ad aumentare:
     # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
 

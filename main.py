@@ -125,224 +125,256 @@ if __name__ == "__main__":
     print("Start Prob3: ")
     myProb = Prob3("2_2_100_0_20")
 
-    # dizionario delle soluzioni per ogni satellite
-    dictSolutions = {}
+    # iterazioni con diverse soluzioni iniziali
+    itNSIMax = 2
+    itNSI = 0
 
-    # dizionario delle soluzioni tabu
-    tabuList = {}
+    while itNSI < itNSIMax:
+        # incremento contatore
+        itNSI += 1
 
-    # ogni rotta viene calcolata per ogni satellite separatamente
-    for s in myProb.Sneg:
-        print("\n\n\nSTART satellite: {}".format(s))
-        start_time = time.time()
+        ### scrittura file stacco per ogni soluzione diversa
 
-        # lista delle soluzioni trovate: (cost, x2, w2, rotte, padri, figli, mossaDiArrivo)
-        # padri: lista di indici alle soluzioni di partenza in solutions
-        # figli: lista di indici alle soluzioni ricavate in solutions
-        # mossaDiArrivo: mossa che ha portato all'attuale soluzione
-        dictSolutions[s] = []
+        pathlib.Path('output').mkdir(parents=True, exist_ok=True)
 
-        # tabu list per ogni satellite. Vengono riportati l'indice della soluzione e la mossa che l'ha determinata
-        tabuList[s] = []
+        filename = pathlib.Path("output/" + myProb.nomeFile)
 
-        # generate variables for Model Three
-        generateVariablesModelThree(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, s)
+        filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
-        # trova una soluzione di base ammissibile
-        resultSolutionBase, myProb.x2, myProb.w2, rotte = findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2,
-                                                                           myProb.Pgac, myProb.PsGa, myProb.K2diS[s],
-                                                                           myProb.A2, myProb.GammadiS[s], myProb.CdiS)
-        # variabile che contiene il costo della soluzione appena trovata
-        cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij,
-                           s)
-        # variabile che contiente il costo della nuova soluzione (inizialmente maggiore di cost)
-        costNew = cost + 1
+        file = open(filename, 'a')
+        file.write("##########################################################################################")
+        file.close()
 
-        # dizionari per ogni tipo di mossa che contengono tutte le mosse con relativi costi
-        smd10 = {}  # 1-0 Exchange: chiave: [v1, v2, n1, n2, p]
-        smd11 = {}  # 1-1 Exchange: chiave: [v1, v2, n1, n2]
+        pathlib.Path('output').mkdir(parents=True, exist_ok=True)
 
-        # inizializzazione della bestSolution (soluzione iniziale)
-        bestSolutionIndice = 0
+        filename = pathlib.Path("output/" + myProb.nomeFile + "_StartBest")
 
-        # se è stata trovata una soluzione iniziale
-        if resultSolutionBase:
-            print("Soluzione di base trovata, costo: {}.".format(cost))
-            # lista dei padri della soluzione
-            padri = [-1]
-            # aggiungo la soluzione alle soluzioni
-            dictSolutions[s].append((cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [], [-1]))
-            # aggiornamento di padri
-            padri = [len(dictSolutions[s]) - 1]
-            # indice della soluzione attuale che genera un figlio con il local search
-            soluzionePrecedente = 0
+        filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
-            # vengono inizializzati gli SMD
-            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
-            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
-            # crea la lista unica dei costi in cui verrà salvato l'heap
-            # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
-            heapSMD = list(smd10.values()) + list(smd11.values())
-            # crea l'heap di smd10 e smd11
-            heapq.heapify(heapSMD)
+        file = open(filename, 'a')
+        file.write("##########################################################################################")
+        file.close()
+        ### scrittura file stacco per ogni soluzione diversa
+        print("##########################################################################################")
 
-            # contatore di mosse effettuate nel localSearch e nel tabuSearch
-            itMosseLS = 0
-            itMosseTS = 0
+        # dizionario delle soluzioni per ogni satellite
+        dictSolutions = {}
 
-            # chiave della mossa precedente
-            oldKeyLocalSearch = -1
+        # dizionario delle soluzioni tabu
+        tabuList = {}
 
-            # iterazioni continuano finché non si presentano determinate condizioni
-            # (esplorazione completa tramite Tabu Search, numero di iterazioni limitate, ecc)
-            while True:
-                # parte il LocalSearch
-                x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11, deepcopy(myProb.x2),
-                                                                           deepcopy(myProb.w2),
-                                                                           rotte, s, myProb.uk2,
-                                                                           myProb.Pgac, myProb.PsGa, myProb.K2diS[s],
-                                                                           myProb.A2,
-                                                                           myProb.GammadiS[s], myProb.CdiS)
-                # aggiornamento del costo
-                costNew = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
-                                      myProb.ak2ij, s)
+        # ogni rotta viene calcolata per ogni satellite separatamente
+        for s in myProb.Sneg:
+            print("\n\n\nSTART satellite: {}".format(s))
+            start_time = time.time()
 
-                # print("localSearch, key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
+            # lista delle soluzioni trovate: (cost, x2, w2, rotte, padri, figli, mossaDiArrivo)
+            # padri: lista di indici alle soluzioni di partenza in solutions
+            # figli: lista di indici alle soluzioni ricavate in solutions
+            # mossaDiArrivo: mossa che ha portato all'attuale soluzione
+            dictSolutions[s] = []
 
-                # effettua mossa migliorativa
-                if keyLocalSearch != -1 and costNew < cost:
-                    itMosseLS += 1
-                    cost = costNew
+            # tabu list per ogni satellite. Vengono riportati l'indice della soluzione e la mossa che l'ha determinata
+            tabuList[s] = []
 
-                    # aggiornare rotte dopo una mossa ammissibile
-                    # 1-0 Exchange
-                    if len(keyLocalSearch) == 5:
-                        updateRotteSmd10(rotte, keyLocalSearch, flagAllPallets)
-                    # 1-1 Exchange
-                    elif len(keyLocalSearch) == 4:
-                        updateRotteSmd11(rotte, keyLocalSearch)
+            # generate variables for Model Three
+            generateVariablesModelThree(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, s)
 
-                    # aggiornare x2 e w2 dopo una mossa ammissibile
-                    myProb.x2 = deepcopy(x2TMP)
-                    myProb.w2 = deepcopy(w2TMP)
+            # trova una soluzione di base ammissibile
+            resultSolutionBase, myProb.x2, myProb.w2, rotte = findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2,
+                                                                               myProb.Pgac, myProb.PsGa, myProb.K2diS[s],
+                                                                               myProb.A2, myProb.GammadiS[s], myProb.CdiS)
+            # variabile che contiene il costo della soluzione appena trovata
+            cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij,
+                               s)
+            # variabile che contiente il costo della nuova soluzione (inizialmente maggiore di cost)
+            costNew = cost + 1
 
-                    # aggiornare SMD dopo una mossa ammissibile
-                    smd10.clear()
-                    inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
-                    smd11.clear()
-                    inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+            # dizionari per ogni tipo di mossa che contengono tutte le mosse con relativi costi
+            smd10 = {}  # 1-0 Exchange: chiave: [v1, v2, n1, n2, p]
+            smd11 = {}  # 1-1 Exchange: chiave: [v1, v2, n1, n2]
 
-                    print("Soluzione migliore trovata, costo: {}.".format(cost))
-                    # print("rotte: {}".format(rotte))
+            # inizializzazione della bestSolution (soluzione iniziale)
+            bestSolutionIndice = 0
 
-                    listaCosti = [item[0] for item in dictSolutions[s]]
+            # se è stata trovata una soluzione iniziale
+            if resultSolutionBase:
+                print("Soluzione di base trovata, costo: {}.".format(cost))
+                # lista dei padri della soluzione
+                padri = [-1]
+                # aggiungo la soluzione alle soluzioni
+                dictSolutions[s].append((cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [], [-1]))
+                # aggiornamento di padri
+                padri = [len(dictSolutions[s]) - 1]
+                # indice della soluzione attuale che genera un figlio con il local search
+                soluzionePrecedente = 0
 
-                    # se esiste già una soluzione con lo stesso costo
-                    if cost in listaCosti:
-                        indiceSoluzionePresente = listaCosti.index(cost)
+                # vengono inizializzati gli SMD
+                inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+                inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+                # crea la lista unica dei costi in cui verrà salvato l'heap
+                # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
+                heapSMD = list(smd10.values()) + list(smd11.values())
+                # crea l'heap di smd10 e smd11
+                heapq.heapify(heapSMD)
 
-                        # se la rotta è uguale ad una soluzione precedente
-                        if dictSolutions[s][indiceSoluzionePresente][3] == rotte:
-                            # aggiornamento del padre della nuova soluzione
-                            dictSolutions[s][indiceSoluzionePresente][4].append(soluzionePrecedente)
-                            # aggiornamento dei figli del padre della nuova soluzione
-                            dictSolutions[s][soluzionePrecedente][5].append(indiceSoluzionePresente)
-                            # aggiornamento delle mosse di arrivo della nuova soluzione
-                            dictSolutions[s][indiceSoluzionePresente][6].append(keyLocalSearch)
+                # contatore di mosse effettuate nel localSearch e nel tabuSearch
+                itMosseLS = 0
+                itMosseTS = 0
 
-                            soluzionePrecedente = indiceSoluzionePresente
-                            pass
-                        # se la rotta non è uguale ad una soluzione precedente
+                # chiave della mossa precedente
+                oldKeyLocalSearch = -1
+
+                # iterazioni continuano finché non si presentano determinate condizioni
+                # (esplorazione completa tramite Tabu Search, numero di iterazioni limitate, ecc)
+                while True:
+                    # parte il LocalSearch
+                    x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11, deepcopy(myProb.x2),
+                                                                               deepcopy(myProb.w2),
+                                                                               rotte, s, myProb.uk2,
+                                                                               myProb.Pgac, myProb.PsGa, myProb.K2diS[s],
+                                                                               myProb.A2,
+                                                                               myProb.GammadiS[s], myProb.CdiS)
+                    # aggiornamento del costo
+                    costNew = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
+                                          myProb.ak2ij, s)
+
+                    # print("localSearch, key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
+
+                    # effettua mossa migliorativa
+                    if keyLocalSearch != -1 and costNew < cost:
+                        itMosseLS += 1
+                        cost = costNew
+
+                        # aggiornare rotte dopo una mossa ammissibile
+                        # 1-0 Exchange
+                        if len(keyLocalSearch) == 5:
+                            updateRotteSmd10(rotte, keyLocalSearch, flagAllPallets)
+                        # 1-1 Exchange
+                        elif len(keyLocalSearch) == 4:
+                            updateRotteSmd11(rotte, keyLocalSearch)
+
+                        # aggiornare x2 e w2 dopo una mossa ammissibile
+                        myProb.x2 = deepcopy(x2TMP)
+                        myProb.w2 = deepcopy(w2TMP)
+
+                        # aggiornare SMD dopo una mossa ammissibile
+                        smd10.clear()
+                        inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+                        smd11.clear()
+                        inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+
+                        print("Soluzione migliore trovata, costo: {}.".format(cost))
+                        # print("rotte: {}".format(rotte))
+
+                        listaCosti = [item[0] for item in dictSolutions[s]]
+
+                        # se esiste già una soluzione con lo stesso costo
+                        if cost in listaCosti:
+                            indiceSoluzionePresente = listaCosti.index(cost)
+
+                            # se la rotta è uguale ad una soluzione precedente
+                            if dictSolutions[s][indiceSoluzionePresente][3] == rotte:
+                                # aggiornamento del padre della nuova soluzione
+                                dictSolutions[s][indiceSoluzionePresente][4].append(soluzionePrecedente)
+                                # aggiornamento dei figli del padre della nuova soluzione
+                                dictSolutions[s][soluzionePrecedente][5].append(indiceSoluzionePresente)
+                                # aggiornamento delle mosse di arrivo della nuova soluzione
+                                dictSolutions[s][indiceSoluzionePresente][6].append(keyLocalSearch)
+
+                                soluzionePrecedente = indiceSoluzionePresente
+                                pass
+                            # se la rotta non è uguale ad una soluzione precedente
+                            else:
+                                # aggiunta di una nuova soluzione
+                                dictSolutions[s].append(
+                                    [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), deepcopy(padri), [],
+                                     [keyLocalSearch]])
+                                for padreSingolo in padri:
+                                    dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
+                                padri = [len(dictSolutions[s]) - 1]
+
+                                soluzionePrecedente = len(dictSolutions[s]) - 1
+                        # non esiste una soluzione con lo stesso costo
                         else:
                             # aggiunta di una nuova soluzione
                             dictSolutions[s].append(
-                                [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), deepcopy(padri), [],
+                                [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), [soluzionePrecedente], [],
                                  [keyLocalSearch]])
                             for padreSingolo in padri:
                                 dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
                             padri = [len(dictSolutions[s]) - 1]
 
                             soluzionePrecedente = len(dictSolutions[s]) - 1
-                    # non esiste una soluzione con lo stesso costo
-                    else:
-                        # aggiunta di una nuova soluzione
-                        dictSolutions[s].append(
-                            [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), [soluzionePrecedente], [],
-                             [keyLocalSearch]])
-                        for padreSingolo in padri:
-                            dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
-                        padri = [len(dictSolutions[s]) - 1]
 
-                        soluzionePrecedente = len(dictSolutions[s]) - 1
+                        # eliminare le mosse tabu dagli SMD
+                        for mossaTabu in tabuList[s]:
+                            # print("mossaTabu deleted: ", mossaTabu)
+                            if mossaTabu[0] == soluzionePrecedente:
+                                # 1-0 Exchange
+                                if len(mossaTabu[1]) == 5:
+                                    del smd10[mossaTabu[1]]
+                                # 1-1 Exchange
+                                elif len(mossaTabu[1]) == 4:
+                                    del smd11[mossaTabu[1]]
 
-                    # eliminare le mosse tabu dagli SMD
-                    for mossaTabu in tabuList[s]:
-                        # print("mossaTabu deleted: ", mossaTabu)
-                        if mossaTabu[0] == soluzionePrecedente:
-                            # 1-0 Exchange
-                            if len(mossaTabu[1]) == 5:
-                                del smd10[mossaTabu[1]]
-                            # 1-1 Exchange
-                            elif len(mossaTabu[1]) == 4:
-                                del smd11[mossaTabu[1]]
+                        # crea la lista unica dei costi in cui verrà salvato l'heap
+                        heapSMD = list(smd10.values()) + list(smd11.values())
+                        # crea l'heap di smd10 e di smd11
+                        heapq.heapify(heapSMD)
 
-                    # crea la lista unica dei costi in cui verrà salvato l'heap
-                    heapSMD = list(smd10.values()) + list(smd11.values())
-                    # crea l'heap di smd10 e di smd11
-                    heapq.heapify(heapSMD)
+                        oldKeyLocalSearch = keyLocalSearch
+                    # non esiste mossa migliorativa
+                    elif keyLocalSearch == -1 and costNew == cost:
+                        # utilizzare itMosse come termine del ciclo?
+                        # se non è stata raggiunta nuovamente la soluzione iniziale (non è possibile applicare il Tabu Search)
+                        if dictSolutions[s][soluzionePrecedente][4] != [-1]:
+                            print("Soluzione minimo locale trovata, itMosseLS: {}, costo: {}.".format(itMosseLS, cost))
+                            # print("rotte: {}".format(rotte))
 
-                    oldKeyLocalSearch = keyLocalSearch
-                # non esiste mossa migliorativa
-                elif keyLocalSearch == -1 and costNew == cost:
-                    # utilizzare itMosse come termine del ciclo?
-                    # se non è stata raggiunta nuovamente la soluzione iniziale (non è possibile applicare il Tabu Search)
-                    if dictSolutions[s][soluzionePrecedente][4] != [-1]:
-                        print("Soluzione minimo locale trovata, itMosseLS: {}, costo: {}.".format(itMosseLS, cost))
-                        # print("rotte: {}".format(rotte))
+                            # print("dictSolutions[{}]:".format(s))
+                            # for solution in dictSolutions[s]:
+                            #    print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution), solution[0], solution[3],
+                            #                                                              solution[4], solution[5], solution[6]))
 
-                        # print("dictSolutions[{}]:".format(s))
-                        # for solution in dictSolutions[s]:
-                        #    print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution), solution[0], solution[3],
-                        #                                                              solution[4], solution[5], solution[6]))
+                            # aggiornamento della bestSolution finora trovata
+                            if costNew < dictSolutions[s][bestSolutionIndice][0]:
+                                bestSolutionIndice = len(dictSolutions[s]) - 1
+                                print("bestSolution:\ncosto: {}, rotte: {}".format(dictSolutions[s][bestSolutionIndice][0],
+                                                                                   dictSolutions[s][bestSolutionIndice][3]))
 
-                        # aggiornamento della bestSolution finora trovata
-                        if costNew < dictSolutions[s][bestSolutionIndice][0]:
-                            bestSolutionIndice = len(dictSolutions[s]) - 1
-                            print("bestSolution:\ncosto: {}, rotte: {}".format(dictSolutions[s][bestSolutionIndice][0],
-                                                                               dictSolutions[s][bestSolutionIndice][3]))
+                            # applica Tabu Search
+                            heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, soluzionePrecedente, padri = tabuSearch(
+                                dictSolutions[s], soluzionePrecedente, tabuList[s], oldKeyLocalSearch, myProb.nik2ij,
+                                myProb.ak2ij, s)
+                            oldKeyLocalSearch = -1
+                            itMosseTS += 1
 
-                        # applica Tabu Search
-                        heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, soluzionePrecedente, padri = tabuSearch(
-                            dictSolutions[s], soluzionePrecedente, tabuList[s], oldKeyLocalSearch, myProb.nik2ij,
-                            myProb.ak2ij, s)
-                        oldKeyLocalSearch = -1
-                        itMosseTS += 1
+                        # condizione di uscita
+                        else:
+                            print("dictSolutions[{}]:".format(s))
+                            for solution in dictSolutions[s]:
+                                print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(
+                                    dictSolutions[s].index(solution), solution[0], solution[3], solution[4], solution[5],
+                                    solution[6]))
 
-                    # condizione di uscita
-                    else:
-                        print("dictSolutions[{}]:".format(s))
-                        for solution in dictSolutions[s]:
-                            print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(
-                                dictSolutions[s].index(solution), solution[0], solution[3], solution[4], solution[5],
-                                solution[6]))
+                            print("\n\n\nLa soluzione migliore trovata, itMosseLS: {}, itMosseTS: {}, costo: {}.".format(
+                                itMosseLS, itMosseTS, dictSolutions[s][bestSolutionIndice][0]))
+                            print("{} -> costo: {}, rotte: {}".format(bestSolutionIndice,
+                                                                      dictSolutions[s][bestSolutionIndice][0],
+                                                                      dictSolutions[s][bestSolutionIndice][3]))
 
-                        print("\n\n\nLa soluzione migliore trovata, itMosseLS: {}, itMosseTS: {}, costo: {}.".format(
-                            itMosseLS, itMosseTS, dictSolutions[s][bestSolutionIndice][0]))
-                        print("{} -> costo: {}, rotte: {}".format(bestSolutionIndice,
-                                                                  dictSolutions[s][bestSolutionIndice][0],
-                                                                  dictSolutions[s][bestSolutionIndice][3]))
+                            timeElapsed = time.time() - start_time
+                            print("time elapsed: {:.2f}s.".format(timeElapsed))
 
-                        timeElapsed = time.time() - start_time
-                        print("time elapsed: {:.2f}s.".format(timeElapsed))
+                            # creazione file output
+                            writeOutput(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS,
+                                        itMosseTS)
+                            writeOutputStartBest(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS,
+                                                 itMosseTS)
 
-                        # creazione file output
-                        writeOutput(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS,
-                                    itMosseTS)
-                        writeOutput0Best(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS,
-                                    itMosseTS)
-
-                        break
-        # se non è stata trovata una soluzione iniziale
-        else:
-            # trovare un'altra soluzione
-            print("Trova un'altra soluzione iniziale.")
+                            break
+            # se non è stata trovata una soluzione iniziale
+            else:
+                # trovare un'altra soluzione
+                print("Trova un'altra soluzione iniziale.")
