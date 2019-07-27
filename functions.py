@@ -1846,10 +1846,10 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
 
     return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale, padriDiAttuale
 
-
+# scrive su file tutte le soluzioni trovate
 def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS):
     # creazione cartella
-    print("\nOutput file.")
+    print("\nOutput file, s: {}.".format(s))
 
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
 
@@ -1893,10 +1893,10 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
 
     file.close()
 
-
+# scrive su file la soluzione iniziale e la best solution
 def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS):
     # creazione cartella
-    print("\nOutput file: start - best.")
+    print("\nOutput file: start - best, s: {}.".format(s))
 
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
 
@@ -1908,14 +1908,6 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
 
     file = open(filename, 'a')
     file.write("s: {}".format(s))
-
-    # scrittura file dizionario di tutte le soluzioni ammissibili trovate
-    # file.write("\ndictSolutions[{}]:".format(s))
-    # for solution in dictSolutions[s]:
-    #     file.write("\n{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution),
-    #                                                                                solution[0], solution[3],
-    #                                                                                solution[4], solution[5],
-    #                                                                                solution[6]))
 
     # scrittura file soluzione iniziale
     file.write("\nsoluzione iniziale: {}".format(0))
@@ -1946,4 +1938,28 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
     file.write("\nnumero di soluzioni totali trovati: {}.".format(len(dictSolutions[s])))
     file.write("\ntime elapsed: {:.2f}s.\n\n\n".format(timeElapsed))
 
+    file.close()
+
+def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSolution):
+    # scrittura su file della bestSolution in assoluto
+    pathlib.Path('output').mkdir(parents=True, exist_ok=True)
+    filename = pathlib.Path("output/" + nomeFileInput + "_StartBest")
+    filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
+
+    file = open(filename, 'a')
+    file.write("##########################################################################################\n")
+    file.write("##########################################################################################\n")
+    file.write("##########################################################################################\n")
+    file.write("Soluzione migliore in assoluto trovata:\n")
+    for s in Sneg:
+        file.write("\ns: {}".format(s))
+        file.write("\ncosto: {}, \nrotte: {}".format(bestSolution[s][0], bestSolution[s][3]))
+        # pallet
+        trasportoPalletDiGamma = {}
+        for k in bestSolution[s][3]:
+            trasportoPalletDiGamma[k] = []
+            for arc in bestSolution[s][3][k]:
+                trasportoPalletDiGamma[k].append(
+                    (arc[1], bestSolution[s][1][k, arc[1], arc[0], arc[1]]))
+        file.write("\ntrasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
     file.close()

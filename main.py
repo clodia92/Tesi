@@ -127,8 +127,13 @@ if __name__ == "__main__":
 
     # numero soluzioni iniziali
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
-    itNSIMax = 5
+    itNSIMax = 2
     itNSI = 0
+
+    # soluzione migliore assoluta trovata
+    bestSolution = {}
+    for s in myProb.Sneg:
+        bestSolution[s] = []
 
     while itNSI < itNSIMax:
         # incremento contatore
@@ -137,23 +142,19 @@ if __name__ == "__main__":
         ### scrittura file stacco per ogni soluzione diversa
 
         pathlib.Path('output').mkdir(parents=True, exist_ok=True)
-
         filename = pathlib.Path("output/" + myProb.nomeFile)
-
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
         file = open(filename, 'a')
-        file.write("##########################################################################################")
+        file.write("##########################################################################################\n")
         file.close()
 
         pathlib.Path('output').mkdir(parents=True, exist_ok=True)
-
         filename = pathlib.Path("output/" + myProb.nomeFile + "_StartBest")
-
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
         file = open(filename, 'a')
-        file.write("##########################################################################################")
+        file.write("##########################################################################################\n")
         file.close()
         ### scrittura file stacco per ogni soluzione diversa
         print("##########################################################################################")
@@ -365,6 +366,12 @@ if __name__ == "__main__":
                                                                       dictSolutions[s][bestSolutionIndice][0],
                                                                       dictSolutions[s][bestSolutionIndice][3]))
 
+                            # se non è stata ancora assegnata un bestSolution (prima iterazione) oppure
+                            # se la nuova soluzione è migliore della bestSolution trovata fino ad allora
+                            if bestSolution[s] == [] or dictSolutions[s][bestSolutionIndice][0] < bestSolution[s][0]:
+                                # aggiornamento della bestSolution assoluta
+                                bestSolution[s] = dictSolutions[s][bestSolutionIndice]
+
                             timeElapsed = time.time() - start_time
                             print("time elapsed: {:.2f}s.".format(timeElapsed))
 
@@ -379,3 +386,6 @@ if __name__ == "__main__":
             else:
                 # trovare un'altra soluzione
                 print("Trova un'altra soluzione iniziale.")
+
+    # scrittura su file della bestSolution in assoluto
+    writeOutputStartBestwriteOutputStartBestAssoluta(myProb.nomeFile, myProb.Sneg, bestSolution)
