@@ -123,11 +123,14 @@ class Prob3:
 if __name__ == "__main__":
 
     print("Start Prob3: ")
-    myProb = Prob3("2_4_100_0_15_capacita3")
+    myProb = Prob3("2_2_100_0_20")
 
-    # numero soluzioni iniziali
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
     itNSIMax = 2
+    # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
+    itMosseTSMax = 2
+
+    # contatore numero soluzioni iniziali
     itNSI = 0
 
     # soluzione migliore assoluta trovata
@@ -328,9 +331,8 @@ if __name__ == "__main__":
                         oldKeyLocalSearch = keyLocalSearch
                     # non esiste mossa migliorativa
                     elif keyLocalSearch == -1 and costNew == cost:
-                        # utilizzare itMosse come termine del ciclo?
                         # se non è stata raggiunta nuovamente la soluzione iniziale (non è possibile applicare il Tabu Search)
-                        if dictSolutions[s][soluzionePrecedente][4] != [-1]:
+                        if dictSolutions[s][soluzionePrecedente][4] != [-1] and itMosseTS < itMosseTSMax:
                             print("Soluzione minimo locale trovata, itMosseLS: {}, costo: {}.".format(itMosseLS, cost))
                             # print("rotte: {}".format(rotte))
 

@@ -1062,8 +1062,8 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
     itMAX = len(heapSMD)
     itNonAmmissibili = 0
 
-    x2TMP = deepcopy(x2)
-    w2TMP = deepcopy(w2)
+    # x2TMP = deepcopy(x2)
+    # w2TMP = deepcopy(w2)
 
     while heapSMD[0] < 0 and itNonAmmissibili < itMAX:
 
@@ -1679,7 +1679,11 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
     return x2, w2, -1, False
 
 
-# aggiorna le rotte
+# aggiorna le rotte secondo la mossa effettuata (Exchange 1-0)
+#
+# rotte: dizionario dei percorsi dei veicoli assegnati ad un satellite
+# keyLocalSearch: mossa che viene effettuata dal Local Search
+# flagAllPallets: in caso di Exchange 1-0, True se vengono spostati tutti i pallet del cliente, altrimenti False
 def updateRotteSmd10(rotte, keyLocalSearch, flagAllPallets):
     v1 = keyLocalSearch[0]
     v2 = keyLocalSearch[1]
@@ -1735,6 +1739,10 @@ def updateRotteSmd10(rotte, keyLocalSearch, flagAllPallets):
                 rotte[v2][index] = (precN2[0], succN2[0])
 
 
+# aggiorna le rotte secondo la mossa effettuata (Exchange 1-1)
+#
+# rotte: dizionario dei percorsi dei veicoli assegnati ad un satellite
+# keyLocalSearch: mossa che viene effettuata dal Local Search
 def updateRotteSmd11(rotte, keyLocalSearch):
     v1 = keyLocalSearch[0]
     v2 = keyLocalSearch[1]
@@ -1797,25 +1805,43 @@ def updateRotteSmd11(rotte, keyLocalSearch):
         pass
 
 
+# Tabu Search: risale al nodo padre e aggiunge alla tabu list la mossa appena effettuata
+# heapSMD: lista unica dei costi che contiene la variazione della funzione obiettivo in base alle mosse applicate
+# smd10: dizionario che contiene la mossa con relativa variazione di costo (1-0 Exchange)
+# smd11: dizionario che contiene la mossa con relativa variazione di costo (1-1 Exchange)
+# x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
+# w2: variabile di instradamento, che vale 1 se il veicolo k∈K2 attraversa l’arco (i,j)∈A2, altrimenti 0
+# rotte: dizionario dei percorsi dei veicoli assegnati ad un satellite
+# cost: costo della soluzione
+# padreDiAttuale: l'ultimo padre di soluzionePrecedente
+# padriDiAttuale: tutti i padri di soluzionePrecedente
+#
+# dictSolutionsDiS: lista di soluzioni del satellite s
+# soluzionePrecedente: indice della soluzione da cui non si possono effettuare altre mosse migliorative, quindi si risale verso il padre
+# tabuListDiS: tabu list del satellite s
+# oldKeyLocalSearch: chiave della mossa appena effettuata
+# nik2ij: costo di instradamento del veicolo k∈K2 che attraversa l’arco (i,j)∈A2 nel secondo livello.
+# ak2ij: costo di trasporto del pallet con destinazione γ∈Γ che attraversa l’arco (i,j)∈A2 con il veicolo k∈K2
+# s: satellite
 def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSearch, nik2ij, ak2ij, s):
     print("\nSTART tabuSearch()")
+    # prende i padri di soluzionePrecedente
     padriDiAttuale = deepcopy(dictSolutionsDiS[soluzionePrecedente][4])
     padreDiAttuale = padriDiAttuale[-1]
 
+    # prende i valori del padre per poter salire ad esso
     cost = deepcopy(dictSolutionsDiS[padreDiAttuale][0])
     x2 = deepcopy(dictSolutionsDiS[padreDiAttuale][1])
     w2 = deepcopy(dictSolutionsDiS[padreDiAttuale][2])
     rotte = deepcopy(dictSolutionsDiS[padreDiAttuale][3])
 
+    # aggiornamento della Tabu list
+    # se è stata trovata una nuova soluzione dopo aver effettuato una volta il tabu search
     if oldKeyLocalSearch != -1:
-        # aggiornamento della Tabu list
         tabuListDiS.append((padreDiAttuale, deepcopy(oldKeyLocalSearch)))
     # non è stata trovata una nuova soluzione dopo aver effettuato una volta il tabu search
     else:
         tabuListDiS.append((padreDiAttuale, deepcopy(dictSolutionsDiS[soluzionePrecedente][6][-1])))
-        # padriDiAttuale.clear()
-        # padriDiAttuale = deepcopy(dictSolutionsDiS[padreDiAttuale][4])
-        # padreDiAttuale = padriDiAttuale[-1]
 
     # struttura che contiene tutte le mosse con relativi costi
     # dizionari di smd con chiave move point
