@@ -1051,7 +1051,10 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
         return False, x2, w2, rotte
 
 
-# Local Search: ricerca l'ottimo locale tra le soluzioni ammissibili
+# Local Search: ricerca l'ottimo locale tra le soluzioni ammissibili.
+# In caso in cui un cliente viene spostato in una rotta in cui lo stesso cliente è già presente per il trasporto di
+# almeno un pallet, la richiesta viene unificata senza modificare la posizione del cliente ma viene modificata solo la
+# quantità di pallet trasportati.
 # x2: aggiornato se è stata trovata una soluzione ammissibile migliore, altrimenti invariato
 # w2: aggiornato se è stata trovata una soluzione ammissibile migliore, altrimenti invariato
 # minCostKey: chiave dell'smd che identifica la mossa che porta alla soluzione migliore, altrimenti restituisce -1 se è stato raggiunto un minimo locale
@@ -1115,24 +1118,26 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                 # modificare x2TMP e w2TMP
 
                 # se viene trattato un cliente splittato sulle rotte v1 e v2
-                #
                 if n2 in [c[1] for c in rotte[v1]] and v1 != v2 and n1 != n2:
                     # v1
                     for arc in rotte[v1]:
-                        if arc[0] == n1:
+                        # n2, succN2[0]
+                        if arc[0] == n2:
                             break
+                        # prima di precN2[0]
                         x2TMP[v1, n2, arc[0], arc[1]] += numeroPallet
 
                     # v2
+                    # tutti i pallet vengono spostati e l'arco viene eliminato in v2
                     if numeroPallet == numeroTotPallet:
                         w2TMP[v2, precN2[0], n2] = 0
                     # prima di precN2[0]
                     flag = 0
                     for arc in rotte[v2]:
-                        # precN2[0] - n2
+                        # precN2[0], n2
                         if arc[1] == n2:
                             flag = 1
-                        # n2 - succN2[0]
+                        # n2, succN2[0]
                         if arc[0] == n2:
                             flag = 2
                         # dopo succN2[0]
@@ -1142,11 +1147,11 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                         # prima di precN2[0]
                         if flag == 0:
                             x2TMP[v2, n2, arc[0], arc[1]] -= numeroPallet
-                        # precN2[0] - n2
+                        # precN2[0], n2
                         if flag == 1:
                             x2TMP[v2, n2, arc[0], arc[1]] -= numeroPallet
 
-                        # n2 - succN2[0]
+                        # n2, succN2[0]
                         if flag == 2:
                             if numeroPallet == numeroTotPallet:
                                 w2TMP[v2, n2, succN2[0]] = 0
@@ -1167,6 +1172,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                         w2TMP[v1, precN2[0], n1] = 1
                         w2TMP[v1, n1, n2] = 1
 
+                        # se n1 ha successori
                         if succN1[0] != -1:
                             w2TMP[v1, n1, succN1[0]] = 0
                             w2TMP[v1, n2, succN1[0]] = 1
@@ -1174,20 +1180,26 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                         # ak2ij
                         flag = 0
                         for arc in rotte[v1]:
+                            # precN2[0],...
                             if arc[0] == precN2[0]:
                                 flag = 1
+                            # n2. succN2[0]
                             if arc[0] == n2:
                                 flag = 2
+                            # n1, succeN1[0]
                             if arc[0] == n1:
                                 flag = 3
 
+                            # precN2[0],...
                             if flag == 1:
                                 for gamma in [n2] + succN2:
                                     x2TMP[v1, gamma, precN2[0], n2] = 0
                                     x2TMP[v1, gamma, precN2[0], n1] = x2[v1, gamma, precN2[0], n2]
+                            # n2. succN2[0]
                             if flag == 2:
                                 for gamma in succN2:
                                     x2TMP[v1, gamma, n2, n1] = 0
+                            # n1, succeN1[0]
                             if flag == 3:
                                 for gamma in succN1:
                                     x2TMP[v1, gamma, n1, succN1[0]] = 0
@@ -1346,7 +1358,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                     # rimozione del vecchio arco in n2
                     w2TMP[v2, precN2[0], n2] = 0
 
-                    # ak2ijsuccN2
+                    # ak2ij
                     # prima di precN2[0]
                     flag = 0
                     for arc in rotte[v2]:
@@ -1383,8 +1395,11 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                         itNonAmmissibili, minCostKey, smd10[minCostKey]))
                     # soluzione ammissibile trovata
                     if numeroTotPallet == numeroPallet:
+                        # tutti i pallet spostati in v1
                         return x2TMP, w2TMP, minCostKey, True
-                    return x2TMP, w2TMP, minCostKey, False
+                    else:
+                        # non tutti i pallet spostati in v1
+                        return x2TMP, w2TMP, minCostKey, False
 
         # 1-1 Exchange
         elif len(minCostKey) == 4:
