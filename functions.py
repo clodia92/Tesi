@@ -73,6 +73,7 @@ def assignx2w2(x2, w2, trasportoPalletDiGamma, rotte):
 # Gamma: l'insieme di clienti
 # CdiS: L’insieme di container c∈C trasportati verso il satellite s∈Sneg secondo la soluzione di Prob1
 def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
+    # chiama le funzioni dei singoli vincoli
     vincolo29 = BuildConstr29(Gamma, x2, K2, PsGa, sat)
     vincolo30 = BuildConstr30(Gamma, x2, K2, Pgac, CdiS, sat)
     vincolo31 = BuildConstr31(Gamma, K2, x2, sat)
@@ -90,6 +91,9 @@ def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, Cd
 # inizializzazione del smd10
 # 1-0 Exchange
 # p pallet del cliente n2 della rotta v2 vengono spostati dopo il cliente n1 della rotta v1
+# In caso in cui un cliente viene spostato in una rotta in cui lo stesso cliente è già presente per il trasporto di
+# almeno un pallet, la richiesta viene unificata senza modificare la posizione del cliente ma viene modificata solo la
+# quantità di pallet trasportati
 #
 # smd10: dizionario che contiene la mossa con relativa variazione di costo
 # rotte: rotta a cui vengono applicate le mosse
@@ -108,16 +112,17 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
             for n2, v2 in clienteVeicolo:
                 # v1 = veicolo di destinazione di n1
                 # v2 = veicolo di partenza di n2
-                # n1 = nodo dietro al quale viene spostato n2
-                # n2 = nodo da spostare dietro n1
+                # n1 = nodo dopo al quale viene spostato n2
+                # n2 = nodo da spostare dopo n1
 
                 # lista dei nodi precedenti e dei nodi successivi
                 precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
                 precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
+                # split: per ogni quantità di pallet possibile da spostare
+                # (viene spostata solo una parte dei pallet per motivi di capienza)
                 for numeroPallet in range(1, x2[v2, n2, precN2[0], n2]):
                     # se viene trattato un cliente splittato sulle rotte v1 e v2
-                    #
                     if (n2 in [c[1] for c in rotte[v1]]) and v1 != v2 and n2 != n1:
                         # viene creata la chiave
                         smd10[v1, v2, n1, n2, numeroPallet] = 0
@@ -128,9 +133,10 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 
                         # ak2ij
                         for arc in rotte[v1]:
-                            #
+                            # n2, succN2[0]
                             if arc[0] == n2:
                                 break
+                            # prima di precN2[0]
                             smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, arc[0], arc[1]])
 
                         # v2
@@ -138,12 +144,12 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 
                         # ak2ij modifica costi sui precedenti di n2
                         for arc in rotte[v2]:
-                            # n2,succN2[0]
+                            # n2, succN2[0]
                             if arc[0] == n2:
                                 break
-
                             # prima di precN2[0]
                             smd10[v1, v2, n1, n2, numeroPallet] -= (numeroPallet * ak2ij[v2, arc[0], arc[1]])
+
                     # l'arco non deve esistere nella soluzione attuale
                     # un veicolo non puo' essere spostato dietro se stesso
                     elif v1 != v2 and n2 != n1:
@@ -204,7 +210,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             smd10[v1, v2, n1, n2, numeroPallet] -= (numeroPallet * ak2ij[v2, arc[0], arc[1]])
                             # dopo N2 -> non vengono modificati
 
-                ######### Senza split
+                # Senza split (vengono spostati tutti i pallet del cliente)
                 numeroPallet = x2[v2, n2, precN2[0], n2]
 
                 # se viene trattato un cliente splittato sulle rotte v1 e v2
@@ -219,9 +225,10 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 
                     # ak2ij
                     for arc in rotte[v1]:
-                        #
+                        # n2, succN2[0]
                         if arc[0] == n2:
                             break
+                        # prima di precN2[0]
                         smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
 
                     # v2
@@ -264,7 +271,6 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                                 smd10[v1, v2, n1, n2, numeroPallet] -= (
                                         x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
                         # dopo succN2[0] -> non vengono modificati
-                    pass
 
                 # se n1 e n2 sono sullo stesso veicolo
                 elif v1 == v2 and ((n1, n2) not in rotte[v1]):
@@ -279,29 +285,37 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, precN2[0], n1]
                         smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
 
+                        # se n1 ha successori
                         if succN1[0] != -1:
                             smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
                             smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
 
                         # ak2ij
                         flag = 0
+                        # scorrimento della rotta con calcolo della variazione del costo a seconda dell'arco considerato
                         for arc in rotte[v1]:
+                            # precN2[0], ...
                             if arc[0] == precN2[0]:
                                 flag = 1
+                            # n2, succN2[0]
                             if arc[0] == n2:
                                 flag = 2
+                            # n1, succN1[0]
                             if arc[0] == n1:
                                 flag = 3
 
+                            # precN2[0], ...
                             if flag == 1:
                                 for gamma in [n2] + succN2:
                                     smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, precN2[0], n2] * ak2ij[
                                         v1, precN2[0], n2]
                                     smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, precN2[0], n2] * ak2ij[
                                         v1, precN2[0], n1]
+                            # n2, succN2[0]
                             if flag == 2:
                                 for gamma in succN2:
                                     smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n2, n1] * ak2ij[v1, n2, n1]
+                            # n1, succN1[0]
                             if flag == 3:
                                 for gamma in succN1:
                                     smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
@@ -312,6 +326,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                                         v1, n2, succN1[0]]
                                 break
                         smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
+
                     # se n2 in succN1
                     elif n2 in succN1 and ((n1, n2) not in rotte[v1]):
                         # viene creata la chiave
@@ -460,8 +475,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 
                         # prima di n1
                         if flag == 0:
-                            smd10[v1, v2, n1, n2, numeroPallet] += (
-                                    x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
+                            smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
                         # n1, n2
                         if flag == 1:
                             smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
@@ -486,7 +500,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                     # rimozione del vecchio arco in n2
                     smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v2, precN2[0], n2]
 
-                    # ak2ijsuccN2
+                    # ak2ij
                     # prima di precN2[0]
                     flag = 0
                     for arc in rotte[v2]:
