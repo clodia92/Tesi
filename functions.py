@@ -1846,7 +1846,15 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
 
     return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale, padriDiAttuale
 
-# scrive su file tutte le soluzioni trovate
+# Scrive su file tutte le soluzioni trovate
+#
+# nomeFileInput: nome del file di input
+# s: satellite
+# dictSolutions: dizionario delle soluzioni
+# bestSolutionIndice: indice della soluzione migliore in riferimento a dictSolutions[s]
+# timeElapsed: tempo impiegato per la determinazione del risultato
+# itMosseLS: numero iterazioni delle mosse realizzate con il Local Search
+# itMosseTS: numero iterazioni delle mosse realizzate con il Tabu Search
 def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS):
     # creazione cartella
     print("\nOutput file, s: {}.".format(s))
@@ -1857,17 +1865,23 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
     # per creare file con numero che va ad aumentare:
     # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
 
-    filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
+    # crea il file nel caso non esista già
+    filename.touch(exist_ok=True)
 
+    # apertura del file in append
     file = open(filename, 'a')
     file.write("s: {}".format(s))
     file.write("\ndictSolutions[{}]:".format(s))
+
+    # scrittura di ogni singola soluzione
     for solution in dictSolutions[s]:
         file.write(
             "\n{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution),
                                                                                    solution[0], solution[3],
                                                                                    solution[4], solution[5],
                                                                                    solution[6]))
+
+    # scrittura della soluzione migliore
     file.write("\nbestSolutionIndice: {}".format(bestSolutionIndice))
     file.write("\n{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(bestSolutionIndice,
                                                                                       dictSolutions[s][
@@ -1880,22 +1894,32 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
                                                                                           bestSolutionIndice][5],
                                                                                       dictSolutions[s][
                                                                                           bestSolutionIndice][6]))
-    # pallet
+    # pallet richiesti da ogni cliente
     trasportoPalletDiGamma = {}
     for k in dictSolutions[s][bestSolutionIndice][3]:
         trasportoPalletDiGamma[k] = []
         for arc in dictSolutions[s][bestSolutionIndice][3][k]:
             trasportoPalletDiGamma[k].append(
                 (arc[1], dictSolutions[s][bestSolutionIndice][1][k, arc[1], arc[0], arc[1]]))
+
     file.write("\ntrasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
     file.write("\nitMosseLS: {}, itMosseTS: {}".format(itMosseLS, itMosseTS))
     file.write("\ntime elapsed: {:.2f}s.\n\n\n".format(timeElapsed))
 
+    # chiusura file
     file.close()
 
-# scrive su file la soluzione iniziale e la best solution
+# Scrive su file la soluzione iniziale e soluzione migliore trovata in seguito all'applicazione del Local Search e Tabu Search
+#
+# nomeFileInput: nome del file di input
+# s: satellite
+# dictSolutions: dizionario delle soluzioni
+# bestSolutionIndice: indice della soluzione migliore in riferimento a dictSolutions[s]
+# timeElapsed: tempo impiegato per la determinazione del risultato
+# itMosseLS: numero iterazioni delle mosse realizzate con il Local Search
+# itMosseTS: numero iterazioni delle mosse realizzate con il Tabu Search
 def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS):
-    # creazione cartella
+    # creazione cartella di output
     print("\nOutput file: start - best, s: {}.".format(s))
 
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
@@ -1904,16 +1928,18 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
     # per creare file con numero che va ad aumentare:
     # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
 
-    filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
+    # crea il file nel caso non esista già
+    filename.touch(exist_ok=True)
 
+    # apertura del file in append
     file = open(filename, 'a')
     file.write("s: {}".format(s))
 
-    # scrittura file soluzione iniziale
+    # scrittura della soluzione iniziale sul file
     file.write("\nsoluzione iniziale: {}".format(0))
     file.write(
         "\n{} -> \ncosto: {}, \nrotte: {}".format(0, dictSolutions[s][0][0], dictSolutions[s][0][3]))
-    # pallet
+    # pallet richiesti da ogni cliente
     trasportoPalletDiGamma = {}
     for k in dictSolutions[s][0][3]:
         trasportoPalletDiGamma[k] = []
@@ -1922,11 +1948,11 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
                 (arc[1], dictSolutions[s][0][1][k, arc[1], arc[0], arc[1]]))
     file.write("\ntrasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
 
-    # scrittura file soluzione finale
+    # scrittura file soluzione migliore tra tutte quelle trovate
     file.write("\nbestSolutionIndice: {}".format(bestSolutionIndice))
     file.write("\n{} -> \ncosto: {}, \nrotte: {}".format(bestSolutionIndice, dictSolutions[s][bestSolutionIndice][0],
                                                          dictSolutions[s][bestSolutionIndice][3]))
-    # pallet
+    # pallet richiesti da ogni cliente
     trasportoPalletDiGamma = {}
     for k in dictSolutions[s][bestSolutionIndice][3]:
         trasportoPalletDiGamma[k] = []
@@ -1938,23 +1964,32 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
     file.write("\nnumero di soluzioni totali trovati: {}.".format(len(dictSolutions[s])))
     file.write("\ntime elapsed: {:.2f}s.\n\n\n".format(timeElapsed))
 
+    # chiusura file
     file.close()
 
+# Scrive su file la soluzione migliore tra tutte quelle trovate per ogni satellite
+#
+# nomeFileInput: nome del file di input che costituirà parte del nome del file di output
+# Sneg: satelliti selezionati
+# bestSolution: soluzioni migliori trovate per ogni satellite
 def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSolution):
     # scrittura su file della bestSolution in assoluto
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
     filename = pathlib.Path("output/" + nomeFileInput + "_StartBest")
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
+    # apertura file in append
     file = open(filename, 'a')
     file.write("##########################################################################################\n")
     file.write("##########################################################################################\n")
     file.write("##########################################################################################\n")
     file.write("Soluzione migliore in assoluto trovata:\n")
+
+    # scrittura della soluzione migliore per ogni satellite
     for s in Sneg:
         file.write("\ns: {}".format(s))
         file.write("\ncosto: {}, \nrotte: {}".format(bestSolution[s][0], bestSolution[s][3]))
-        # pallet
+        # pallet richiesti da ogni cliente
         trasportoPalletDiGamma = {}
         for k in bestSolution[s][3]:
             trasportoPalletDiGamma[k] = []
@@ -1962,4 +1997,6 @@ def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSo
                 trasportoPalletDiGamma[k].append(
                     (arc[1], bestSolution[s][1][k, arc[1], arc[0], arc[1]]))
         file.write("\ntrasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
+
+    # chiusura file
     file.close()
