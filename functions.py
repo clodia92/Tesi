@@ -1467,14 +1467,17 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                     w2TMP[v1, precN1[0], n1] = 0
                     w2TMP[v1, n1, n2] = 0
 
+                    # archi successivi a n1 compreso
                     for gamma in [n1] + succN1:
                         x2TMP[v1, gamma, precN1[0], n2] = x2[v1, gamma, precN1[0], n1]
                         x2TMP[v1, gamma, precN1[0], n1] = 0
 
+                    # se n2 ha successori
                     if succN2[0] != -1:
                         w2TMP[v1, n1, succN2[0]] = 1
                         w2TMP[v1, n2, succN2[0]] = 0
 
+                        # archi successivi ad n2
                         for gamma in succN2:
                             x2TMP[v1, gamma, n2, n1] = x2[v1, gamma, n1, n2]
                             x2TMP[v1, gamma, n1, n2] = 0
@@ -1548,6 +1551,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                                 x2TMP[v1, gamma, n2, succN2[0]] = 0
                                 x2TMP[v1, gamma, n1, succN2[0]] = x2[v1, gamma, n2, succN2[0]]
 
+            # rotte diverse e clienti diversi
             elif n1 != n2:
                 # v1
                 # v1: se n2 in v1
@@ -1556,18 +1560,25 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                     if n2 in precN1:
                         w2TMP[v1, precN1[0], n1] = 0
 
+                        # (..., n1)
                         flag1 = 0
+                        # (..., n2)
                         flag2 = 0
                         for arc in rotte[v1]:
+                            # (n1, succN1[0])
                             if arc[0] == n1:
                                 flag1 = 1
+                            # (n2, succN2[0])
                             if arc[0] == n2:
                                 flag2 = 1
+                            # (succN1[0],...)
                             if arc[0] == succN1[0]:
                                 break
 
+                            # (..., n1)
                             if flag1 == 0:
                                 x2TMP[v1, n1, arc[0], arc[1]] = 0
+                            # (n1, succN1[0])
                             if flag1 == 1:
                                 w2TMP[v1, n1, succN1[0]] = 0
                                 w2TMP[v1, precN1[0], succN1[0]] = 1
@@ -1575,6 +1586,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                                     x2TMP[v1, gamma, precN1[0], n1] = 0
                                     x2TMP[v1, gamma, n1, succN1[0]] = 0
                                     x2TMP[v1, gamma, precN1[0], succN1[0]] = x2[v1, gamma, precN1[0], n1]
+                            # (..., n2)
                             if flag2 == 0:
                                 x2TMP[v1, n2, arc[0], arc[1]] += x2[v2, n2, precN2[0], n2]
                     # in v1: n2 in succN1
@@ -1583,6 +1595,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                         w2TMP[v1, n1, succN1[0]] = 0
                         w2TMP[v1, precN1[0], succN1[0]] = 1
 
+                        # per tutti i successori di n1
                         for gamma in succN1:
                             x2TMP[v1, gamma, precN1[0], n1] = 0
                             x2TMP[v1, gamma, n1, succN1[0]] = 0
@@ -1590,23 +1603,32 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                         x2TMP[v1, n2, precN1[0], succN1[0]] += x2[v2, n2, precN2[0], n2]
 
+                        # (..., n1)
                         flag1 = 0
+                        # (..., precN1[0])
                         flag2 = 0
                         for arc in rotte[v1]:
+                            # (n1, succN1[0])
                             if arc[0] == n1:
                                 flag1 = 1
+                            # (precN1[0], n1)
                             if arc[0] == precN1[0]:
                                 flag2 = 1
+                            # (succN1[0],...) ma succN1[0] != n2
                             if arc[0] == succN1[0] and arc[0] != n2:
                                 flag2 = 0
+                            # (n2, succN2[0])
                             if arc[0] == n2:
                                 break
 
+                            # (..., n1)
                             if flag1 == 0:
                                 x2TMP[v1, n1, arc[0], arc[1]] = 0
+                            # (..., precN1[0]) oppure {(succN1[0],...) ma succN1[0] != n2}
                             if flag2 == 0:
                                 x2TMP[v1, n2, arc[0], arc[1]] += x2[v2, n2, precN2[0], n2]
 
+                # v1: se n2 non è in v1
                 else:
                     # v1: se n1 ha successori
                     if succN1[0] != -1:
@@ -1647,18 +1669,25 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                     if n1 in precN2:
                         w2TMP[v2, precN2[0], n2] = 0
 
+                        # (..., n2)
                         flag1 = 0
+                        # (..., n1)
                         flag2 = 0
                         for arc in rotte[v2]:
+                            # (n2, succN2[0])
                             if arc[0] == n2:
                                 flag1 = 1
+                            # (n1, succN1[0])
                             if arc[0] == n1:
                                 flag2 = 1
+                            # (succN2[0],...)
                             if arc[0] == succN2[0]:
                                 break
 
+                            # (..., n2)
                             if flag1 == 0:
                                 x2TMP[v2, n2, arc[0], arc[1]] = 0
+                            # (n2, succN2[0])
                             if flag1 == 1:
                                 w2TMP[v2, n2, succN2[0]] = 0
                                 w2TMP[v2, precN2[0], succN2[0]] = 1
@@ -1666,6 +1695,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                                     x2TMP[v2, gamma, precN2[0], n2] = 0
                                     x2TMP[v2, gamma, n2, succN2[0]] = 0
                                     x2TMP[v2, gamma, precN2[0], succN2[0]] = x2[v2, gamma, precN2[0], n2]
+                            # (..., n1)
                             if flag2 == 0:
                                 x2TMP[v2, n1, arc[0], arc[1]] += x2[v1, n1, precN1[0], n1]
 
@@ -1675,6 +1705,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                         w2TMP[v2, n2, succN2[0]] = 0
                         w2TMP[v2, precN2[0], succN2[0]] = 1
 
+                        # per tutti i successivi di n2
                         for gamma in succN2:
                             x2TMP[v2, gamma, precN2[0], n2] = 0
                             x2TMP[v2, gamma, n2, succN2[0]] = 0
@@ -1682,23 +1713,32 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                         x2TMP[v2, n1, precN2[0], succN2[0]] += x2[v1, n1, precN1[0], n1]
 
+                        # (..., n2)
                         flag1 = 0
+                        # (..., precN2[0])
                         flag2 = 0
                         for arc in rotte[v2]:
+                            # (n2, succN2[0])
                             if arc[0] == n2:
                                 flag1 = 1
+                            # (precN2[0], n2)
                             if arc[0] == precN2[0]:
                                 flag2 = 1
+                            # (succN2[0], ...) ma succN2[0] != n1
                             if arc[0] == succN2[0] and arc[0] != n1:
                                 flag2 = 0
+                            # (n1, succN1[0])
                             if arc[0] == n1:
                                 break
 
+                            # (..., n2)
                             if flag1 == 0:
                                 x2TMP[v2, n2, arc[0], arc[1]] = 0
+                            # (..., precN2) oppure (succN2[0], ...) ma succN2[0] != n1
                             if flag2 == 0:
                                 x2TMP[v2, n1, arc[0], arc[1]] += x2[v1, n1, precN1[0], n1]
 
+                # v2: se n1 non in v2
                 else:
                     # v2: se n2 ha successori
                     if succN2[0] != -1:
@@ -1706,6 +1746,8 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                         w2TMP[v2, n1, succN2[0]] = 1
                         # eliminare arco (n2, succN2)
                         w2TMP[v2, n2, succN2[0]] = 0
+
+                        # per tutti i successori di n2
                         for gamma in succN2:
                             # aggiungere pallet dei succN2 in (precN2, n1) e (n1, succN2)
                             x2TMP[v2, gamma, precN2[0], n1] = x2[v2, gamma, precN2[0], n2]
@@ -1730,12 +1772,17 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                     x2TMP[v1, n1, precN2[0], n1] = palletN1
                     x2TMP[v2, n2, precN2[0], n2] = 0
 
+            # clienti uguali ma rotte diverse
             elif v1 != v2 and n1 == n2:
+                # per ogni arco in v1
                 for arc in rotte[v1]:
+                    # (n1, succN1[0])
                     if arc[0] == n1:
                         break
                     x2TMP[v1, n1, arc[0], arc[1]] = x2[v2, n2, precN2[0], n2]
+                # per ogni arco in v2
                 for arc in rotte[v2]:
+                    # (n2, succN2[0])
                     if arc[0] == n2:
                         break
                     x2TMP[v2, n2, arc[0], arc[1]] = x2[v1, n1, precN1[0], n1]
