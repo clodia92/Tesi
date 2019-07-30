@@ -553,6 +553,7 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
     # in modo da evitare duplicati: smd11[7, 8, 3, 4] == smd11[8, 7, 4, 3]
     indexCV = 0
 
+    # per ogni (cliente, veicolo) in clienteVeicolo
     for n1, v1 in clienteVeicolo:
         indexCV += 1
 
@@ -576,16 +577,21 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                     smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, n2]
 
                     # ak2ij
+
+                    # archi successivi a n1 compreso
                     for gamma in [n1] + succN1:
                         smd11[v1, v2, n1, n2] += x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2]
                         smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
 
+                    # se n2 ha successori
                     if succN2[0] != -1:
                         # nik2ij
                         smd11[v1, v2, n1, n2] += nik2ij[v1, n1, succN2[0]]
                         smd11[v1, v2, n1, n2] += nik2ij[v1, n2, succN2[0]]
 
                         # ak2ij
+
+                        # archi successivi a n2
                         for gamma in succN2:
                             smd11[v1, v2, n1, n2] += x2[v1, gamma, n1, n2] * ak2ij[v1, n2, n1]
                             smd11[v1, v2, n1, n2] -= x2[v1, gamma, n1, n2] * ak2ij[v1, n1, n2]
@@ -659,7 +665,7 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
 
                                 smd11[v1, v2, n1, n2] -= x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n2, succN2[0]]
                                 smd11[v1, v2, n1, n2] += x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n1, succN2[0]]
-
+            # rotte diverse, clienti diversi
             elif n1 != n2:
                 # v1
                 # v1: se n2 in v1
@@ -668,18 +674,25 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                     if n2 in precN1:
                         smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
 
+                        # (..., n1)
                         flag1 = 0
+                        # (..., n2)
                         flag2 = 0
                         for arc in rotte[v1]:
+                            # (n1, succN1[0])
                             if arc[0] == n1:
                                 flag1 = 1
+                            # (n2, succN2[0])
                             if arc[0] == n2:
                                 flag2 = 1
+                            # (succN1[0], ...)
                             if arc[0] == succN1[0]:
                                 break
 
+                            # (..., n1)
                             if flag1 == 0:
                                 smd11[v1, v2, n1, n2] -= x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc[0], arc[1]]
+                            # (n1, succN1[0])
                             if flag1 == 1:
                                 smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
                                 smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], succN1[0]]
@@ -688,6 +701,7 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                                     smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, n1, succN1[0]]
                                     smd11[v1, v2, n1, n2] += x2[v1, gamma, precN1[0], n1] * ak2ij[
                                         v1, precN1[0], succN1[0]]
+                            # (..., n2)
                             if flag2 == 0:
                                 smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]]
                     # in v1: n2 in succN1
@@ -696,6 +710,7 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                         smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
                         smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], succN1[0]]
 
+                        # per tutti successori di n1
                         for gamma in succN1:
                             smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
                             smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, n1, succN1[0]]
@@ -703,23 +718,31 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
 
                         smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, precN1[0], succN1[0]]
 
+                        # (..., n1)
                         flag1 = 0
+                        # (..., precN1[0])
                         flag2 = 0
                         for arc in rotte[v1]:
+                            # (n1, succN1[0])
                             if arc[0] == n1:
                                 flag1 = 1
+                            # (precN1[0], n1)
                             if arc[0] == precN1[0]:
                                 flag2 = 1
+                            # (succN1[0], ...) ma succN1[0] diverso da n2
                             if arc[0] == succN1[0] and arc[0] != n2:
                                 flag2 = 0
+                            # (n2, succN2[0]
                             if arc[0] == n2:
                                 break
 
+                            # (..., n1)
                             if flag1 == 0:
                                 smd11[v1, v2, n1, n2] -= x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc[0], arc[1]]
+                            # (..., precN1[0]) oppure {(succN1[0], ...) ma succN1[0] diverso da n2}
                             if flag2 == 0:
                                 smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]]
-
+                # v1: se n2 non in v1
                 else:
                     # v1: se n1 ha successori
                     if succN1[0] != -1:
@@ -763,18 +786,25 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                     if n1 in precN2:
                         smd11[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
 
+                        # (..., n2)
                         flag1 = 0
+                        # (..., n1)
                         flag2 = 0
                         for arc in rotte[v2]:
+                            # (n2, succN2[0])
                             if arc[0] == n2:
                                 flag1 = 1
+                            # (n1, succN1[0])
                             if arc[0] == n1:
                                 flag2 = 1
+                            # (succN2[0], ...)
                             if arc[0] == succN2[0]:
                                 break
 
+                            # (..., n2)
                             if flag1 == 0:
                                 smd11[v1, v2, n1, n2] -= x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]]
+                            # (n2, succN2[0])
                             if flag1 == 1:
                                 smd11[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
                                 smd11[v1, v2, n1, n2] += nik2ij[v2, precN2[0], succN2[0]]
@@ -783,6 +813,7 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                                     smd11[v1, v2, n1, n2] -= x2[v2, gamma, precN2[0], n2] * ak2ij[v2, n2, succN2[0]]
                                     smd11[v1, v2, n1, n2] += x2[v2, gamma, precN2[0], n2] * ak2ij[
                                         v2, precN2[0], succN2[0]]
+                            # (..., n1)
                             if flag2 == 0:
                                 smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc[0], arc[1]]
                     # in v2: n1 in succN2
@@ -791,6 +822,7 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                         smd11[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
                         smd11[v1, v2, n1, n2] += nik2ij[v2, precN2[0], succN2[0]]
 
+                        # per tutti i successori di n2
                         for gamma in succN2:
                             smd11[v1, v2, n1, n2] -= x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2]
                             smd11[v1, v2, n1, n2] -= x2[v2, gamma, precN2[0], n2] * ak2ij[v2, n2, succN2[0]]
@@ -798,23 +830,32 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
 
                         smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v2, precN2[0], succN2[0]]
 
+                        # (..., n2)
                         flag1 = 0
+                        # (..., precN2[0])
                         flag2 = 0
                         for arc in rotte[v2]:
+                            # (n2, succN2[0])
                             if arc[0] == n2:
                                 flag1 = 1
+                            # (precN2[0], n2)
                             if arc[0] == precN2[0]:
                                 flag2 = 1
+                            # (succN2[0], ...) ma succN2[0] diverso da n1
                             if arc[0] == succN2[0] and arc[0] != n1:
                                 flag2 = 0
+                            # (n1, succN1[0])
                             if arc[0] == n1:
                                 break
 
+                            # (..., n2)
                             if flag1 == 0:
                                 smd11[v1, v2, n1, n2] -= x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]]
+                            # (..., precN2[0]) oppure {(succN2[0], ...) ma succN2[0] diverso da n1}
                             if flag2 == 0:
                                 smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc[0], arc[1]]
 
+                # v2: se n1 non in v2
                 else:
 
                     # v2: se n2 ha successori
@@ -825,6 +866,7 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                         # eliminare costo arco (n2, succN2)
                         smd11[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
                         # ak2ij
+                        # per tutti i successori di n2
                         for gamma in succN2:
                             # aggiungere costi pallet dei succN2 in (precN2, n1) e (n1, succN2)
                             smd11[v1, v2, n1, n2] += (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n1])
@@ -851,13 +893,18 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                     smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, precN2[0], n1])
                     smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
 
+            # clienti uguali, rotte diverse
             elif v1 != v2 and n1 == n2:
+                # per ogni arco in v1
                 for arc in rotte[v1]:
+                    # (n1, succN1[0])
                     if arc[0] == n1:
                         break
                     smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] - x2[v1, n1, precN1[0], n1]) * ak2ij[
                         v1, arc[0], arc[1]]
+                # per ogni arco in v2
                 for arc in rotte[v2]:
+                    # (n2, succN2[0])
                     if arc[0] == n2:
                         break
                     smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] - x2[v2, n2, precN2[0], n2]) * ak2ij[
