@@ -1450,8 +1450,6 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
         # 1-1 Exchange
         elif len(minCostKey) == 4:
-            # se n1 è già presente in v2
-            # se n2 è già presente in v1
 
             # numero di pallet che ricevono n1 e n2
             palletN1 = x2TMP[v1, n1, precN1[0], n1]
