@@ -126,9 +126,27 @@ if __name__ == "__main__":
     myProb = Prob3("006")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
-    itNSIMax = 1
+    itNSIMax = 2
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
-    itMosseTSMax = 2
+    itMosseTSMax = 1
+
+    ### creazione file: il file vecchio viene sovrascritto
+    pathlib.Path('output').mkdir(parents=True, exist_ok=True)
+    filename = pathlib.Path("output/" + myProb.nomeFile)
+    filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
+
+    file = open(filename, 'w')
+    file.write("itNSIMax: {}, itMosseTSMax: {}.\n".format(itNSIMax, itMosseTSMax))
+    file.close()
+
+    pathlib.Path('output').mkdir(parents=True, exist_ok=True)
+    filename = pathlib.Path("output/" + myProb.nomeFile + "_StartBest")
+    filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
+
+    file = open(filename, 'w')
+    file.write("itNSIMax: {}, itMosseTSMax: {}.\n".format(itNSIMax, itMosseTSMax))
+    file.close()
+    ### creazione file: il file vecchio viene sovrascritto
 
     # contatore numero soluzioni iniziali
     itNSI = 0
@@ -143,12 +161,11 @@ if __name__ == "__main__":
         itNSI += 1
 
         ### scrittura file stacco per ogni soluzione diversa
-
         pathlib.Path('output').mkdir(parents=True, exist_ok=True)
         filename = pathlib.Path("output/" + myProb.nomeFile)
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
-        file = open(filename, 'w')
+        file = open(filename, 'a')
         file.write("##########################################################################################\n")
         file.close()
 
@@ -156,7 +173,7 @@ if __name__ == "__main__":
         filename = pathlib.Path("output/" + myProb.nomeFile + "_StartBest")
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
-        file = open(filename, 'w')
+        file = open(filename, 'a')
         file.write("##########################################################################################\n")
         file.close()
         ### scrittura file stacco per ogni soluzione diversa
