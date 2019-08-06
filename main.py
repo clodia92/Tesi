@@ -123,10 +123,10 @@ class Prob3:
 if __name__ == "__main__":
 
     print("Start Prob3: ")
-    myProb = Prob3("006")
+    myProb = Prob3("100")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
-    itNSIMax = 2
+    itNSIMax = 1
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
     itMosseTSMax = 1
 
