@@ -123,12 +123,15 @@ class Prob3:
 if __name__ == "__main__":
 
     print("Start Prob3: ")
-    myProb = Prob3("044")#
+    myProb = Prob3("007")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
     itNSIMax = 1
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
-    itMosseTSMax = 1
+    itMosseTSMax = 5
+    # modificare timeElapsedMax per modificare il tempo massimo di esecuzione
+    # riga 355
+    # timeElapsedMax =
 
     ### creazione file: il file vecchio viene sovrascritto
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
@@ -287,7 +290,7 @@ if __name__ == "__main__":
                         inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
 
                         print("Soluzione migliore trovata, costo: {}.".format(cost))
-                        # print("rotte: {}".format(rotte))
+                        print("rotte: {}".format(rotte))
 
                         listaCosti = [item[0] for item in dictSolutions[s]]
 
