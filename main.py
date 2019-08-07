@@ -123,7 +123,7 @@ class Prob3:
 if __name__ == "__main__":
 
     print("Start Prob3: ")
-    myProb = Prob3("044")
+    myProb = Prob3("044")#
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
     itNSIMax = 1
