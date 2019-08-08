@@ -299,7 +299,7 @@ if __name__ == "__main__":
                             indiceSoluzionePresente = listaCosti.index(cost)
 
                             # se la rotta è uguale ad una soluzione precedente
-                            if dictSolutions[s][indiceSoluzionePresente][3] == rotte:
+                            if dictSolutions[s][indiceSoluzionePresente][3] == rotte and dictSolutions[s][indiceSoluzionePresente][1]==x2TMP:
                                 # aggiornamento del padre della nuova soluzione
                                 dictSolutions[s][indiceSoluzionePresente][4].append(soluzionePrecedente)
                                 # aggiornamento dei figli del padre della nuova soluzione
