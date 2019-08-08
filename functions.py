@@ -2004,13 +2004,13 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
 # timeElapsed: tempo impiegato per la determinazione del risultato
 # itMosseLS: numero iterazioni delle mosse realizzate con il Local Search
 # itMosseTS: numero iterazioni delle mosse realizzate con il Tabu Search
-def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS):
+def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS, itNSIMax, itMosseTSMax):
     # creazione cartella
     print("\nOutput file, s: {}.".format(s))
 
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
 
-    filename = pathlib.Path("output/" + nomeFileInput)
+    filename = pathlib.Path("output/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax))
     # per creare file con numero che va ad aumentare:
     # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
 
@@ -2067,13 +2067,13 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
 # timeElapsed: tempo impiegato per la determinazione del risultato
 # itMosseLS: numero iterazioni delle mosse realizzate con il Local Search
 # itMosseTS: numero iterazioni delle mosse realizzate con il Tabu Search
-def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS):
+def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS, itNSIMax, itMosseTSMax):
     # creazione cartella di output
     print("\nOutput file: start - best, s: {}.".format(s))
 
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
 
-    filename = pathlib.Path("output/" + nomeFileInput + "_StartBest")
+    filename = pathlib.Path("output/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_StartBest")
     # per creare file con numero che va ad aumentare:
     # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
 
@@ -2121,10 +2121,10 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
 # nomeFileInput: nome del file di input che costituirà parte del nome del file di output
 # Sneg: satelliti selezionati
 # bestSolution: soluzioni migliori trovate per ogni satellite
-def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSolution):
+def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSolution, itNSIMax, itMosseTSMax):
     # scrittura su file della bestSolution in assoluto
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
-    filename = pathlib.Path("output/" + nomeFileInput + "_StartBest")
+    filename = pathlib.Path("output/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_StartBest")
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     # apertura file in append

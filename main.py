@@ -135,7 +135,7 @@ if __name__ == "__main__":
 
     ### creazione file: il file vecchio viene sovrascritto
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
-    filename = pathlib.Path("output/" + myProb.nomeFile)
+    filename = pathlib.Path("output/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax))
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     file = open(filename, 'w')
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     file.close()
 
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
-    filename = pathlib.Path("output/" + myProb.nomeFile + "_StartBest")
+    filename = pathlib.Path("output/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_StartBest")
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     file = open(filename, 'w')
@@ -165,7 +165,7 @@ if __name__ == "__main__":
 
         ### scrittura file stacco per ogni soluzione diversa
         pathlib.Path('output').mkdir(parents=True, exist_ok=True)
-        filename = pathlib.Path("output/" + myProb.nomeFile)
+        filename = pathlib.Path("output/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax))
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
         file = open(filename, 'a')
@@ -173,7 +173,7 @@ if __name__ == "__main__":
         file.close()
 
         pathlib.Path('output').mkdir(parents=True, exist_ok=True)
-        filename = pathlib.Path("output/" + myProb.nomeFile + "_StartBest")
+        filename = pathlib.Path("output/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_StartBest")
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
         file = open(filename, 'a')
@@ -407,9 +407,9 @@ if __name__ == "__main__":
 
                             # creazione file output
                             writeOutput(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS,
-                                        itMosseTS)
+                                        itMosseTS, itNSIMax, itMosseTSMax)
                             writeOutputStartBest(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS,
-                                                 itMosseTS)
+                                                 itMosseTS, itNSIMax, itMosseTSMax)
 
                             break
             # se non è stata trovata una soluzione iniziale
@@ -418,4 +418,4 @@ if __name__ == "__main__":
                 print("Trova un'altra soluzione iniziale.")
 
     # scrittura su file della bestSolution in assoluto
-    writeOutputStartBestwriteOutputStartBestAssoluta(myProb.nomeFile, myProb.Sneg, bestSolution)
+    writeOutputStartBestwriteOutputStartBestAssoluta(myProb.nomeFile, myProb.Sneg, bestSolution, itNSIMax, itMosseTSMax)
