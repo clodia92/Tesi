@@ -298,8 +298,8 @@ if __name__ == "__main__":
                         if cost in listaCosti:
                             indiceSoluzionePresente = listaCosti.index(cost)
 
-                            # se la rotta è uguale ad una soluzione precedente
-                            if dictSolutions[s][indiceSoluzionePresente][3] == rotte and dictSolutions[s][indiceSoluzionePresente][1]==x2TMP:
+                            # se la rotta è uguale ad una soluzione precedente e anche x2 è uguale
+                            if cost== dictSolutions[s][indiceSoluzionePresente][0] and dictSolutions[s][indiceSoluzionePresente][3] == rotte and dictSolutions[s][indiceSoluzionePresente][1]==x2TMP:
                                 # aggiornamento del padre della nuova soluzione
                                 dictSolutions[s][indiceSoluzionePresente][4].append(soluzionePrecedente)
                                 # aggiornamento dei figli del padre della nuova soluzione
@@ -310,13 +310,21 @@ if __name__ == "__main__":
                                 soluzionePrecedente = indiceSoluzionePresente
                                 pass
                             # se la rotta non è uguale ad una soluzione precedente
-                            else:
+                            elif cost== dictSolutions[s][indiceSoluzionePresente][0] and dictSolutions[s][indiceSoluzionePresente][3] != rotte:
                                 # aggiunta di una nuova soluzione
                                 dictSolutions[s].append(
                                     [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), deepcopy(padri), [],
                                      [keyLocalSearch]])
                                 for padreSingolo in padri:
                                     dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
+                                padri = [len(dictSolutions[s]) - 1]
+
+                                soluzionePrecedente = len(dictSolutions[s]) - 1
+                            # rotte uguali ma con distribuzione dei pallet differenti
+                            elif cost== dictSolutions[s][indiceSoluzionePresente][0] and dictSolutions[s][indiceSoluzionePresente][3] == rotte and dictSolutions[s][indiceSoluzionePresente][1]!=x2TMP:
+                                # aggiunta di una nuova soluzione
+                                dictSolutions[s].append(
+                                    [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), [soluzionePrecedente], [], [keyLocalSearch]])
                                 padri = [len(dictSolutions[s]) - 1]
 
                                 soluzionePrecedente = len(dictSolutions[s]) - 1
