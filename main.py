@@ -130,10 +130,9 @@ if __name__ == "__main__":
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
     itNSIMax = 1
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
-    itMosseTSMax = 5
-    # modificare timeElapsedTotalMax per modificare il tempo massimo di esecuzione
-    # riga 355
-    timeElapsedTotalMax = 5
+    itMosseTSMax = 10
+    # modificare timeElapsedTotalMax per modificare il tempo massimo di esecuzione (in secondi)
+    timeElapsedTotalMax = 15
 
     ### creazione file: il file vecchio viene sovrascritto
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
@@ -360,11 +359,22 @@ if __name__ == "__main__":
                         heapq.heapify(heapSMD)
 
                         oldKeyLocalSearch = keyLocalSearch
+
+                        # aggiornamento della bestSolution finora trovata
+                        # questo aggiornamento deve essere fatto ogni volta che viene effettuato il LocalSearch
+                        # perché se si imposta timeElapsedTotalMax tale da non permettere di arrivare ad un minimo locale,
+                        # allora deve esere salvata la soluzione con costo minimo trovata fino ad allora
+                        if costNew < dictSolutions[s][bestSolutionIndice][0]:
+                            bestSolutionIndice = soluzionePrecedente
+                            # print("bestSolution:\ncosto: {}, rotte: {}".format(dictSolutions[s][bestSolutionIndice][0],
+                            #                                                    dictSolutions[s][bestSolutionIndice][3]))
+
                     # non esiste mossa migliorativa
                     elif keyLocalSearch == -1 and costNew == cost:
                         elapsedTimeTotal = time.time() - startTimeTotal
+                        print("elapsedTimeTotal: ", elapsedTimeTotal)
                         # se non è stata raggiunta nuovamente la soluzione iniziale (non è possibile applicare il Tabu Search)
-                        if dictSolutions[s][soluzionePrecedente][4] != [-1] and (itMosseTS < itMosseTSMax or elapsedTimeTotal < timeElapsedTotalMax):
+                        if dictSolutions[s][soluzionePrecedente][4] != [-1] and itMosseTS < itMosseTSMax and elapsedTimeTotal < timeElapsedTotalMax:
                             print("Soluzione minimo locale trovata, itMosseLS: {}, costo: {}.".format(itMosseLS, cost))
                             # print("rotte: {}".format(rotte))
 
@@ -372,18 +382,6 @@ if __name__ == "__main__":
                             # for solution in dictSolutions[s]:
                             #    print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution), solution[0], solution[3],
                             #                                                              solution[4], solution[5], solution[6]))
-
-                            # aggiornamento della bestSolution finora trovata
-                            if costNew < dictSolutions[s][bestSolutionIndice][0]:
-                                bestSolutionIndice = len(dictSolutions[s]) - 1
-                                print("bestSolution:\ncosto: {}, rotte: {}".format(dictSolutions[s][bestSolutionIndice][0],
-                                                                                   dictSolutions[s][bestSolutionIndice][3]))
-
-                                # if bestSolution[s] == [] or dictSolutions[s][bestSolutionIndice][0] < bestSolution[s][0]:
-                                #     # aggiornamento della bestSolution assoluta
-                                #     bestSolution[s] = dictSolutions[s][bestSolutionIndice]
-                                #     # riferimento a itNSI
-                                #     bestSolution[s].append(itNSI)
 
                             # applica Tabu Search
                             heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, soluzionePrecedente, padri = tabuSearch(
