@@ -131,8 +131,8 @@ if __name__ == "__main__":
     itNSIMax = 1
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
     itMosseTSMax = 10
-    # modificare timeElapsedTotalMax per modificare il tempo massimo di esecuzione (in secondi)
-    timeElapsedTotalMax = 15
+    # modificare elapsedTimeTotalMax per modificare il tempo massimo di esecuzione (in secondi)
+    elapsedTimeTotalMax = 30
 
     ### creazione file: il file vecchio viene sovrascritto
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
@@ -175,7 +175,8 @@ if __name__ == "__main__":
         file.close()
 
         pathlib.Path('output').mkdir(parents=True, exist_ok=True)
-        filename = pathlib.Path("output/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_StartBest")
+        filename = pathlib.Path(
+            "output/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_StartBest")
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
         file = open(filename, 'a')
@@ -209,10 +210,13 @@ if __name__ == "__main__":
 
             # trova una soluzione di base ammissibile
             resultSolutionBase, myProb.x2, myProb.w2, rotte = findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2,
-                                                                               myProb.Pgac, myProb.PsGa, myProb.K2diS[s],
-                                                                               myProb.A2, myProb.GammadiS[s], myProb.CdiS)
+                                                                               myProb.Pgac, myProb.PsGa,
+                                                                               myProb.K2diS[s],
+                                                                               myProb.A2, myProb.GammadiS[s],
+                                                                               myProb.CdiS)
             # variabile che contiene il costo della soluzione appena trovata
-            cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij, myProb.ak2ij,
+            cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
+                               myProb.ak2ij,
                                s)
             # variabile che contiente il costo della nuova soluzione (inizialmente maggiore di cost)
             costNew = cost + 1
@@ -230,7 +234,8 @@ if __name__ == "__main__":
                 # lista dei padri della soluzione
                 padri = [-1]
                 # aggiungo la soluzione alle soluzioni
-                dictSolutions[s].append([cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [], [-1]])
+                dictSolutions[s].append(
+                    [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [], [-1]])
                 # aggiornamento di padri
                 padri = [len(dictSolutions[s]) - 1]
                 # indice della soluzione attuale che genera un figlio con il local search
@@ -255,18 +260,28 @@ if __name__ == "__main__":
                 # iterazioni continuano finché non si presentano determinate condizioni
                 # (esplorazione completa tramite Tabu Search, numero di iterazioni limitate, ecc)
                 while True:
-                    # parte il LocalSearch
-                    x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11, deepcopy(myProb.x2),
-                                                                               deepcopy(myProb.w2),
-                                                                               rotte, s, myProb.uk2,
-                                                                               myProb.Pgac, myProb.PsGa, myProb.K2diS[s],
-                                                                               myProb.A2,
-                                                                               myProb.GammadiS[s], myProb.CdiS)
-                    # aggiornamento del costo
-                    costNew = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
-                                          myProb.ak2ij, s)
+                    elapsedTimeTotal = time.time() - startTimeTotal
+                    # print("elapsedTimeTotal: ", elapsedTimeTotal)
+                    # non è stato raggiunto il tempo massimo di esecuzione
+                    if elapsedTimeTotal < elapsedTimeTotalMax:
+                        # parte il LocalSearch
+                        x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11,
+                                                                                   deepcopy(myProb.x2),
+                                                                                   deepcopy(myProb.w2),
+                                                                                   rotte, s, myProb.uk2,
+                                                                                   myProb.Pgac, myProb.PsGa,
+                                                                                   myProb.K2diS[s],
+                                                                                   myProb.A2,
+                                                                                   myProb.GammadiS[s], myProb.CdiS)
+                        # aggiornamento del costo
+                        costNew = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
+                                              myProb.ak2ij, s)
 
-                    # print("localSearch, key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
+                        # print("localSearch, key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
+                    # è stato raggiunto il tempo massimo di esecuzione
+                    else:
+                        keyLocalSearch = -1
+                        costNew = cost
 
                     # effettua mossa migliorativa
                     if keyLocalSearch != -1 and costNew < cost:
@@ -292,7 +307,7 @@ if __name__ == "__main__":
                         inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
 
                         print("Soluzione migliore trovata, costo: {}.".format(cost))
-                        print("rotte: {}".format(rotte))
+                        # print("rotte: {}".format(rotte))
 
                         listaCosti = [item[0] for item in dictSolutions[s]]
 
@@ -301,7 +316,9 @@ if __name__ == "__main__":
                             indiceSoluzionePresente = listaCosti.index(cost)
 
                             # se la rotta è uguale ad una soluzione precedente e anche x2 è uguale
-                            if cost== dictSolutions[s][indiceSoluzionePresente][0] and dictSolutions[s][indiceSoluzionePresente][3] == rotte and dictSolutions[s][indiceSoluzionePresente][1]==x2TMP:
+                            if cost == dictSolutions[s][indiceSoluzionePresente][0] and \
+                                    dictSolutions[s][indiceSoluzionePresente][3] == rotte and \
+                                    dictSolutions[s][indiceSoluzionePresente][1] == x2TMP:
                                 # aggiornamento del padre della nuova soluzione
                                 dictSolutions[s][indiceSoluzionePresente][4].append(soluzionePrecedente)
                                 # aggiornamento dei figli del padre della nuova soluzione
@@ -312,10 +329,12 @@ if __name__ == "__main__":
                                 soluzionePrecedente = indiceSoluzionePresente
                                 pass
                             # se la rotta non è uguale ad una soluzione precedente
-                            elif cost== dictSolutions[s][indiceSoluzionePresente][0] and dictSolutions[s][indiceSoluzionePresente][3] != rotte:
+                            elif cost == dictSolutions[s][indiceSoluzionePresente][0] and \
+                                    dictSolutions[s][indiceSoluzionePresente][3] != rotte:
                                 # aggiunta di una nuova soluzione
                                 dictSolutions[s].append(
-                                    [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), deepcopy(padri), [],
+                                    [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), deepcopy(padri),
+                                     [],
                                      [keyLocalSearch]])
                                 for padreSingolo in padri:
                                     dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
@@ -323,10 +342,13 @@ if __name__ == "__main__":
 
                                 soluzionePrecedente = len(dictSolutions[s]) - 1
                             # rotte uguali ma con distribuzione dei pallet differenti
-                            elif cost== dictSolutions[s][indiceSoluzionePresente][0] and dictSolutions[s][indiceSoluzionePresente][3] == rotte and dictSolutions[s][indiceSoluzionePresente][1]!=x2TMP:
+                            elif cost == dictSolutions[s][indiceSoluzionePresente][0] and \
+                                    dictSolutions[s][indiceSoluzionePresente][3] == rotte and \
+                                    dictSolutions[s][indiceSoluzionePresente][1] != x2TMP:
                                 # aggiunta di una nuova soluzione
                                 dictSolutions[s].append(
-                                    [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), [soluzionePrecedente], [], [keyLocalSearch]])
+                                    [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte),
+                                     [soluzionePrecedente], [], [keyLocalSearch]])
                                 padri = [len(dictSolutions[s]) - 1]
 
                                 soluzionePrecedente = len(dictSolutions[s]) - 1
@@ -334,7 +356,8 @@ if __name__ == "__main__":
                         else:
                             # aggiunta di una nuova soluzione
                             dictSolutions[s].append(
-                                [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), [soluzionePrecedente], [],
+                                [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), [soluzionePrecedente],
+                                 [],
                                  [keyLocalSearch]])
                             for padreSingolo in padri:
                                 dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
@@ -362,7 +385,7 @@ if __name__ == "__main__":
 
                         # aggiornamento della bestSolution finora trovata
                         # questo aggiornamento deve essere fatto ogni volta che viene effettuato il LocalSearch
-                        # perché se si imposta timeElapsedTotalMax tale da non permettere di arrivare ad un minimo locale,
+                        # perché se si imposta elapsedTimeTotalMax tale da non permettere di arrivare ad un minimo locale,
                         # allora deve esere salvata la soluzione con costo minimo trovata fino ad allora
                         if costNew < dictSolutions[s][bestSolutionIndice][0]:
                             bestSolutionIndice = soluzionePrecedente
@@ -370,11 +393,14 @@ if __name__ == "__main__":
                             #                                                    dictSolutions[s][bestSolutionIndice][3]))
 
                     # non esiste mossa migliorativa
+                    # oppure è stato raggiunto il tempo massimo
                     elif keyLocalSearch == -1 and costNew == cost:
-                        elapsedTimeTotal = time.time() - startTimeTotal
-                        print("elapsedTimeTotal: ", elapsedTimeTotal)
+                        # elapsedTimeTotal = time.time() - startTimeTotal
+                        # print("elapsedTimeTotal: ", elapsedTimeTotal)
                         # se non è stata raggiunta nuovamente la soluzione iniziale (non è possibile applicare il Tabu Search)
-                        if dictSolutions[s][soluzionePrecedente][4] != [-1] and itMosseTS < itMosseTSMax and elapsedTimeTotal < timeElapsedTotalMax:
+                        # viene verificato anche se è stata raggiunta la lunghezza massima della Tabu List e il tempo massimo di esecuzione
+                        if dictSolutions[s][soluzionePrecedente][4] != [
+                            -1] and itMosseTS < itMosseTSMax and elapsedTimeTotal < elapsedTimeTotalMax:
                             print("Soluzione minimo locale trovata, itMosseLS: {}, costo: {}.".format(itMosseLS, cost))
                             # print("rotte: {}".format(rotte))
 
@@ -395,11 +421,13 @@ if __name__ == "__main__":
                             print("dictSolutions[{}]:".format(s))
                             for solution in dictSolutions[s]:
                                 print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(
-                                    dictSolutions[s].index(solution), solution[0], solution[3], solution[4], solution[5],
+                                    dictSolutions[s].index(solution), solution[0], solution[3], solution[4],
+                                    solution[5],
                                     solution[6]))
 
-                            print("\n\n\nLa soluzione migliore trovata, itMosseLS: {}, itMosseTS: {}, costo: {}.".format(
-                                itMosseLS, itMosseTS, dictSolutions[s][bestSolutionIndice][0]))
+                            print(
+                                "\n\n\nLa soluzione migliore trovata, itMosseLS: {}, itMosseTS: {}, costo: {}.".format(
+                                    itMosseLS, itMosseTS, dictSolutions[s][bestSolutionIndice][0]))
                             print("{} -> costo: {}, rotte: {}".format(bestSolutionIndice,
                                                                       dictSolutions[s][bestSolutionIndice][0],
                                                                       dictSolutions[s][bestSolutionIndice][3]))
@@ -418,7 +446,8 @@ if __name__ == "__main__":
                             # creazione file output
                             writeOutput(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS,
                                         itMosseTS, itNSIMax, itMosseTSMax)
-                            writeOutputStartBest(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS,
+                            writeOutputStartBest(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsedS,
+                                                 itMosseLS,
                                                  itMosseTS, itNSI, itNSIMax, itMosseTSMax)
 
                             break
@@ -427,8 +456,9 @@ if __name__ == "__main__":
                 # trovare un'altra soluzione
                 print("Trova un'altra soluzione iniziale.")
 
-    timeElapsedTotal = time.time() - startTimeTotal
-    print("Total time elapsed: {:.2f}s.".format(timeElapsedTotal))
+    elapsedTimeTotal = time.time() - startTimeTotal
+    print("Total time elapsed: {:.2f}s.".format(elapsedTimeTotal))
 
     # scrittura su file della bestSolution in assoluto
-    writeOutputStartBestwriteOutputStartBestAssoluta(myProb.nomeFile, myProb.Sneg, bestSolution, itNSIMax, itMosseTSMax, timeElapsedTotal)
+    writeOutputStartBestwriteOutputStartBestAssoluta(myProb.nomeFile, myProb.Sneg, bestSolution, itNSIMax, itMosseTSMax,
+                                                     elapsedTimeTotal)

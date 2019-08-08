@@ -475,7 +475,8 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 
                         # prima di n1
                         if flag == 0:
-                            smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
+                            smd10[v1, v2, n1, n2, numeroPallet] += (
+                                        x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
                         # n1, n2
                         if flag == 1:
                             smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
@@ -986,7 +987,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     # K2.reverse()
     shuffle(K2)
 
-    if s==1:
+    if s == 1:
         Gamma = [5, 6, 2, 4, 8, 7, 3]
         K2 = [4, 6, 5, 3, 2]
 
@@ -1788,10 +1789,9 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
             # verificare ammissibilità
             if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
                 # print("rotte: {}".format(rotte))
-                print(
-                    "localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
-                                                                                                      minCostKey, smd11[
-                                                                                                          minCostKey]))
+                print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
+                                                                                                        minCostKey,
+                                                                                                        smd11[minCostKey]))
                 # soluzione ammissibile trovata
                 return x2TMP, w2TMP, minCostKey, True
     # non è stata trovata nessuna mossa migliorativa
@@ -1956,7 +1956,7 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
     w2 = deepcopy(dictSolutionsDiS[padreDiAttuale][2])
     rotte = deepcopy(dictSolutionsDiS[padreDiAttuale][3])
 
-    print("rotte: {}".format(rotte))
+    # print("rotte: {}".format(rotte))
 
     # aggiornamento della Tabu list
     # se è stata trovata una nuova soluzione dopo aver effettuato una volta il tabu search
@@ -1995,6 +1995,7 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
 
     return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale, padriDiAttuale
 
+
 # Scrive su file tutte le soluzioni trovate
 #
 # nomeFileInput: nome del file di input
@@ -2004,7 +2005,8 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
 # timeElapsedS: tempo impiegato per la determinazione del risultato
 # itMosseLS: numero iterazioni delle mosse realizzate con il Local Search
 # itMosseTS: numero iterazioni delle mosse realizzate con il Tabu Search
-def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS, itMosseTS, itNSIMax, itMosseTSMax):
+def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS, itMosseTS, itNSIMax,
+                itMosseTSMax):
     # creazione cartella
     print("\nOutput file, s: {}.".format(s))
 
@@ -2058,6 +2060,7 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
     # chiusura file
     file.close()
 
+
 # Scrive su file la soluzione iniziale e soluzione migliore trovata in seguito all'applicazione del Local Search e Tabu Search
 #
 # nomeFileInput: nome del file di input
@@ -2067,7 +2070,8 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
 # timeElapsedS: tempo impiegato per la determinazione del risultato
 # itMosseLS: numero iterazioni delle mosse realizzate con il Local Search
 # itMosseTS: numero iterazioni delle mosse realizzate con il Tabu Search
-def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS, itMosseTS, itNSI, itNSIMax, itMosseTSMax):
+def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS, itMosseTS, itNSI,
+                         itNSIMax, itMosseTSMax):
     # creazione cartella di output
     print("Output file: start - best, s: {}.".format(s))
 
@@ -2116,12 +2120,14 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
     # chiusura file
     file.close()
 
+
 # Scrive su file la soluzione migliore tra tutte quelle trovate per ogni satellite
 #
 # nomeFileInput: nome del file di input che costituirà parte del nome del file di output
 # Sneg: satelliti selezionati
 # bestSolution: soluzioni migliori trovate per ogni satellite
-def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSolution, itNSIMax, itMosseTSMax, timeElapsedTotal):
+def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSolution, itNSIMax, itMosseTSMax,
+                                                     timeElapsedTotal):
     # scrittura su file della bestSolution in assoluto
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
     filename = pathlib.Path("output/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_StartBest")
@@ -2137,7 +2143,8 @@ def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSo
     # scrittura della soluzione migliore per ogni satellite
     for s in Sneg:
         file.write("\ns: {}".format(s))
-        file.write("\nitNSI: {}, \ncosto: {}, \nrotte: {}".format(bestSolution[s][7], bestSolution[s][0], bestSolution[s][3]))
+        file.write(
+            "\nitNSI: {}, \ncosto: {}, \nrotte: {}".format(bestSolution[s][7], bestSolution[s][0], bestSolution[s][3]))
         # pallet richiesti da ogni cliente
         trasportoPalletDiGamma = {}
         for k in bestSolution[s][3]:
