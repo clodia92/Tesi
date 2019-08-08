@@ -987,9 +987,9 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     # K2.reverse()
     shuffle(K2)
 
-    if s == 1:
-        Gamma = [5, 6, 2, 4, 8, 7, 3]
-        K2 = [4, 6, 5, 3, 2]
+    # if s == 1:
+    #     Gamma = [5, 6, 2, 4, 8, 7, 3]
+    #     K2 = [4, 6, 5, 3, 2]
 
     print("Gamma: ", Gamma)
     print("K2: ", K2)

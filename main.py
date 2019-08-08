@@ -128,11 +128,11 @@ if __name__ == "__main__":
     myProb = Prob3("007")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
-    itNSIMax = 1
+    itNSIMax = 10
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
-    itMosseTSMax = 10
+    itMosseTSMax = 30
     # modificare elapsedTimeTotalMax per modificare il tempo massimo di esecuzione (in secondi)
-    elapsedTimeTotalMax = 30
+    elapsedTimeTotalMax = 60
 
     ### creazione file: il file vecchio viene sovrascritto
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
@@ -228,8 +228,9 @@ if __name__ == "__main__":
             # inizializzazione della bestSolution (soluzione iniziale)
             bestSolutionIndice = 0
 
+            elapsedTimeTotal = time.time() - startTimeTotal
             # se è stata trovata una soluzione iniziale
-            if resultSolutionBase:
+            if resultSolutionBase and elapsedTimeTotal < elapsedTimeTotalMax:
                 print("Soluzione di base trovata, costo: {}.".format(cost))
                 # lista dei padri della soluzione
                 padri = [-1]
@@ -270,8 +271,7 @@ if __name__ == "__main__":
                                                                                    deepcopy(myProb.w2),
                                                                                    rotte, s, myProb.uk2,
                                                                                    myProb.Pgac, myProb.PsGa,
-                                                                                   myProb.K2diS[s],
-                                                                                   myProb.A2,
+                                                                                   myProb.K2diS[s], myProb.A2,
                                                                                    myProb.GammadiS[s], myProb.CdiS)
                         # aggiornamento del costo
                         costNew = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
