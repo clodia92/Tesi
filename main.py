@@ -132,7 +132,7 @@ if __name__ == "__main__":
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
     itMosseTSMax = 30
     # modificare elapsedTimeTotalMax per modificare il tempo massimo di esecuzione (in secondi)
-    elapsedTimeTotalMax = 60
+    elapsedTimeTotalMax = 3600
 
     ### creazione file: il file vecchio viene sovrascritto
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
