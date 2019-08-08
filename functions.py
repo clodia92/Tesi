@@ -2067,7 +2067,7 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
 # timeElapsed: tempo impiegato per la determinazione del risultato
 # itMosseLS: numero iterazioni delle mosse realizzate con il Local Search
 # itMosseTS: numero iterazioni delle mosse realizzate con il Tabu Search
-def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS, itNSIMax, itMosseTSMax):
+def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS, itNSI, itNSIMax, itMosseTSMax):
     # creazione cartella di output
     print("\nOutput file: start - best, s: {}.".format(s))
 
@@ -2082,7 +2082,7 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
 
     # apertura del file in append
     file = open(filename, 'a')
-    file.write("s: {}".format(s))
+    file.write("s: {}, itNSI: {}.".format(s, itNSI))
 
     # scrittura della soluzione iniziale sul file
     file.write("\nsoluzione iniziale: {}".format(0))
@@ -2137,7 +2137,7 @@ def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSo
     # scrittura della soluzione migliore per ogni satellite
     for s in Sneg:
         file.write("\ns: {}".format(s))
-        file.write("\ncosto: {}, \nrotte: {}".format(bestSolution[s][0], bestSolution[s][3]))
+        file.write("\nitNSI: {}, \ncosto: {}, \nrotte: {}".format(bestSolution[s][7], bestSolution[s][0], bestSolution[s][3]))
         # pallet richiesti da ogni cliente
         trasportoPalletDiGamma = {}
         for k in bestSolution[s][3]:

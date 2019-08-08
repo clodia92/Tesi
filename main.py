@@ -155,6 +155,7 @@ if __name__ == "__main__":
     itNSI = 0
 
     # soluzione migliore assoluta trovata
+    # [cost, x2, w2, rotte, padri, figli, mossaDiArrivo, itNSI]
     bestSolution = {}
     for s in myProb.Sneg:
         bestSolution[s] = []
@@ -401,6 +402,8 @@ if __name__ == "__main__":
                             if bestSolution[s] == [] or dictSolutions[s][bestSolutionIndice][0] < bestSolution[s][0]:
                                 # aggiornamento della bestSolution assoluta
                                 bestSolution[s] = dictSolutions[s][bestSolutionIndice]
+                                # riferimento a itNSI
+                                bestSolution[s].append(itNSI)
 
                             timeElapsed = time.time() - start_time
                             print("time elapsed: {:.2f}s.".format(timeElapsed))
@@ -409,7 +412,7 @@ if __name__ == "__main__":
                             writeOutput(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS,
                                         itMosseTS, itNSIMax, itMosseTSMax)
                             writeOutputStartBest(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS,
-                                                 itMosseTS, itNSIMax, itMosseTSMax)
+                                                 itMosseTS, itNSI, itNSIMax, itMosseTSMax)
 
                             break
             # se non è stata trovata una soluzione iniziale
