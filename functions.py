@@ -2001,10 +2001,10 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
 # s: satellite
 # dictSolutions: dizionario delle soluzioni
 # bestSolutionIndice: indice della soluzione migliore in riferimento a dictSolutions[s]
-# timeElapsed: tempo impiegato per la determinazione del risultato
+# timeElapsedS: tempo impiegato per la determinazione del risultato
 # itMosseLS: numero iterazioni delle mosse realizzate con il Local Search
 # itMosseTS: numero iterazioni delle mosse realizzate con il Tabu Search
-def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS, itNSIMax, itMosseTSMax):
+def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS, itMosseTS, itNSIMax, itMosseTSMax):
     # creazione cartella
     print("\nOutput file, s: {}.".format(s))
 
@@ -2053,7 +2053,7 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
 
     file.write("\ntrasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
     file.write("\nitMosseLS: {}, itMosseTS: {}".format(itMosseLS, itMosseTS))
-    file.write("\ntime elapsed: {:.2f}s.\n\n\n".format(timeElapsed))
+    file.write("\ntime elapsed: {:.2f}s.\n\n\n".format(timeElapsedS))
 
     # chiusura file
     file.close()
@@ -2064,12 +2064,12 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
 # s: satellite
 # dictSolutions: dizionario delle soluzioni
 # bestSolutionIndice: indice della soluzione migliore in riferimento a dictSolutions[s]
-# timeElapsed: tempo impiegato per la determinazione del risultato
+# timeElapsedS: tempo impiegato per la determinazione del risultato
 # itMosseLS: numero iterazioni delle mosse realizzate con il Local Search
 # itMosseTS: numero iterazioni delle mosse realizzate con il Tabu Search
-def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS, itMosseTS, itNSI, itNSIMax, itMosseTSMax):
+def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS, itMosseTS, itNSI, itNSIMax, itMosseTSMax):
     # creazione cartella di output
-    print("\nOutput file: start - best, s: {}.".format(s))
+    print("Output file: start - best, s: {}.".format(s))
 
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
 
@@ -2111,7 +2111,7 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
     file.write("\ntrasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
     file.write("\nitMosseLS: {}, itMosseTS: {}".format(itMosseLS, itMosseTS))
     file.write("\nnumero di soluzioni totali trovati: {}.".format(len(dictSolutions[s])))
-    file.write("\ntime elapsed: {:.2f}s.\n\n\n".format(timeElapsed))
+    file.write("\ntime elapsed: {:.2f}s.\n\n\n".format(timeElapsedS))
 
     # chiusura file
     file.close()
@@ -2121,7 +2121,7 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
 # nomeFileInput: nome del file di input che costituirà parte del nome del file di output
 # Sneg: satelliti selezionati
 # bestSolution: soluzioni migliori trovate per ogni satellite
-def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSolution, itNSIMax, itMosseTSMax):
+def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSolution, itNSIMax, itMosseTSMax, timeElapsedTotal):
     # scrittura su file della bestSolution in assoluto
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
     filename = pathlib.Path("output/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_StartBest")
@@ -2147,5 +2147,6 @@ def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSo
                     (arc[1], bestSolution[s][1][k, arc[1], arc[0], arc[1]]))
         file.write("\ntrasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
 
+    file.write("\n\nTotal time elapsed: {:.2f}s.".format(timeElapsedTotal))
     # chiusura file
     file.close()

@@ -122,6 +122,8 @@ class Prob3:
 
 if __name__ == "__main__":
 
+    startTimeTotal = time.time()
+
     print("Start Prob3: ")
     myProb = Prob3("007")
 
@@ -129,9 +131,9 @@ if __name__ == "__main__":
     itNSIMax = 1
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
     itMosseTSMax = 5
-    # modificare timeElapsedMax per modificare il tempo massimo di esecuzione
+    # modificare timeElapsedTotalMax per modificare il tempo massimo di esecuzione
     # riga 355
-    # timeElapsedMax =
+    timeElapsedTotalMax = 5
 
     ### creazione file: il file vecchio viene sovrascritto
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
@@ -192,7 +194,7 @@ if __name__ == "__main__":
         # ogni rotta viene calcolata per ogni satellite separatamente
         for s in myProb.Sneg:
             print("\n\n\nSTART satellite: {}".format(s))
-            start_time = time.time()
+            start_timeS = time.time()
 
             # lista delle soluzioni trovate: (cost, x2, w2, rotte, padri, figli, mossaDiArrivo)
             # padri: lista di indici alle soluzioni di partenza in solutions
@@ -229,7 +231,7 @@ if __name__ == "__main__":
                 # lista dei padri della soluzione
                 padri = [-1]
                 # aggiungo la soluzione alle soluzioni
-                dictSolutions[s].append((cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [], [-1]))
+                dictSolutions[s].append([cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [], [-1]])
                 # aggiornamento di padri
                 padri = [len(dictSolutions[s]) - 1]
                 # indice della soluzione attuale che genera un figlio con il local search
@@ -360,8 +362,9 @@ if __name__ == "__main__":
                         oldKeyLocalSearch = keyLocalSearch
                     # non esiste mossa migliorativa
                     elif keyLocalSearch == -1 and costNew == cost:
+                        elapsedTimeTotal = time.time() - startTimeTotal
                         # se non è stata raggiunta nuovamente la soluzione iniziale (non è possibile applicare il Tabu Search)
-                        if dictSolutions[s][soluzionePrecedente][4] != [-1] and itMosseTS < itMosseTSMax:
+                        if dictSolutions[s][soluzionePrecedente][4] != [-1] and (itMosseTS < itMosseTSMax or elapsedTimeTotal < timeElapsedTotalMax):
                             print("Soluzione minimo locale trovata, itMosseLS: {}, costo: {}.".format(itMosseLS, cost))
                             # print("rotte: {}".format(rotte))
 
@@ -375,6 +378,12 @@ if __name__ == "__main__":
                                 bestSolutionIndice = len(dictSolutions[s]) - 1
                                 print("bestSolution:\ncosto: {}, rotte: {}".format(dictSolutions[s][bestSolutionIndice][0],
                                                                                    dictSolutions[s][bestSolutionIndice][3]))
+
+                                # if bestSolution[s] == [] or dictSolutions[s][bestSolutionIndice][0] < bestSolution[s][0]:
+                                #     # aggiornamento della bestSolution assoluta
+                                #     bestSolution[s] = dictSolutions[s][bestSolutionIndice]
+                                #     # riferimento a itNSI
+                                #     bestSolution[s].append(itNSI)
 
                             # applica Tabu Search
                             heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, soluzionePrecedente, padri = tabuSearch(
@@ -405,13 +414,13 @@ if __name__ == "__main__":
                                 # riferimento a itNSI
                                 bestSolution[s].append(itNSI)
 
-                            timeElapsed = time.time() - start_time
-                            print("time elapsed: {:.2f}s.".format(timeElapsed))
+                            timeElapsedS = time.time() - start_timeS
+                            print("time elapsed: {:.2f}s.".format(timeElapsedS))
 
                             # creazione file output
-                            writeOutput(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS,
+                            writeOutput(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS,
                                         itMosseTS, itNSIMax, itMosseTSMax)
-                            writeOutputStartBest(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsed, itMosseLS,
+                            writeOutputStartBest(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS,
                                                  itMosseTS, itNSI, itNSIMax, itMosseTSMax)
 
                             break
@@ -420,5 +429,8 @@ if __name__ == "__main__":
                 # trovare un'altra soluzione
                 print("Trova un'altra soluzione iniziale.")
 
+    timeElapsedTotal = time.time() - startTimeTotal
+    print("Total time elapsed: {:.2f}s.".format(timeElapsedTotal))
+
     # scrittura su file della bestSolution in assoluto
-    writeOutputStartBestwriteOutputStartBestAssoluta(myProb.nomeFile, myProb.Sneg, bestSolution, itNSIMax, itMosseTSMax)
+    writeOutputStartBestwriteOutputStartBestAssoluta(myProb.nomeFile, myProb.Sneg, bestSolution, itNSIMax, itMosseTSMax, timeElapsedTotal)
