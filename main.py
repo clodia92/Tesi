@@ -128,9 +128,9 @@ if __name__ == "__main__":
     myProb = Prob3("020")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
-    itNSIMax = 10
+    itNSIMax = 2
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
-    itMosseTSMax = 30
+    itMosseTSMax = 1000
     # modificare elapsedTimeTotalMax per modificare il tempo massimo di esecuzione (in secondi)
     elapsedTimeTotalMax = 3600
 
