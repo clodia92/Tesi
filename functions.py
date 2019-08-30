@@ -988,8 +988,8 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     shuffle(K2)
 
     # if s == 1:
-    #     Gamma = [5, 6, 2, 4, 8, 7, 3]
-    #     K2 = [4, 6, 5, 3, 2]
+    #     Gamma = [2, 3, 4, 5, 6, 7, 8, 9]
+    #     K2 = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
     print("Gamma: ", Gamma)
     print("K2: ", K2)
@@ -1944,7 +1944,7 @@ def updateRotteSmd11(rotte, keyLocalSearch):
 # nik2ij: costo di instradamento del veicolo k∈K2 che attraversa l’arco (i,j)∈A2 nel secondo livello.
 # ak2ij: costo di trasporto del pallet con destinazione γ∈Γ che attraversa l’arco (i,j)∈A2 con il veicolo k∈K2
 # s: satellite
-def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSearch, nik2ij, ak2ij, s):
+def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSearch, nik2ij, ak2ij, s, flag10or11):
     print("\nSTART tabuSearch()")
     # prende i padri di soluzionePrecedente
     padriDiAttuale = deepcopy(dictSolutionsDiS[soluzionePrecedente][4])
@@ -1970,9 +1970,21 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
     # dizionari di smd con chiave move point
     smd10 = {}
     smd11 = {}
-    # vengono inizializzati gli SMD
-    inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s)
-    inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2)
+
+    if flag10or11 == 1:
+        # vengono inizializzati gli SMD
+        inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s)
+
+    # SMD11
+    elif flag10or11 == -1:
+        # vengono inizializzati gli SMD
+        inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2)
+
+    # SMD10 and SMD11
+    elif flag10or11 == 0:
+        # vengono inizializzati gli SMD
+        inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s)
+        inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2)
 
     # print("stampa tabuList: {}".format(tabuListDiS))
 
@@ -1981,11 +1993,14 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
         # print("mossaTabu deleted: ", mossaTabu)
         if mossaTabu[0] == padreDiAttuale:
             # 1-0 Exchange
-            if len(mossaTabu[1]) == 5:
+            if len(mossaTabu[1]) == 5 and flag10or11 != -1:
                 del smd10[mossaTabu[1]]
             # 1-1 Exchange
-            elif len(mossaTabu[1]) == 4:
+            elif len(mossaTabu[1]) == 4 and flag10or11 != 1:
                 del smd11[mossaTabu[1]]
+
+    # alternare 1-0 exchange e 1-1 exchange
+    flag10or11 = flag10or11 * -1
 
     # crea la lista unica dei costi in cui verrà salvato l'heap
     # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
@@ -1993,7 +2008,7 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
     # crea l'heap di smd10 e smd11
     heapq.heapify(heapSMD)
 
-    return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale, padriDiAttuale
+    return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale, padriDiAttuale, flag10or11
 
 
 # Scrive su file tutte le soluzioni trovate

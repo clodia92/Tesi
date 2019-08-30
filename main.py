@@ -125,14 +125,21 @@ if __name__ == "__main__":
     startTimeTotal = time.time()
 
     print("Start Prob3: ")
-    myProb = Prob3("017")
+    myProb = Prob3("008")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
-    itNSIMax = 3
+    itNSIMax = 10
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
-    itMosseTSMax = 150
+    itMosseTSMax = 100
     # modificare elapsedTimeTotalMax per modificare il tempo massimo di esecuzione (in secondi)
-    elapsedTimeTotalMax = 3600
+    elapsedTimeTotalMax = 600
+
+    # modificare flag10or11 per modificare se alternare 1-0 exchange e 1-1 exchange (1 o -1)
+    # oppure utilizzare sempre entrambe contemporaneamente (0)
+    #  1:   1-0 start
+    # -1:   1-1 start
+    #  0:   1-0 and 1-1
+    flag10or11 = 1
 
     ### creazione file: il file vecchio viene sovrascritto
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
@@ -242,14 +249,28 @@ if __name__ == "__main__":
                 # indice della soluzione attuale che genera un figlio con il local search
                 soluzionePrecedente = 0
 
-                # vengono inizializzati gli SMD
-                inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
-                inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+                # SMD10
+                if flag10or11 == 1:
+                    # vengono inizializzati gli SMD
+                    inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+
+                # SMD11
+                elif flag10or11 == -1:
+                    # vengono inizializzati gli SMD
+                    inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+
+                # SMD10 and SMD11
+                elif flag10or11 == 0:
+                    # vengono inizializzati gli SMD
+                    inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+                    inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
                 # crea la lista unica dei costi in cui verrà salvato l'heap
                 # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
                 heapSMD = list(smd10.values()) + list(smd11.values())
                 # crea l'heap di smd10 e smd11
                 heapq.heapify(heapSMD)
+                # alternare 1-0 exchange e 1-1 exchange
+                flag10or11 = flag10or11 * -1
 
                 # contatore di mosse effettuate nel localSearch e nel tabuSearch
                 itMosseLS = 0
@@ -258,9 +279,12 @@ if __name__ == "__main__":
                 # chiave della mossa precedente
                 oldKeyLocalSearch = -1
 
+                tried10and11 = False
+
                 # iterazioni continuano finché non si presentano determinate condizioni
                 # (esplorazione completa tramite Tabu Search, numero di iterazioni limitate, ecc)
                 while True:
+
                     elapsedTimeTotal = time.time() - startTimeTotal
                     # print("elapsedTimeTotal: ", elapsedTimeTotal)
                     # non è stato raggiunto il tempo massimo di esecuzione
@@ -285,6 +309,8 @@ if __name__ == "__main__":
 
                     # effettua mossa migliorativa
                     if keyLocalSearch != -1 and costNew < cost:
+                        tried10and11 = False
+
                         itMosseLS += 1
                         cost = costNew
 
@@ -302,9 +328,19 @@ if __name__ == "__main__":
 
                         # aggiornare SMD dopo una mossa ammissibile
                         smd10.clear()
-                        inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
                         smd11.clear()
-                        inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+                        # SMD10
+                        if flag10or11 == 1:
+                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+
+                        # SMD11
+                        elif flag10or11 == -1:
+                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+
+                        # SMD10 and SMD11
+                        elif flag10or11 == 0:
+                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
 
                         print("Soluzione migliore trovata, costo: {}.".format(cost))
                         # print("rotte: {}".format(rotte))
@@ -357,8 +393,7 @@ if __name__ == "__main__":
                             # aggiunta di una nuova soluzione
                             dictSolutions[s].append(
                                 [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), [soluzionePrecedente],
-                                 [],
-                                 [keyLocalSearch]])
+                                 [], [keyLocalSearch]])
                             for padreSingolo in padri:
                                 dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
                             padri = [len(dictSolutions[s]) - 1]
@@ -370,11 +405,13 @@ if __name__ == "__main__":
                             # print("mossaTabu deleted: ", mossaTabu)
                             if mossaTabu[0] == soluzionePrecedente:
                                 # 1-0 Exchange
-                                if len(mossaTabu[1]) == 5:
+                                if len(mossaTabu[1]) == 5 and flag10or11 != -1:
                                     del smd10[mossaTabu[1]]
                                 # 1-1 Exchange
-                                elif len(mossaTabu[1]) == 4:
+                                elif len(mossaTabu[1]) == 4 and flag10or11 != 1:
                                     del smd11[mossaTabu[1]]
+                        # alternare 1-0 exchange e 1-1 exchange
+                        flag10or11 = flag10or11 * -1
 
                         # crea la lista unica dei costi in cui verrà salvato l'heap
                         heapSMD = list(smd10.values()) + list(smd11.values())
@@ -392,15 +429,19 @@ if __name__ == "__main__":
                             # print("bestSolution:\ncosto: {}, rotte: {}".format(dictSolutions[s][bestSolutionIndice][0],
                             #                                                    dictSolutions[s][bestSolutionIndice][3]))
 
+                    elif keyLocalSearch == -1 and costNew == cost and tried10and11 == False:
+                        tried10and11 = True
+
                     # non esiste mossa migliorativa
                     # oppure è stato raggiunto il tempo massimo
-                    elif keyLocalSearch == -1 and costNew == cost:
+                    elif keyLocalSearch == -1 and costNew == cost and tried10and11 == True:
                         # elapsedTimeTotal = time.time() - startTimeTotal
                         # print("elapsedTimeTotal: ", elapsedTimeTotal)
                         # se non è stata raggiunta nuovamente la soluzione iniziale (non è possibile applicare il Tabu Search)
                         # viene verificato anche se è stata raggiunta la lunghezza massima della Tabu List e il tempo massimo di esecuzione
-                        if dictSolutions[s][soluzionePrecedente][4] != [
-                            -1] and itMosseTS < itMosseTSMax and elapsedTimeTotal < elapsedTimeTotalMax:
+                        if dictSolutions[s][soluzionePrecedente][4] != [-1] \
+                                and itMosseTS < itMosseTSMax \
+                                and elapsedTimeTotal < elapsedTimeTotalMax:
                             print("Soluzione minimo locale trovata, itMosseLS: {}, costo: {}.".format(itMosseLS, cost))
                             # print("rotte: {}".format(rotte))
 
@@ -410,9 +451,9 @@ if __name__ == "__main__":
                             #                                                              solution[4], solution[5], solution[6]))
 
                             # applica Tabu Search
-                            heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, soluzionePrecedente, padri = tabuSearch(
+                            heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, soluzionePrecedente, padri, flag10or11 = tabuSearch(
                                 dictSolutions[s], soluzionePrecedente, tabuList[s], oldKeyLocalSearch, myProb.nik2ij,
-                                myProb.ak2ij, s)
+                                myProb.ak2ij, s, flag10or11)
                             oldKeyLocalSearch = -1
                             itMosseTS += 1
 
