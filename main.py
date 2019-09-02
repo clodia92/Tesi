@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 __author__ = "Dennis Incollu, Claudia Porcu"
 __date__ = "2019"
 
@@ -125,21 +127,21 @@ if __name__ == "__main__":
     startTimeTotal = time.time()
 
     print("Start Prob3: ")
-    myProb = Prob3("008")
+    myProb = Prob3("007")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
-    itNSIMax = 10
+    itNSIMax = 30
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
-    itMosseTSMax = 100
+    itMosseTSMax = 150
     # modificare elapsedTimeTotalMax per modificare il tempo massimo di esecuzione (in secondi)
-    elapsedTimeTotalMax = 600
+    elapsedTimeTotalMax = 3600
 
     # modificare flag10or11 per modificare se alternare 1-0 exchange e 1-1 exchange (1 o -1)
     # oppure utilizzare sempre entrambe contemporaneamente (0)
     #  1:   1-0 start
     # -1:   1-1 start
     #  0:   1-0 and 1-1
-    flag10or11 = 1
+    flag10or11 = -1
 
     ### creazione file: il file vecchio viene sovrascritto
     pathlib.Path('output').mkdir(parents=True, exist_ok=True)
@@ -279,6 +281,7 @@ if __name__ == "__main__":
                 # chiave della mossa precedente
                 oldKeyLocalSearch = -1
 
+                # flag per segnalare che sono stati analizzati entrambi i tipo di mossa quando vengono alternate
                 tried10and11 = False
 
                 # iterazioni continuano finché non si presentano determinate condizioni
@@ -429,11 +432,13 @@ if __name__ == "__main__":
                             # print("bestSolution:\ncosto: {}, rotte: {}".format(dictSolutions[s][bestSolutionIndice][0],
                             #                                                    dictSolutions[s][bestSolutionIndice][3]))
 
+                    # non esiste mossa migliorativa con il tipo di mossa attuale, quindi tenta l'altro tipo di mossa prima di uscire
                     elif keyLocalSearch == -1 and costNew == cost and tried10and11 == False:
                         tried10and11 = True
 
                     # non esiste mossa migliorativa
                     # oppure è stato raggiunto il tempo massimo
+                    # e sono state esplorati entrambi i tipi di mossa
                     elif keyLocalSearch == -1 and costNew == cost and tried10and11 == True:
                         # elapsedTimeTotal = time.time() - startTimeTotal
                         # print("elapsedTimeTotal: ", elapsedTimeTotal)

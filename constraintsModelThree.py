@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # generate Objective Function for model Three
 def computeCost(x2, w2, K2diS, GammadiS, A2, nik2ij, ak2ij, sat):
     myObjFunction = 0
