@@ -991,9 +991,9 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     shuffle(K2)
 
     # popolazione manuale di Gamma e K2 per avere la stessa soluzione iniziale
-    # if s == 1:
-    #     Gamma = [3, 2, 4, 5, 6, 7, 8, 9]
-    #     K2 = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    if s == 1:
+        Gamma = [7, 3, 5, 4, 8, 6, 2]
+        K2 = [5, 3, 6, 2, 4]
 
     print("Gamma: ", Gamma)
     print("K2: ", K2)
@@ -1975,6 +1975,7 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
     smd10 = {}
     smd11 = {}
 
+    # SMD10
     if flag10or11 == 1:
         # vengono inizializzati gli SMD
         inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s)
