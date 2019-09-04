@@ -130,7 +130,7 @@ if __name__ == "__main__":
     myProb = Prob3("2_2_100_0_20")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
-    itNSIMax = 1
+    itNSIMax = 10
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
     itMosseTSMax = 50
     # modificare elapsedTimeTotalMax per modificare il tempo massimo di esecuzione (in secondi)
@@ -272,8 +272,6 @@ if __name__ == "__main__":
                 heapSMD = list(smd10.values()) + list(smd11.values())
                 # crea l'heap di smd10 e smd11
                 heapq.heapify(heapSMD)
-                # alternare 1-0 exchange e 1-1 exchange
-                #alternate10or11 = alternate10or11 * -1
 
                 # contatore di mosse effettuate nel localSearch e nel tabuSearch
                 itMosseLS = 0
@@ -417,8 +415,6 @@ if __name__ == "__main__":
                                 # 1-1 Exchange
                                 elif len(mossaTabu[1]) == 4 and alternate10or11 != 1:
                                     del smd11[mossaTabu[1]]
-                        # alternare 1-0 exchange e 1-1 exchange
-                        #alternate10or11 = alternate10or11 * -1
 
                         # crea la lista unica dei costi in cui verrà salvato l'heap
                         heapSMD = list(smd10.values()) + list(smd11.values())
@@ -457,6 +453,18 @@ if __name__ == "__main__":
                             # vengono inizializzati gli SMD
                             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
                             inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+
+                        # eliminare le mosse tabu dagli SMD
+                        for mossaTabu in tabuList[s]:
+                            # print("mossaTabu deleted: ", mossaTabu)
+                            if mossaTabu[0] == soluzionePrecedente:
+                                # 1-0 Exchange
+                                if len(mossaTabu[1]) == 5 and alternate10or11 != -1:
+                                    del smd10[mossaTabu[1]]
+                                # 1-1 Exchange
+                                elif len(mossaTabu[1]) == 4 and alternate10or11 != 1:
+                                    del smd11[mossaTabu[1]]
+
                         # crea la lista unica dei costi in cui verrà salvato l'heap
                         # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
                         heapSMD = list(smd10.values()) + list(smd11.values())

@@ -992,8 +992,8 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 
     # popolazione manuale di Gamma e K2 per avere la stessa soluzione iniziale
     # if s == 1:
-    #     Gamma = [7, 3, 5, 4, 8, 6, 2]
-    #     K2 = [5, 3, 6, 2, 4]
+    #     Gamma = [3, 7, 6, 4, 5, 8]
+    #     K2 = [7, 8]
 
     print("Gamma: ", Gamma)
     print("K2: ", K2)
@@ -2005,9 +2005,6 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
             # 1-1 Exchange
             elif len(mossaTabu[1]) == 4 and alternate10or11 != 1:
                 del smd11[mossaTabu[1]]
-
-    # alternare 1-0 exchange e 1-1 exchange
-    #alternate10or11 = alternate10or11 * -1
 
     # crea la lista unica dei costi in cui verrà salvato l'heap
     # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
