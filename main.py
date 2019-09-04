@@ -127,12 +127,12 @@ if __name__ == "__main__":
     startTimeTotal = time.time()
 
     print("Start Prob3: ")
-    myProb = Prob3("007")
+    myProb = Prob3("2_2_100_0_20")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
     itNSIMax = 1
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
-    itMosseTSMax = 500
+    itMosseTSMax = 50
     # modificare elapsedTimeTotalMax per modificare il tempo massimo di esecuzione (in secondi)
     elapsedTimeTotalMax = 3600
 
@@ -273,7 +273,7 @@ if __name__ == "__main__":
                 # crea l'heap di smd10 e smd11
                 heapq.heapify(heapSMD)
                 # alternare 1-0 exchange e 1-1 exchange
-                alternate10or11 = alternate10or11 * -1
+                #alternate10or11 = alternate10or11 * -1
 
                 # contatore di mosse effettuate nel localSearch e nel tabuSearch
                 itMosseLS = 0
@@ -294,6 +294,7 @@ if __name__ == "__main__":
                     # non è stato raggiunto il tempo massimo di esecuzione
                     if elapsedTimeTotal < elapsedTimeTotalMax:
                         # parte il LocalSearch
+                        print("LS, alternate10or11: {}: ".format(alternate10or11))
                         x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11,
                                                                                    deepcopy(myProb.x2),
                                                                                    deepcopy(myProb.w2),
@@ -333,6 +334,8 @@ if __name__ == "__main__":
                         # aggiornare SMD dopo una mossa ammissibile
                         smd10.clear()
                         smd11.clear()
+                        # alternare 1-0 exchange e 1-1 exchange
+                        alternate10or11 = alternate10or11 * -1
                         # SMD10
                         if alternate10or11 == 1:
                             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
@@ -415,7 +418,7 @@ if __name__ == "__main__":
                                 elif len(mossaTabu[1]) == 4 and alternate10or11 != 1:
                                     del smd11[mossaTabu[1]]
                         # alternare 1-0 exchange e 1-1 exchange
-                        alternate10or11 = alternate10or11 * -1
+                        #alternate10or11 = alternate10or11 * -1
 
                         # crea la lista unica dei costi in cui verrà salvato l'heap
                         heapSMD = list(smd10.values()) + list(smd11.values())
@@ -437,6 +440,8 @@ if __name__ == "__main__":
                     # quindi tenta l'altro tipo di mossa prima di uscire
                     elif keyLocalSearch == -1 and costNew == cost and flagTried10and11 == False:
                         flagTried10and11 = True
+                        # alternare 1-0 exchange e 1-1 exchange
+                        alternate10or11 = alternate10or11 * -1
                         # SMD10
                         if alternate10or11 == 1:
                             # vengono inizializzati gli SMD
