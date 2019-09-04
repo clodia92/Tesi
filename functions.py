@@ -2031,7 +2031,12 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
 
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
 
-    filename = pathlib.Path("outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_" + str(alternate10or11))
+    if alternate10or11 == 0:
+        filename = pathlib.Path(
+            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0and1-1")
+    elif alternate10or11 == 1 or alternate10or11 == -1:
+        filename = pathlib.Path(
+            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0or1-1")
     # per creare file con numero che va ad aumentare:
     # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
 
@@ -2096,7 +2101,12 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
 
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
 
-    filename = pathlib.Path("outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_" + str(alternate10or11) + "_StartBest")
+    if alternate10or11 == 0:
+        filename = pathlib.Path(
+            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0and1-1" + "_StartBest")
+    elif alternate10or11 == 1 or alternate10or11 == -1:
+        filename = pathlib.Path(
+            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0or1-1" + "_StartBest")
     # per creare file con numero che va ad aumentare:
     # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
 
@@ -2149,7 +2159,12 @@ def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSo
                                                      timeElapsedTotal, alternate10or11):
     # scrittura su file della bestSolution in assoluto
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
-    filename = pathlib.Path("outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_" + str(alternate10or11) + "_StartBest")
+    if alternate10or11 == 0:
+        filename = pathlib.Path(
+            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0and1-1" + "_StartBest")
+    elif alternate10or11 == 1 or alternate10or11 == -1:
+        filename = pathlib.Path(
+            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0or1-1" + "_StartBest")
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     # apertura file in append

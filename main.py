@@ -145,7 +145,12 @@ if __name__ == "__main__":
 
     # creazione file: il file vecchio viene sovrascritto
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
-    filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_" + str(alternate10or11))
+    if alternate10or11 == 0:
+        filename = pathlib.Path(
+            "outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0and1-1")
+    elif alternate10or11 == 1 or alternate10or11 == -1:
+        filename = pathlib.Path(
+            "outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0or1-1")
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     file = open(filename, 'w')
@@ -153,7 +158,10 @@ if __name__ == "__main__":
     file.close()
 
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
-    filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_" + str(alternate10or11) + "_StartBest")
+    if alternate10or11 == 0:
+        filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0and1-1" + "_StartBest")
+    elif alternate10or11 == 1 or alternate10or11 == -1:
+        filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0or1-1" + "_StartBest")
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     file = open(filename, 'w')
@@ -176,7 +184,10 @@ if __name__ == "__main__":
 
         # scrittura file stacco per ogni soluzione diversa
         pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
-        filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_" + str(alternate10or11))
+        if alternate10or11 == 0:
+            filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0and1-1")
+        elif alternate10or11 == 1 or alternate10or11 == -1:
+            filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0or1-1")
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
         file = open(filename, 'a')
@@ -184,8 +195,10 @@ if __name__ == "__main__":
         file.close()
 
         pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
-        filename = pathlib.Path(
-            "outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_" + str(alternate10or11) + "_StartBest")
+        if alternate10or11 == 0:
+            filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0and1-1" + "_StartBest")
+        elif alternate10or11 == 1 or alternate10or11 == -1:
+            filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0or1-1" + "_StartBest")
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
         file = open(filename, 'a')
