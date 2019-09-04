@@ -1948,7 +1948,7 @@ def updateRotteSmd11(rotte, keyLocalSearch):
 # nik2ij: costo di instradamento del veicolo k∈K2 che attraversa l’arco (i,j)∈A2 nel secondo livello.
 # ak2ij: costo di trasporto del pallet con destinazione γ∈Γ che attraversa l’arco (i,j)∈A2 con il veicolo k∈K2
 # s: satellite
-def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSearch, nik2ij, ak2ij, s, flag10or11):
+def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSearch, nik2ij, ak2ij, s, alternate10or11):
     print("\nSTART tabuSearch()")
     # prende i padri di soluzionePrecedente
     padriDiAttuale = deepcopy(dictSolutionsDiS[soluzionePrecedente][4])
@@ -1976,17 +1976,17 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
     smd11 = {}
 
     # SMD10
-    if flag10or11 == 1:
+    if alternate10or11 == 1:
         # vengono inizializzati gli SMD
         inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s)
 
     # SMD11
-    elif flag10or11 == -1:
+    elif alternate10or11 == -1:
         # vengono inizializzati gli SMD
         inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2)
 
     # SMD10 and SMD11
-    elif flag10or11 == 0:
+    elif alternate10or11 == 0:
         # vengono inizializzati gli SMD
         inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s)
         inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2)
@@ -1998,14 +1998,14 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
         # print("mossaTabu deleted: ", mossaTabu)
         if mossaTabu[0] == padreDiAttuale:
             # 1-0 Exchange
-            if len(mossaTabu[1]) == 5 and flag10or11 != -1:
+            if len(mossaTabu[1]) == 5 and alternate10or11 != -1:
                 del smd10[mossaTabu[1]]
             # 1-1 Exchange
-            elif len(mossaTabu[1]) == 4 and flag10or11 != 1:
+            elif len(mossaTabu[1]) == 4 and alternate10or11 != 1:
                 del smd11[mossaTabu[1]]
 
     # alternare 1-0 exchange e 1-1 exchange
-    flag10or11 = flag10or11 * -1
+    alternate10or11 = alternate10or11 * -1
 
     # crea la lista unica dei costi in cui verrà salvato l'heap
     # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
@@ -2013,7 +2013,7 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
     # crea l'heap di smd10 e smd11
     heapq.heapify(heapSMD)
 
-    return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale, padriDiAttuale, flag10or11
+    return heapSMD, smd10, smd11, x2, w2, rotte, cost, padreDiAttuale, padriDiAttuale, alternate10or11
 
 
 # Scrive su file tutte le soluzioni trovate
@@ -2026,13 +2026,13 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
 # itMosseLS: numero iterazioni delle mosse realizzate con il Local Search
 # itMosseTS: numero iterazioni delle mosse realizzate con il Tabu Search
 def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS, itMosseTS, itNSIMax,
-                itMosseTSMax):
+                itMosseTSMax, alternate10or11):
     # creazione cartella
     print("\nOutput file, s: {}.".format(s))
 
-    pathlib.Path('output').mkdir(parents=True, exist_ok=True)
+    pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
 
-    filename = pathlib.Path("output/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax))
+    filename = pathlib.Path("outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_" + str(alternate10or11))
     # per creare file con numero che va ad aumentare:
     # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
 
@@ -2091,13 +2091,13 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
 # itMosseLS: numero iterazioni delle mosse realizzate con il Local Search
 # itMosseTS: numero iterazioni delle mosse realizzate con il Tabu Search
 def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS, itMosseTS, itNSI,
-                         itNSIMax, itMosseTSMax):
+                         itNSIMax, itMosseTSMax, alternate10or11):
     # creazione cartella di output
     print("Output file: start - best, s: {}.".format(s))
 
-    pathlib.Path('output').mkdir(parents=True, exist_ok=True)
+    pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
 
-    filename = pathlib.Path("output/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_StartBest")
+    filename = pathlib.Path("outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_" + str(alternate10or11) + "_StartBest")
     # per creare file con numero che va ad aumentare:
     # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
 
@@ -2147,10 +2147,10 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
 # Sneg: satelliti selezionati
 # bestSolution: soluzioni migliori trovate per ogni satellite
 def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSolution, itNSIMax, itMosseTSMax,
-                                                     timeElapsedTotal):
+                                                     timeElapsedTotal, alternate10or11):
     # scrittura su file della bestSolution in assoluto
-    pathlib.Path('output').mkdir(parents=True, exist_ok=True)
-    filename = pathlib.Path("output/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_StartBest")
+    pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
+    filename = pathlib.Path("outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_" + str(alternate10or11) + "_StartBest")
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     # apertura file in append

@@ -136,30 +136,30 @@ if __name__ == "__main__":
     # modificare elapsedTimeTotalMax per modificare il tempo massimo di esecuzione (in secondi)
     elapsedTimeTotalMax = 3600
 
-    # modificare flag10or11 per modificare se alternare 1-0 exchange e 1-1 exchange (1 o -1)
+    # modificare alternate10or11 per modificare se alternare 1-0 exchange e 1-1 exchange (1 o -1)
     # oppure utilizzare sempre entrambe contemporaneamente (0)
     #  1:   1-0 start
     # -1:   1-1 start
     #  0:   1-0 and 1-1
-    flag10or11 = 1
+    alternate10or11 = 1
 
-    ### creazione file: il file vecchio viene sovrascritto
-    pathlib.Path('output').mkdir(parents=True, exist_ok=True)
-    filename = pathlib.Path("output/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax))
+    # creazione file: il file vecchio viene sovrascritto
+    pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
+    filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_" + str(alternate10or11))
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     file = open(filename, 'w')
     file.write("itNSIMax: {}, itMosseTSMax: {}.\n".format(itNSIMax, itMosseTSMax))
     file.close()
 
-    pathlib.Path('output').mkdir(parents=True, exist_ok=True)
-    filename = pathlib.Path("output/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_StartBest")
+    pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
+    filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_" + str(alternate10or11) + "_StartBest")
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     file = open(filename, 'w')
     file.write("itNSIMax: {}, itMosseTSMax: {}.\n".format(itNSIMax, itMosseTSMax))
     file.close()
-    ### creazione file: il file vecchio viene sovrascritto
+    # creazione file: il file vecchio viene sovrascritto
 
     # contatore numero soluzioni iniziali
     itNSI = 0
@@ -174,24 +174,24 @@ if __name__ == "__main__":
         # incremento contatore
         itNSI += 1
 
-        ### scrittura file stacco per ogni soluzione diversa
-        pathlib.Path('output').mkdir(parents=True, exist_ok=True)
-        filename = pathlib.Path("output/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax))
+        # scrittura file stacco per ogni soluzione diversa
+        pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
+        filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_" + str(alternate10or11))
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
         file = open(filename, 'a')
         file.write("##########################################################################################\n")
         file.close()
 
-        pathlib.Path('output').mkdir(parents=True, exist_ok=True)
+        pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
         filename = pathlib.Path(
-            "output/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_StartBest")
+            "outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_" + str(alternate10or11) + "_StartBest")
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
         file = open(filename, 'a')
         file.write("##########################################################################################\n")
         file.close()
-        ### scrittura file stacco per ogni soluzione diversa
+        # scrittura file stacco per ogni soluzione diversa
         print("##########################################################################################")
 
         # dizionario delle soluzioni per ogni satellite
@@ -253,17 +253,17 @@ if __name__ == "__main__":
                 soluzionePrecedente = 0
 
                 # SMD10
-                if flag10or11 == 1:
+                if alternate10or11 == 1:
                     # vengono inizializzati gli SMD
                     inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
 
                 # SMD11
-                elif flag10or11 == -1:
+                elif alternate10or11 == -1:
                     # vengono inizializzati gli SMD
                     inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
 
                 # SMD10 and SMD11
-                elif flag10or11 == 0:
+                elif alternate10or11 == 0:
                     # vengono inizializzati gli SMD
                     inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
                     inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
@@ -273,7 +273,7 @@ if __name__ == "__main__":
                 # crea l'heap di smd10 e smd11
                 heapq.heapify(heapSMD)
                 # alternare 1-0 exchange e 1-1 exchange
-                flag10or11 = flag10or11 * -1
+                alternate10or11 = alternate10or11 * -1
 
                 # contatore di mosse effettuate nel localSearch e nel tabuSearch
                 itMosseLS = 0
@@ -283,7 +283,7 @@ if __name__ == "__main__":
                 oldKeyLocalSearch = -1
 
                 # flag per segnalare che sono stati analizzati entrambi i tipo di mossa quando vengono alternate
-                tried10and11 = False
+                flagTried10and11 = False
 
                 # iterazioni continuano finché non si presentano determinate condizioni
                 # (esplorazione completa tramite Tabu Search, numero di iterazioni limitate, ecc)
@@ -313,7 +313,7 @@ if __name__ == "__main__":
 
                     # effettua mossa migliorativa
                     if keyLocalSearch != -1 and costNew < cost:
-                        tried10and11 = False
+                        flagTried10and11 = False
 
                         itMosseLS += 1
                         cost = costNew
@@ -334,15 +334,15 @@ if __name__ == "__main__":
                         smd10.clear()
                         smd11.clear()
                         # SMD10
-                        if flag10or11 == 1:
+                        if alternate10or11 == 1:
                             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
 
                         # SMD11
-                        elif flag10or11 == -1:
+                        elif alternate10or11 == -1:
                             inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
 
                         # SMD10 and SMD11
-                        elif flag10or11 == 0:
+                        elif alternate10or11 == 0:
                             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
                             inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
 
@@ -409,13 +409,13 @@ if __name__ == "__main__":
                             # print("mossaTabu deleted: ", mossaTabu)
                             if mossaTabu[0] == soluzionePrecedente:
                                 # 1-0 Exchange
-                                if len(mossaTabu[1]) == 5 and flag10or11 != -1:
+                                if len(mossaTabu[1]) == 5 and alternate10or11 != -1:
                                     del smd10[mossaTabu[1]]
                                 # 1-1 Exchange
-                                elif len(mossaTabu[1]) == 4 and flag10or11 != 1:
+                                elif len(mossaTabu[1]) == 4 and alternate10or11 != 1:
                                     del smd11[mossaTabu[1]]
                         # alternare 1-0 exchange e 1-1 exchange
-                        flag10or11 = flag10or11 * -1
+                        alternate10or11 = alternate10or11 * -1
 
                         # crea la lista unica dei costi in cui verrà salvato l'heap
                         heapSMD = list(smd10.values()) + list(smd11.values())
@@ -435,20 +435,20 @@ if __name__ == "__main__":
 
                     # non esiste mossa migliorativa con il tipo di mossa attuale,
                     # quindi tenta l'altro tipo di mossa prima di uscire
-                    elif keyLocalSearch == -1 and costNew == cost and tried10and11 == False:
-                        tried10and11 = True
+                    elif keyLocalSearch == -1 and costNew == cost and flagTried10and11 == False:
+                        flagTried10and11 = True
                         # SMD10
-                        if flag10or11 == 1:
+                        if alternate10or11 == 1:
                             # vengono inizializzati gli SMD
                             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
 
                         # SMD11
-                        elif flag10or11 == -1:
+                        elif alternate10or11 == -1:
                             # vengono inizializzati gli SMD
                             inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
 
                         # SMD10 and SMD11
-                        elif flag10or11 == 0:
+                        elif alternate10or11 == 0:
                             # vengono inizializzati gli SMD
                             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
                             inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
@@ -461,7 +461,7 @@ if __name__ == "__main__":
                     # non esiste mossa migliorativa
                     # oppure è stato raggiunto il tempo massimo
                     # e sono state esplorati entrambi i tipi di mossa
-                    elif keyLocalSearch == -1 and costNew == cost and tried10and11 == True:
+                    elif keyLocalSearch == -1 and costNew == cost and flagTried10and11 == True:
                         # elapsedTimeTotal = time.time() - startTimeTotal
                         # print("elapsedTimeTotal: ", elapsedTimeTotal)
                         # se non è stata raggiunta nuovamente la soluzione iniziale (non è possibile applicare il Tabu Search)
@@ -478,12 +478,12 @@ if __name__ == "__main__":
                             #                                                              solution[4], solution[5], solution[6]))
 
                             # applica Tabu Search
-                            heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, soluzionePrecedente, padri, flag10or11 = tabuSearch(
+                            heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, soluzionePrecedente, padri, alternate10or11 = tabuSearch(
                                 dictSolutions[s], soluzionePrecedente, tabuList[s], oldKeyLocalSearch, myProb.nik2ij,
-                                myProb.ak2ij, s, flag10or11)
+                                myProb.ak2ij, s, alternate10or11)
                             oldKeyLocalSearch = -1
                             itMosseTS += 1
-                            tried10and11 = False
+                            flagTried10and11 = False
 
                         # condizione di uscita
                         else:
@@ -514,10 +514,9 @@ if __name__ == "__main__":
 
                             # creazione file output
                             writeOutput(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS,
-                                        itMosseTS, itNSIMax, itMosseTSMax)
+                                        itMosseTS, itNSIMax, itMosseTSMax, alternate10or11)
                             writeOutputStartBest(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsedS,
-                                                 itMosseLS,
-                                                 itMosseTS, itNSI, itNSIMax, itMosseTSMax)
+                                                 itMosseLS, itMosseTS, itNSI, itNSIMax, itMosseTSMax, alternate10or11)
 
                             break
             # se non è stata trovata una soluzione iniziale
@@ -530,4 +529,4 @@ if __name__ == "__main__":
 
     # scrittura su file della bestSolution in assoluto
     writeOutputStartBestwriteOutputStartBestAssoluta(myProb.nomeFile, myProb.Sneg, bestSolution, itNSIMax, itMosseTSMax,
-                                                     elapsedTimeTotal)
+                                                     elapsedTimeTotal, alternate10or11)
