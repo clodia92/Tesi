@@ -121,7 +121,6 @@ class Prob3:
 
         pass
 
-
 if __name__ == "__main__":
 
     startTimeTotal = time.time()
@@ -325,6 +324,15 @@ if __name__ == "__main__":
 
                     # effettua mossa migliorativa
                     if keyLocalSearch != -1 and costNew < cost:
+
+                        # 1-0 Exchange
+                        if len(keyLocalSearch) == 5:
+                            testareCosto(smd10[keyLocalSearch], cost, costNew)
+                        # 1-1 Exchange
+                        elif len(keyLocalSearch) == 4:
+                            testareCosto(smd11[keyLocalSearch], cost, costNew)
+
+
                         flagTried10and11 = False
 
                         itMosseLS += 1

@@ -2189,3 +2189,12 @@ def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSo
     file.write("\n\nTotal time elapsed: {:.2f}s.".format(timeElapsedTotal))
     # chiusura file
     file.close()
+
+
+def testareCosto(smdValue, cost, costNew):
+    if round(cost + smdValue, 1) != round(costNew, 1):
+        print("\n\n\n\n\n\n\n\n\n#####################################################################################")
+        print("#####################################################################################")
+        print("#####################################################################################")
+        print("smdValue: {},\ncost: {},\ncostNew: {},\n\ncost + smdValue: {}".format(smdValue, cost, costNew, cost + smdValue))
+        print("\n\n\n\n\n\n\n\n\n")
