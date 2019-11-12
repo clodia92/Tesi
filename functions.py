@@ -992,8 +992,8 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 
     # popolazione manuale di Gamma e K2 per avere la stessa soluzione iniziale
     # if s == 1:
-    #     Gamma = [3, 7, 6, 4, 5, 8]
-    #     K2 = [7, 8]
+    Gamma = [10, 13, 11, 17, 16, 5, 4, 7, 6, 18, 2, 15, 9, 14, 19, 12, 8, 3]
+    K2 = [2, 3, 4]
 
     print("Gamma: ", Gamma)
     print("K2: ", K2)
@@ -1374,9 +1374,9 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                     w2TMP[v1, n1, n2] = 1
 
                     # ak2ij
-                    # prima di n1
+                    # dopo di n1 se n1 non ha successori
                     if succN1[0] == -1:
-                        x2TMP[v1, n2, n1, n2] = x2[v2, n2, precN2[0], n2]
+                        x2TMP[v1, n2, n1, n2] = numeroPallet
                     flag = 0
                     for arc in rotte[v1]:
                         # n1, n2
@@ -1388,27 +1388,29 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                         # prima di n1
                         if flag == 0:
-                            x2TMP[v1, n2, arc[0], arc[1]] = x2[v2, n2, precN2[0], n2]
+                            x2TMP[v1, n2, arc[0], arc[1]] = numeroPallet
                         # n1, n2
                         if flag == 1:
-                            x2TMP[v1, n2, n1, n2] = x2[v2, n2, precN2[0], n2]
-                            if succN1[0] != -1:
-                                for gamma in succN1:
-                                    x2TMP[v1, gamma, n1, n2] = x2[v1, gamma, n1, succN1[0]]
-                                    x2TMP[v1, gamma, n2, succN1[0]] = x2[v1, gamma, n1, succN1[0]]
-                                    x2TMP[v1, gamma, n1, succN1[0]] = 0
+                            x2TMP[v1, n2, n1, n2] = numeroPallet
+                            # if succN1[0] != -1:
+                            for gamma in succN1:
+                                x2TMP[v1, gamma, n1, n2] = x2[v1, gamma, n1, succN1[0]]
+                                x2TMP[v1, gamma, n2, succN1[0]] = x2[v1, gamma, n1, succN1[0]]
+                                x2TMP[v1, gamma, n1, succN1[0]] = 0
                         # dopo n2 -> non vengono modificati
 
                     # v2
                     # nik2ij
-                    # se n2 non è l'ultimo nodo della sua rotta
-                    if succN2[0] != -1:
-                        # rimozione del vecchio arco out n2
-                        w2TMP[v2, n2, succN2[0]] = 0
-                        # aggiunta del nuovo arco in sostituzione di n2
-                        w2TMP[v2, precN2[0], succN2[0]] = 1
-                    # rimozione del vecchio arco in n2
-                    w2TMP[v2, precN2[0], n2] = 0
+                    # se vengono spostati tutti i pallet
+                    if numeroPallet == numeroTotPallet:
+                        # se n2 non è l'ultimo nodo della sua rotta
+                        if succN2[0] != -1:
+                            # rimozione del vecchio arco out n2
+                            w2TMP[v2, n2, succN2[0]] = 0
+                            # aggiunta del nuovo arco in sostituzione di n2
+                            w2TMP[v2, precN2[0], succN2[0]] = 1
+                        # rimozione del vecchio arco in n2
+                        w2TMP[v2, precN2[0], n2] = 0
 
                     # ak2ij
                     # prima di precN2[0]
@@ -1426,17 +1428,17 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
                         # prima di precN2[0]
                         if flag == 0:
-                            x2TMP[v2, n2, arc[0], arc[1]] = x2[v2, n2, precN2[0], n2]
+                            x2TMP[v2, n2, arc[0], arc[1]] = numeroPallet
                         # precN2[0], n2
                         if flag == 1:
-                            x2TMP[v2, n2, precN2[0], n2] = 0
-                            if succN2[0] != -1:
+                            x2TMP[v2, n2, precN2[0], n2] -= numeroPallet
+                            if numeroPallet == numeroTotPallet:
                                 for gamma in succN2:
-                                    x2TMP[v2, gamma, precN2[0], succN2[0]] = x2[v2, gamma, precN2[0], n2]
                                     x2TMP[v2, gamma, precN2[0], n2] = 0
                         # n2, succN2[0]
-                        if flag == 2:
+                        if flag == 2 and numeroPallet == numeroTotPallet:
                             for gamma in succN2:
+                                x2TMP[v2, gamma, precN2[0], succN2[0]] = x2[v2, gamma, precN2[0], n2]
                                 x2TMP[v2, gamma, n2, succN2[0]] = 0
                         # dopo succN2[0] -> non vengono modificati
 

@@ -127,12 +127,12 @@ if __name__ == "__main__":
     startTimeTotal = time.time()
 
     print("Start Prob3: ")
-    myProb = Prob3("006")
+    myProb = Prob3("018")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
-    itNSIMax = 15
+    itNSIMax = 10
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
-    itMosseTSMax = 50
+    itMosseTSMax = 20
     # modificare elapsedTimeTotalMax per modificare il tempo massimo di esecuzione (in secondi)
     elapsedTimeTotalMax = 3600
 
