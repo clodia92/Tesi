@@ -189,14 +189,10 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             # n1, n2
                             if flag == 1:
                                 smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, n1, n2])
-                                if succN1[0] != -1:
-                                    for gamma in succN1:
-                                        smd10[v1, v2, n1, n2, numeroPallet] += (
-                                                x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2])
-                                        smd10[v1, v2, n1, n2, numeroPallet] += (
-                                                x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
-                                        smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                                x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
+                                for gamma in succN1:
+                                    smd10[v1, v2, n1, n2, numeroPallet] += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2])
+                                    smd10[v1, v2, n1, n2, numeroPallet] += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
                             # dopo n2 -> non vengono modificati
 
                         # v2
@@ -231,7 +227,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         if arc[0] == n2:
                             break
                         # prima di precN2[0]
-                        smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
+                        smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, arc[0], arc[1]])
 
                     # v2
                     # rimozione del vecchio arco in n2
@@ -252,11 +248,11 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         # prima di precN2[0]
                         if flag == 0:
                             smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                    x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]])
+                                    numeroPallet * ak2ij[v2, arc[0], arc[1]])
                         # precN2[0], n2
                         if flag == 1:
                             smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                    x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+                                    numeroPallet * ak2ij[v2, precN2[0], n2])
                             if succN2[0] != -1:
                                 for gamma in succN2:
                                     smd10[v1, v2, n1, n2, numeroPallet] += (
@@ -465,7 +461,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                     # prima di n1
                     flag = 0
                     if succN1[0] == -1:
-                        smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
+                        smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, n1, n2])
                     for arc in rotte[v1]:
                         # n1, n2
                         if arc[0] == n1:
@@ -478,10 +474,10 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         # prima di n1
                         if flag == 0:
                             smd10[v1, v2, n1, n2, numeroPallet] += (
-                                        x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
+                                        numeroPallet * ak2ij[v1, arc[0], arc[1]])
                         # n1, n2
                         if flag == 1:
-                            smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
+                            smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, n1, n2])
                             if succN1[0] != -1:
                                 for gamma in succN1:
                                     smd10[v1, v2, n1, n2, numeroPallet] += (
@@ -520,11 +516,11 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         # prima di precN2[0]
                         if flag == 0:
                             smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                    x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]])
+                                    numeroPallet * ak2ij[v2, arc[0], arc[1]])
                         # precN2[0], n2
                         if flag == 1:
                             smd10[v1, v2, n1, n2, numeroPallet] -= (
-                                    x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+                                    numeroPallet * ak2ij[v2, precN2[0], n2])
                             if succN2[0] != -1:
                                 for gamma in succN2:
                                     smd10[v1, v2, n1, n2, numeroPallet] += (
