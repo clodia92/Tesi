@@ -2232,7 +2232,7 @@ def updateSMD10_11(key, smd11, nik2ij, ak2ij, x2, x2TMP, w2, w2TMP, precN2, succ
     # test
     return
 
-def updateSMD11_10(key, smd10, nik2ij, ak2ij, x2, w2, precN1, precN2, succN1, succN2):
+def updateSMD11_10(key, smd10, nik2ij, ak2ij, x2, x2TMP, w2, w2TMP, precN1, precN2, succN1, succN2):
     # estraggo la chiave
     v1 = key[0]
     v2 = key[1]
