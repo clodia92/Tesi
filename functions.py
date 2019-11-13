@@ -2226,6 +2226,11 @@ def updateSMD10_11(key, smd11, nik2ij, ak2ij, x2, w2, precN2, succN1, succN2):
     return
 
 def updateSMD11_10(key, smd10, nik2ij, ak2ij, x2, w2, precN1, precN2, succN1, succN2):
+    # estraggo la chiave
+    v1 = key[0]
+    v2 = key[1]
+    n1 = key[2]
+    n2 = key[3]
     return
 
 def updateSMD11_11(key, smd11, nik2ij, ak2ij, x2, w2, precN1, precN2, succN1, succN2):
