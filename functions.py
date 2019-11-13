@@ -2212,7 +2212,14 @@ def updateSMD(key, smd10, smd11, rotte):
         updateSMD11_11(key, smd11, precN1[0], precN2[0], succN1[0], succN2[0])
 
 def updateSMD10_10(key, smd10, precN2, succN1, succN2):
-    return
+    # estraggo la chiave
+    v1 = key[0]
+    v2 = key[1]
+    n1 = key[2]
+    n2 = key[3]
+    p = key[4]
+
+    
 
 def updateSMD10_11(key, smd11, precN2, succN1, succN2):
     return
