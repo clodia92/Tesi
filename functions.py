@@ -2222,7 +2222,6 @@ def updateSMD10_10(key, smd10, nik2ij, ak2ij, x2, w2, precN2, succN1, succN2):
 
 
 def updateSMD10_11(key, smd11, nik2ij, ak2ij, x2, w2, precN2, succN1, succN2):
-    # test
     return
 
 def updateSMD11_10(key, smd10, nik2ij, ak2ij, x2, w2, precN1, precN2, succN1, succN2):
@@ -2231,6 +2230,42 @@ def updateSMD11_10(key, smd10, nik2ij, ak2ij, x2, w2, precN1, precN2, succN1, su
     v2 = key[1]
     n1 = key[2]
     n2 = key[3]
+
+    for keySMD10, valueSMD10 in smd10.items():
+        # n1
+        # n1 = pred(A)
+        if keySMD10[0] == v1 and keySMD10[2] == precN1:
+            pass
+        # n1 = A
+        if keySMD10[0] == v1 and keySMD10[2] == n1:
+            pass
+        # n1 = pred(B)
+        if keySMD10[1] == v2 and keySMD10[2] == precN2:
+            pass
+        # n1 = B
+        if keySMD10[1] == v2 and keySMD10[2] == n2:
+            pass
+
+        # n2
+        # n2 = pred(A)
+        if keySMD10[0] == v1 and keySMD10[3] == precN1:
+            pass
+        # n2 = A
+        if keySMD10[0] == v1 and keySMD10[3] == n1:
+            pass
+        # n2 = succ(A)
+        if keySMD10[0] == v1 and keySMD10[3] == succN1:
+            pass
+        # n2 = pred(B)
+        if keySMD10[1] == v2 and keySMD10[3] == precN2:
+            pass
+        # n2 = B
+        if keySMD10[1] == v2 and keySMD10[3] == n2:
+            pass
+        # n2 = succ(B)
+        if keySMD10[1] == v2 and keySMD10[3] == succN2:
+            pass
+
     return
 
 def updateSMD11_11(key, smd11, nik2ij, ak2ij, x2, w2, precN1, precN2, succN1, succN2):
