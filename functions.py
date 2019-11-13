@@ -2219,7 +2219,7 @@ def updateSMD10_10(key, smd10, precN2, succN1, succN2):
     n2 = key[3]
     p = key[4]
 
-    
+    # ciao
 
 def updateSMD10_11(key, smd11, precN2, succN1, succN2):
     return
