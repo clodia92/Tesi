@@ -988,8 +988,8 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 
     # popolazione manuale di Gamma e K2 per avere la stessa soluzione iniziale
     # if s == 1:
-    Gamma = [10, 13, 11, 17, 16, 5, 4, 7, 6, 18, 2, 15, 9, 14, 19, 12, 8, 3]
-    K2 = [2, 3, 4]
+    # Gamma = [10, 13, 11, 17, 16, 5, 4, 7, 6, 18, 2, 15, 9, 14, 19, 12, 8, 3]
+    # K2 = [2, 3, 4]
 
     print("Gamma: ", Gamma)
     print("K2: ", K2)
