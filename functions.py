@@ -930,7 +930,7 @@ def getClienteVeicolo(rotte):
 # restituisce due liste precList e succList rispettivamente dei clienti precedenti e successivi al nodo
 #
 # rotta: lista del percorso di un determinato veicolo
-# nodo: cliente di cui si volgiono trovare i clienti precedenti e successivi
+# nodo: cliente di cui si vogliono trovare i clienti precedenti e successivi
 def trovaPrecSuccList(rotta, nodo):
     precList = []
     succList = []
@@ -2198,3 +2198,40 @@ def testareCosto(smdValue, cost, costNew):
         print("#####################################################################################")
         print("smdValue: {},\ncost: {},\ncostNew: {},\n\ncost + smdValue: {}".format(smdValue, cost, costNew, cost + smdValue))
         print("\n\n\n\n\n\n\n\n\n")
+
+def updateSMD(key, smd10, smd11, rotte, nik2ij, ak2ij, x2, w2):
+    # lista dei nodi precedenti e dei nodi successivi
+    precN1, succN1 = trovaPrecSuccList(rotte[key[0]], key[2])
+    precN2, succN2 = trovaPrecSuccList(rotte[key[1]], key[3])
+
+    if len(key) == 5:
+        updateSMD10_10(key, smd10, nik2ij, ak2ij, x2, w2, precN2[0], succN1[0], succN2[0])
+        updateSMD10_11(key, smd11, nik2ij, ak2ij, x2, w2, precN2[0], succN1[0], succN2[0])
+    if len(key) == 4:
+        updateSMD11_10(key, smd10, nik2ij, ak2ij, x2, w2, precN1[0], precN2[0], succN1[0], succN2[0])
+        updateSMD11_11(key, smd11, nik2ij, ak2ij, x2, w2, precN1[0], precN2[0], succN1[0], succN2[0])
+
+def updateSMD10_10(key, smd10, nik2ij, ak2ij, x2, w2, precN2, succN1, succN2):
+    # estraggo la chiave
+    v1 = key[0]
+    v2 = key[1]
+    n1 = key[2]
+    n2 = key[3]
+    p = key[4]
+
+
+
+def updateSMD10_11(key, smd11, nik2ij, ak2ij, x2, w2, precN2, succN1, succN2):
+    # test
+    return
+
+def updateSMD11_10(key, smd10, nik2ij, ak2ij, x2, w2, precN1, precN2, succN1, succN2):
+    # estraggo la chiave
+    v1 = key[0]
+    v2 = key[1]
+    n1 = key[2]
+    n2 = key[3]
+    return
+
+def updateSMD11_11(key, smd11, nik2ij, ak2ij, x2, w2, precN1, precN2, succN1, succN2):
+    return
