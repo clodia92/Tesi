@@ -2220,7 +2220,7 @@ def updateSMD10_10(key, smd10, numeroTotPallet, nik2ij, ak2ij, x2, x2TMP, w2, w2
     numeroPallet = key[4]
 
     # se vengono spostati tutti i pallet: arco precN2-n2 e/o n2-succN2 eliminato/i
-    if p == numeroTotPallet and v1 != v2:
+    if numeroPallet == numeroTotPallet and v1 != v2:
         for mossa, value in smd10.items:
             # n1 = A
             # + (n1 - n2) , - (n1 - succN1)
