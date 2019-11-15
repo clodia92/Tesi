@@ -140,7 +140,7 @@ if __name__ == "__main__":
     #  1:   1-0 start
     # -1:   1-1 start
     #  0:   1-0 and 1-1
-    alternate10or11 = 1
+    alternate10or11 = 0
 
     # creazione file: il file vecchio viene sovrascritto
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
@@ -351,6 +351,8 @@ if __name__ == "__main__":
                         myProb.w2 = deepcopy(w2TMP)
 
                         # aggiornare SMD dopo una mossa ammissibile
+                        provaSMD10 = deepcopy(smd10)
+                        provaSMD11 = deepcopy(smd11)
                         smd10.clear()
                         smd11.clear()
                         # alternare 1-0 exchange e 1-1 exchange
@@ -367,6 +369,15 @@ if __name__ == "__main__":
                         elif alternate10or11 == 0:
                             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
                             inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+
+                        ####################################################################################################
+                        provaCounterKey = 0
+                        provaCounterValue = 0
+                        for k in smd10.keys() & provaSMD10.keys():
+                            provaCounterKey += 1
+                            if smd10[k] == provaSMD10[k]:
+                                provaCounterValue +=1
+                        ####################################################################################################
 
                         print("Soluzione migliore trovata, costo: {}.".format(cost))
                         # print("rotte: {}".format(rotte))
