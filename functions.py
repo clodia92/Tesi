@@ -2232,7 +2232,7 @@ def updateSMD10_11(key, smd11, nik2ij, ak2ij, x2, x2TMP, w2, w2TMP, precN2, succ
     # test
     return
 
-def updateSMD11_10(key, smd10, nik2ij, ak2ij, x2, x2TMP, w2, w2TMP, precN1, precN2, succN1, succN2):
+def updateSMD11_10(key, smd10, nik2ij, ak2ij, x2Old, x2New, w2Old, w2New, precN1, precN2, succN1, succN2):
     # estraggo la chiave
     v1 = key[0]
     v2 = key[1]
@@ -2274,8 +2274,5 @@ def updateSMD11_10(key, smd10, nik2ij, ak2ij, x2, x2TMP, w2, w2TMP, precN1, prec
         if keySMD10[1] == v2 and keySMD10[3] == succN2:
             pass
 
-def updateSMD11_10(key, smd10, nik2ij, ak2ij, x2, x2TMP, w2, w2TMP, precN1, precN2, succN1, succN2):
-    return
-
-def updateSMD11_11(key, smd11, nik2ij, ak2ij, x2, x2TMP, w2, w2TMP, precN1, precN2, succN1, succN2):
+def updateSMD11_11(key, smd11, nik2ij, ak2ij, x2Old, x2New, w2Old, w2New, precN1, precN2, succN1, succN2):
     return
