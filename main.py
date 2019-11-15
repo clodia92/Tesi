@@ -243,9 +243,9 @@ if __name__ == "__main__":
             # variabile che contiente il costo della nuova soluzione (inizialmente maggiore di cost)
             costNew = cost + 1
 
-            # dizionari per ogni tipo di mossa che contengono tutte le mosse con relativi costi
-            smd10 = {}  # 1-0 Exchange: chiave: [v1, v2, n1, n2, p]
-            smd11 = {}  # 1-1 Exchange: chiave: [v1, v2, n1, n2]
+            # heap per ogni tipo di mossa che contengono tutte le mosse con relativi costi
+            smd10 = []  # 1-0 Exchange: chiave: [v1, v2, n1, n2, p]
+            smd11 = []  # 1-1 Exchange: chiave: [v1, v2, n1, n2]
 
             # inizializzazione della bestSolution (soluzione iniziale)
             bestSolutionIndice = 0
