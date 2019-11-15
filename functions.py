@@ -97,7 +97,7 @@ def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, Cd
 # almeno un pallet, la richiesta viene unificata senza modificare la posizione del cliente ma viene modificata solo la
 # quantità di pallet trasportati
 #
-# smd10: dizionario che contiene la mossa con relativa variazione di costo
+# smd10: heap che contiene la mossa con relativa variazione di costo
 # rotte: rotta a cui vengono applicate le mosse
 # nik2ij: costo di instradamento del veicolo k∈K2 che attraversa l’arco (i,j)∈A2 nel secondo livello.
 # ak2ij: costo di trasporto del pallet con destinazione γ∈Γ che attraversa l’arco (i,j)∈A2 con il veicolo k∈K2
@@ -541,7 +541,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 # 1-1 Exchange
 # il cliente n1 della rotta v1 viene invertito con il cliente n2 della rotta v2
 #
-# smd11: dizionario che contiene la mossa con relativa variazione di costo
+# smd11: heap che contiene la mossa con relativa variazione di costo
 # rotte: dizionario dei percorsi dei veicoli assegnati ad un satellite
 # nik2ij: costo di instradamento del veicolo k∈K2 che attraversa l’arco (i,j)∈A2 nel secondo livello.
 # ak2ij: costo di trasporto del pallet con destinazione γ∈Γ che attraversa l’arco (i,j)∈A2 con il veicolo k∈K2
@@ -1112,8 +1112,8 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 # True/False: se è stata trovata una soluzione migliore rispetto alla precedente
 #
 # heapSMD: lista unica dei costi che contiene la variazione della funzione obiettivo in base alle mosse applicate
-# smd10: dizionario che contiene la mossa con relativa variazione di costo (1-0 Exchange)
-# smd11: dizionario che contiene la mossa con relativa variazione di costo (1-1 Exchange)
+# smd10: heap che contiene la mossa con relativa variazione di costo (1-0 Exchange)
+# smd11: heap che contiene la mossa con relativa variazione di costo (1-1 Exchange)
 # x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
 # w2: variabile di instradamento, che vale 1 se il veicolo k∈K2 attraversa l’arco (i,j)∈A2, altrimenti 0
 # rotte: dizionario dei percorsi dei veicoli assegnati ad un satellite
