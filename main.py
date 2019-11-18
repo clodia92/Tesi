@@ -306,8 +306,7 @@ if __name__ == "__main__":
                     if elapsedTimeTotal < elapsedTimeTotalMax:
                         # parte il LocalSearch
                         print("LS, alternate10or11: {}: ".format(alternate10or11))
-                        x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11,
-                                                                                   deepcopy(myProb.x2),
+                        x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, deepcopy(myProb.x2),
                                                                                    deepcopy(myProb.w2),
                                                                                    rotte, s, myProb.uk2,
                                                                                    myProb.Pgac, myProb.PsGa,

@@ -121,6 +121,8 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                 precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
                 precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
+                variazioneCosto = 0
+
                 # split: per ogni quantità di pallet possibile da spostare
                 # (viene spostata solo una parte dei pallet per motivi di capienza)
                 for numeroPallet in range(1, x2[v2, n2, precN2[0], n2]):
