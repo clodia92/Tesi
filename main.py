@@ -140,7 +140,7 @@ if __name__ == "__main__":
     #  1:   1-0 start
     # -1:   1-1 start
     #  0:   1-0 and 1-1
-    alternate10or11 = 1
+    alternate10or11 = 0
 
     # creazione file: il file vecchio viene sovrascritto
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
@@ -281,7 +281,11 @@ if __name__ == "__main__":
                     inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
                 # crea la lista unica dei costi in cui verrà salvato l'heap
                 # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
-                heapSMD = list(smd10.values()) + list(smd11.values())
+                # genera le liste contenenti le tuple: (valore differenza, chiave mossa)
+                smd10ListReverse = [(v, k) for k, v in smd10.items()]
+                smd11ListReverse = [(v, k) for k, v in smd11.items()]
+
+                heapSMD = smd10ListReverse + smd11ListReverse
                 # crea l'heap di smd10 e smd11
                 heapq.heapify(heapSMD)
 
@@ -428,8 +432,13 @@ if __name__ == "__main__":
                                 elif len(mossaTabu[1]) == 4 and alternate10or11 != 1:
                                     del smd11[mossaTabu[1]]
 
+                        # genera le liste contenenti le tuple: (valore differenza, chiave mossa)
+                        smd10ListReverse = [(v, k) for k, v in smd10.items()]
+                        smd11ListReverse = [(v, k) for k, v in smd11.items()]
+
                         # crea la lista unica dei costi in cui verrà salvato l'heap
-                        heapSMD = list(smd10.values()) + list(smd11.values())
+                        heapSMD = smd10ListReverse + smd11ListReverse
+
                         # crea l'heap di smd10 e di smd11
                         heapq.heapify(heapSMD)
 
@@ -479,7 +488,11 @@ if __name__ == "__main__":
 
                         # crea la lista unica dei costi in cui verrà salvato l'heap
                         # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
-                        heapSMD = list(smd10.values()) + list(smd11.values())
+                        # genera le liste contenenti le tuple: (valore differenza, chiave mossa)
+                        smd10ListReverse = [(v, k) for k, v in smd10.items()]
+                        smd11ListReverse = [(v, k) for k, v in smd11.items()]
+
+                        heapSMD = smd10ListReverse + smd11ListReverse
                         # crea l'heap di smd10 e smd11
                         heapq.heapify(heapSMD)
 

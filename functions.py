@@ -2008,7 +2008,11 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
 
     # crea la lista unica dei costi in cui verrà salvato l'heap
     # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
-    heapSMD = list(smd10.values()) + list(smd11.values())
+    # genera le liste contenenti le tuple: (valore differenza, chiave mossa)
+    smd10ListReverse = [(v, k) for k, v in smd10.items()]
+    smd11ListReverse = [(v, k) for k, v in smd11.items()]
+
+    heapSMD = smd10ListReverse + smd11ListReverse
     # crea l'heap di smd10 e smd11
     heapq.heapify(heapSMD)
 
