@@ -1108,12 +1108,10 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 # quantità di pallet trasportati.
 # x2: aggiornato se è stata trovata una soluzione ammissibile migliore, altrimenti invariato
 # w2: aggiornato se è stata trovata una soluzione ammissibile migliore, altrimenti invariato
-# minCostKey: chiave dell'smd che identifica la mossa che porta alla soluzione migliore, altrimenti restituisce -1 se è stato raggiunto un minimo locale
+# minCostKey: tupla del heap che identifica la mossa che porta alla soluzione migliore, altrimenti restituisce -1 se è stato raggiunto un minimo locale
 # True/False: se è stata trovata una soluzione migliore rispetto alla precedente
 #
-# heapSMD: lista unica dei costi che contiene la variazione della funzione obiettivo in base alle mosse applicate
-# smd10: heap che contiene la mossa con relativa variazione di costo (1-0 Exchange)
-# smd11: heap che contiene la mossa con relativa variazione di costo (1-1 Exchange)
+# heapSMD: heap unico che contiene la variazione della funzione obiettivo e la relativa mossa
 # x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
 # w2: variabile di instradamento, che vale 1 se il veicolo k∈K2 attraversa l’arco (i,j)∈A2, altrimenti 0
 # rotte: dizionario dei percorsi dei veicoli assegnati ad un satellite
@@ -1125,7 +1123,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 # A2: insieme di archi che collegano clienti e satelliti tra di loro
 # Gamma: l'insieme di clienti
 # CdiS: L’insieme di container c∈C trasportati verso il satellite s∈Sneg secondo la soluzione di Prob1
-def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
+def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     print("\nSTART localSearch()")
     itMAX = len(heapSMD)
     itNonAmmissibili = 0
@@ -1137,12 +1135,9 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
 
         itNonAmmissibili += 1
 
-        # salva la chiave del valore minore
+        # salva la variazione del costo minore e la relativa chiave
         valoreHeap = heapq.heappop(heapSMD)
         # la chiave avrà lunghezza 5 e lunghezza 4 rispettivamente per 1-0 Exchange e 1-1 Exchange
-        # minCostKey = [key for key, value in list(smd10.items()) + list(smd11.items()) if value == valoreHeap][0]
-
-
         minCostKey = valoreHeap[1]
 
         # estraggo la chiave
