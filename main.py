@@ -140,7 +140,7 @@ if __name__ == "__main__":
     #  1:   1-0 start
     # -1:   1-1 start
     #  0:   1-0 and 1-1
-    alternate10or11 = 0
+    alternate10or11 = 1
 
     # creazione file: il file vecchio viene sovrascritto
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
@@ -243,9 +243,9 @@ if __name__ == "__main__":
             # variabile che contiente il costo della nuova soluzione (inizialmente maggiore di cost)
             costNew = cost + 1
 
-            # heap per ogni tipo di mossa che contengono tutte le mosse con relativi costi
-            smd10 = []  # 1-0 Exchange: chiave: [v1, v2, n1, n2, p]
-            smd11 = []  # 1-1 Exchange: chiave: [v1, v2, n1, n2]
+            # dizionari per ogni tipo di mossa che contengono tutte le mosse con relativi costi
+            smd10 = {}  # 1-0 Exchange: chiave: [v1, v2, n1, n2, p]
+            smd11 = {}  # 1-1 Exchange: chiave: [v1, v2, n1, n2]
 
             # inizializzazione della bestSolution (soluzione iniziale)
             bestSolutionIndice = 0
@@ -281,10 +281,9 @@ if __name__ == "__main__":
                     inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
                 # crea la lista unica dei costi in cui verrà salvato l'heap
                 # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
-                # heapSMD = list(smd10.values()) + list(smd11.values())
-                heapSMD = list(heapq.merge(smd11, smd10))
+                heapSMD = list(smd10.values()) + list(smd11.values())
                 # crea l'heap di smd10 e smd11
-                # heapq.heapify(heapSMD)
+                heapq.heapify(heapSMD)
 
                 # contatore di mosse effettuate nel localSearch e nel tabuSearch
                 itMosseLS = 0
@@ -306,7 +305,8 @@ if __name__ == "__main__":
                     if elapsedTimeTotal < elapsedTimeTotalMax:
                         # parte il LocalSearch
                         print("LS, alternate10or11: {}: ".format(alternate10or11))
-                        x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, deepcopy(myProb.x2),
+                        x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, smd10, smd11,
+                                                                                   deepcopy(myProb.x2),
                                                                                    deepcopy(myProb.w2),
                                                                                    rotte, s, myProb.uk2,
                                                                                    myProb.Pgac, myProb.PsGa,
@@ -324,15 +324,6 @@ if __name__ == "__main__":
 
                     # effettua mossa migliorativa
                     if keyLocalSearch != -1 and costNew < cost:
-
-                        # # 1-0 Exchange
-                        # if len(keyLocalSearch) == 5:
-                        #     testareCosto(smd10[keyLocalSearch], cost, costNew)
-                        # # 1-1 Exchange
-                        # elif len(keyLocalSearch) == 4:
-                        #     testareCosto(smd11[keyLocalSearch], cost, costNew)
-
-
                         flagTried10and11 = False
 
                         itMosseLS += 1
@@ -351,8 +342,6 @@ if __name__ == "__main__":
                         myProb.w2 = deepcopy(w2TMP)
 
                         # aggiornare SMD dopo una mossa ammissibile
-                        provaSMD10 = deepcopy(smd10)
-                        provaSMD11 = deepcopy(smd11)
                         smd10.clear()
                         smd11.clear()
                         # alternare 1-0 exchange e 1-1 exchange
@@ -369,15 +358,6 @@ if __name__ == "__main__":
                         elif alternate10or11 == 0:
                             inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
                             inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
-
-                        ####################################################################################################
-                        provaCounterKey = 0
-                        provaCounterValue = 0
-                        for k in smd10.keys() & provaSMD10.keys():
-                            provaCounterKey += 1
-                            if smd10[k] == provaSMD10[k]:
-                                provaCounterValue +=1
-                        ####################################################################################################
 
                         print("Soluzione migliore trovata, costo: {}.".format(cost))
                         # print("rotte: {}".format(rotte))

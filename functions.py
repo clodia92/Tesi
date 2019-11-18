@@ -97,7 +97,7 @@ def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, Cd
 # almeno un pallet, la richiesta viene unificata senza modificare la posizione del cliente ma viene modificata solo la
 # quantità di pallet trasportati
 #
-# smd10: heap che contiene la mossa con relativa variazione di costo
+# smd10: dizionario che contiene la mossa con relativa variazione di costo
 # rotte: rotta a cui vengono applicate le mosse
 # nik2ij: costo di instradamento del veicolo k∈K2 che attraversa l’arco (i,j)∈A2 nel secondo livello.
 # ak2ij: costo di trasporto del pallet con destinazione γ∈Γ che attraversa l’arco (i,j)∈A2 con il veicolo k∈K2
@@ -121,15 +121,13 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                 precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
                 precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
-                variazioneCosto = 0
-
                 # split: per ogni quantità di pallet possibile da spostare
                 # (viene spostata solo una parte dei pallet per motivi di capienza)
                 for numeroPallet in range(1, x2[v2, n2, precN2[0], n2]):
                     # se viene trattato un cliente splittato sulle rotte v1 e v2
                     if (n2 in [c[1] for c in rotte[v1]]) and v1 != v2 and n2 != n1:
                         # viene creata la chiave
-                        variazioneCosto = 0
+                        smd10[v1, v2, n1, n2, numeroPallet] = 0
                         # calcolo dei costi
                         # v1
                         # nik2ij
@@ -141,7 +139,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             if arc[0] == n2:
                                 break
                             # prima di precN2[0]
-                            variazioneCosto += (numeroPallet * ak2ij[v1, arc[0], arc[1]])
+                            smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, arc[0], arc[1]])
 
                         # v2
                         # nik2ij -> non essendo eliminato l'arco in v2, non vi sono ripercussioni sull'smd per nik2ij
@@ -152,13 +150,13 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             if arc[0] == n2:
                                 break
                             # prima di precN2[0]
-                            variazioneCosto -= (numeroPallet * ak2ij[v2, arc[0], arc[1]])
+                            smd10[v1, v2, n1, n2, numeroPallet] -= (numeroPallet * ak2ij[v2, arc[0], arc[1]])
 
                     # l'arco non deve esistere nella soluzione attuale
                     # un veicolo non puo' essere spostato dietro se stesso
                     elif v1 != v2 and n2 != n1:
                         # viene creata la chiave
-                        variazioneCosto = 0
+                        smd10[v1, v2, n1, n2, numeroPallet] = 0
 
                         # calcolo dei costi
                         # v1
@@ -166,17 +164,17 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         # se n1 non è l'ultimo nodo della sua rotta
                         if succN1[0] != -1:
                             # aggiunta del nuovo arco out n2
-                            variazioneCosto += nik2ij[v1, n2, succN1[0]]
+                            smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
                             # rimozione del vecchio arco da sostituire con n2
-                            variazioneCosto -= nik2ij[v1, n1, succN1[0]]
+                            smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
                         # aggiunta del nuovo arco in n2
-                        variazioneCosto += nik2ij[v1, n1, n2]
+                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
 
                         # ak2ij
                         # prima di n1
                         flag = 0
                         if succN1[0] == -1:
-                            variazioneCosto += (numeroPallet * ak2ij[v1, n1, n2])
+                            smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, n1, n2])
                         for arc in rotte[v1]:
                             # n1, n2
                             if arc[0] == n1:
@@ -187,14 +185,18 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 
                             # prima di n1
                             if flag == 0:
-                                variazioneCosto += (numeroPallet * ak2ij[v1, arc[0], arc[1]])
+                                smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, arc[0], arc[1]])
                             # n1, n2
                             if flag == 1:
-                                variazioneCosto += (numeroPallet * ak2ij[v1, n1, n2])
-                                for gamma in succN1:
-                                    variazioneCosto += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2])
-                                    variazioneCosto += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
-                                    variazioneCosto -= (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
+                                smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, n1, n2])
+                                if succN1[0] != -1:
+                                    for gamma in succN1:
+                                        smd10[v1, v2, n1, n2, numeroPallet] += (
+                                                x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2])
+                                        smd10[v1, v2, n1, n2, numeroPallet] += (
+                                                x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
+                                        smd10[v1, v2, n1, n2, numeroPallet] -= (
+                                                x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
                             # dopo n2 -> non vengono modificati
 
                         # v2
@@ -207,7 +209,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             if arc[0] == n2:
                                 break
 
-                            variazioneCosto -= (numeroPallet * ak2ij[v2, arc[0], arc[1]])
+                            smd10[v1, v2, n1, n2, numeroPallet] -= (numeroPallet * ak2ij[v2, arc[0], arc[1]])
                             # dopo N2 -> non vengono modificati
 
                 # Senza split (vengono spostati tutti i pallet del cliente)
@@ -217,7 +219,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                 # Spostamento di tutti i pallet verso un altro veicolo
                 if n2 in [c[1] for c in rotte[v1]] and v1 != v2 and n2 != n1:
                     # viene creata la chiave
-                    variazioneCosto = 0
+                    smd10[v1, v2, n1, n2, numeroPallet] = 0
                     # calcolo dei costi
                     # v1
                     # nik2ij
@@ -229,11 +231,11 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         if arc[0] == n2:
                             break
                         # prima di precN2[0]
-                        variazioneCosto += (numeroPallet * ak2ij[v1, arc[0], arc[1]])
+                        smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
 
                     # v2
                     # rimozione del vecchio arco in n2
-                    variazioneCosto -= nik2ij[v2, precN2[0], n2]
+                    smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v2, precN2[0], n2]
                     # prima di precN2[0]
                     flag = 0
                     for arc in rotte[v2]:
@@ -249,26 +251,26 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 
                         # prima di precN2[0]
                         if flag == 0:
-                            variazioneCosto -= (
-                                    numeroPallet * ak2ij[v2, arc[0], arc[1]])
+                            smd10[v1, v2, n1, n2, numeroPallet] -= (
+                                    x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]])
                         # precN2[0], n2
                         if flag == 1:
-                            variazioneCosto -= (
-                                    numeroPallet * ak2ij[v2, precN2[0], n2])
+                            smd10[v1, v2, n1, n2, numeroPallet] -= (
+                                    x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                             if succN2[0] != -1:
                                 for gamma in succN2:
-                                    variazioneCosto += (
+                                    smd10[v1, v2, n1, n2, numeroPallet] += (
                                             x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
-                                    variazioneCosto -= (
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= (
                                             x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                         # n2, succN2[0]
                         if flag == 2:
                             # rimozione del vecchio arco out n2
-                            variazioneCosto -= nik2ij[v2, n2, succN2[0]]
+                            smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v2, n2, succN2[0]]
                             # aggiunta del nuovo arco in sostituzione di n2
-                            variazioneCosto += nik2ij[v2, precN2[0], succN2[0]]
+                            smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v2, precN2[0], succN2[0]]
                             for gamma in succN2:
-                                variazioneCosto -= (
+                                smd10[v1, v2, n1, n2, numeroPallet] -= (
                                         x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
                         # dopo succN2[0] -> non vengono modificati
 
@@ -276,19 +278,19 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                 elif v1 == v2 and ((n1, n2) not in rotte[v1]):
                     # se esiste l'arco (n2, n1)
                     if (n2, n1) in rotte[v1]:
-                        variazioneCosto = 0
+                        smd10[v1, v2, n1, n2, numeroPallet] = 0
 
                         # nik2ij
-                        variazioneCosto -= nik2ij[v1, precN2[0], n2]
-                        variazioneCosto -= nik2ij[v1, n2, n1]
+                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, precN2[0], n2]
+                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n2, n1]
 
-                        variazioneCosto += nik2ij[v1, precN2[0], n1]
-                        variazioneCosto += nik2ij[v1, n1, n2]
+                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, precN2[0], n1]
+                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
 
                         # se n1 ha successori
                         if succN1[0] != -1:
-                            variazioneCosto -= nik2ij[v1, n1, succN1[0]]
-                            variazioneCosto += nik2ij[v1, n2, succN1[0]]
+                            smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
+                            smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
 
                         # ak2ij
                         flag = 0
@@ -307,37 +309,37 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             # precN2[0], ...
                             if flag == 1:
                                 for gamma in [n2] + succN2:
-                                    variazioneCosto -= x2[v1, gamma, precN2[0], n2] * ak2ij[
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, precN2[0], n2] * ak2ij[
                                         v1, precN2[0], n2]
-                                    variazioneCosto += x2[v1, gamma, precN2[0], n2] * ak2ij[
+                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, precN2[0], n2] * ak2ij[
                                         v1, precN2[0], n1]
                             # n2, succN2[0]
                             if flag == 2:
                                 for gamma in succN2:
-                                    variazioneCosto -= x2[v1, gamma, n2, n1] * ak2ij[v1, n2, n1]
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n2, n1] * ak2ij[v1, n2, n1]
                             # n1, succN1[0]
                             if flag == 3:
                                 for gamma in succN1:
-                                    variazioneCosto -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n1, succN1[0]]
-                                    variazioneCosto += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n1, n2]
-                                    variazioneCosto += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n2, succN1[0]]
                                 break
-                        variazioneCosto += x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
+                        smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
 
                     # se n2 in succN1
                     elif n2 in succN1 and ((n1, n2) not in rotte[v1]):
                         # viene creata la chiave
-                        variazioneCosto = 0
+                        smd10[v1, v2, n1, n2, numeroPallet] = 0
 
                         # nik2ij
-                        variazioneCosto -= nik2ij[v1, n1, succN1[0]]
-                        variazioneCosto -= nik2ij[v1, precN2[0], n2]
+                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
+                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, precN2[0], n2]
 
-                        variazioneCosto += nik2ij[v1, n1, n2]
-                        variazioneCosto += nik2ij[v1, n2, succN1[0]]
+                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
+                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
 
                         # ak2ij
                         # prima di n1
@@ -359,40 +361,40 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             # (n1, succN1)
                             if flag == 1:
                                 for gamma in succN1:
-                                    variazioneCosto -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n1, succN1[0]]
-                                    variazioneCosto += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n1, n2]
                                     if gamma != n2:
-                                        variazioneCosto += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                        smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                             v1, n2, succN1[0]]
                             # (succN1, ...)
                             if flag == 2:
-                                variazioneCosto -= x2[v1, n2, precN2[0], n2] * ak2ij[
+                                smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, n2, precN2[0], n2] * ak2ij[
                                     v1, arc[0], arc[1]]
                             # (n2, succN2)
                             if flag == 3:
-                                variazioneCosto += nik2ij[v1, precN2[0], n2]
-                                variazioneCosto -= nik2ij[v1, n2, succN2[0]]
+                                smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, precN2[0], n2]
+                                smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n2, succN2[0]]
                                 for gamma in succN2:
-                                    variazioneCosto -= x2[v1, gamma, n2, succN2[0]] * ak2ij[
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n2, succN2[0]] * ak2ij[
                                         v1, n2, succN2[0]]
-                                    variazioneCosto += x2[v1, gamma, n2, succN2[0]] * ak2ij[
+                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n2, succN2[0]] * ak2ij[
                                         v1, precN2[0], succN2[0]]
 
                     # se n1 in succN2 ma non (n2, n1)
                     elif n1 in succN2 and ((n2, n1) not in rotte[v1]):
                         # viene creata la chiave
-                        variazioneCosto = 0
+                        smd10[v1, v2, n1, n2, numeroPallet] = 0
 
                         # nik2ij
-                        variazioneCosto -= nik2ij[v1, precN2[0], n2]
-                        variazioneCosto -= nik2ij[v1, n2, succN2[0]]
+                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, precN2[0], n2]
+                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n2, succN2[0]]
 
-                        variazioneCosto += nik2ij[v1, precN2[0], succN2[0]]
-                        variazioneCosto += nik2ij[v1, n1, n2]
+                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, precN2[0], succN2[0]]
+                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
 
-                        variazioneCosto += x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
+                        smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
 
                         # prima di n2
                         flag = 0
@@ -416,36 +418,36 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                             # (precN2, n2)
                             if flag == 1:
                                 for gamma in [n2] + succN2:
-                                    variazioneCosto -= x2[v1, gamma, precN2[0], n2] * ak2ij[
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, precN2[0], n2] * ak2ij[
                                         v1, precN2[0], n2]
-                                    variazioneCosto += x2[v1, gamma, precN2[0], n2] * ak2ij[
+                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, precN2[0], n2] * ak2ij[
                                         v1, precN2[0], succN2[0]]
                             # (n2, succN2)
                             if flag == 2:
                                 for gamma in succN2:
-                                    variazioneCosto -= x2[v1, gamma, n2, succN2[0]] * ak2ij[
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n2, succN2[0]] * ak2ij[
                                         v1, n2, succN2[0]]
                             # (succN2, ...)
                             if flag == 3:
-                                variazioneCosto += x2[v1, n2, precN2[0], n2] * ak2ij[
+                                smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, n2, precN2[0], n2] * ak2ij[
                                     v1, arc[0], arc[1]]
                             # (n1, succN1)
                             if flag == 4:
-                                variazioneCosto -= nik2ij[v1, n1, succN1[0]]
-                                variazioneCosto += nik2ij[v1, n2, succN1[0]]
+                                smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
+                                smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
                                 for gamma in succN1:
-                                    variazioneCosto -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n1, succN1[0]]
-                                    variazioneCosto += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n1, n2]
-                                    variazioneCosto += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n2, succN1[0]]
 
                 # l'arco non deve esistere nella soluzione attuale
                 # un veicolo non puo' essere spostato dietro se stesso
                 elif v1 != v2 and n2 != n1:
                     # viene creata la chiave
-                    variazioneCosto = 0
+                    smd10[v1, v2, n1, n2, numeroPallet] = 0
 
                     # calcolo dei costi
                     # v1
@@ -453,17 +455,17 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                     # se n1 non è l'ultimo nodo della sua rotta
                     if succN1[0] != -1:
                         # aggiunta del nuovo arco out n2
-                        variazioneCosto += nik2ij[v1, n2, succN1[0]]
+                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
                         # rimozione del vecchio arco da sostituire con n2
-                        variazioneCosto -= nik2ij[v1, n1, succN1[0]]
+                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
                     # aggiunta del nuovo arco in n2
-                    variazioneCosto += nik2ij[v1, n1, n2]
+                    smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
 
                     # ak2ij
                     # prima di n1
                     flag = 0
                     if succN1[0] == -1:
-                        variazioneCosto += (numeroPallet * ak2ij[v1, n1, n2])
+                        smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
                     for arc in rotte[v1]:
                         # n1, n2
                         if arc[0] == n1:
@@ -475,18 +477,18 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 
                         # prima di n1
                         if flag == 0:
-                            variazioneCosto += (
-                                        numeroPallet * ak2ij[v1, arc[0], arc[1]])
+                            smd10[v1, v2, n1, n2, numeroPallet] += (
+                                        x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
                         # n1, n2
                         if flag == 1:
-                            variazioneCosto += (numeroPallet * ak2ij[v1, n1, n2])
+                            smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
                             if succN1[0] != -1:
                                 for gamma in succN1:
-                                    variazioneCosto += (
+                                    smd10[v1, v2, n1, n2, numeroPallet] += (
                                             x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2])
-                                    variazioneCosto += (
+                                    smd10[v1, v2, n1, n2, numeroPallet] += (
                                             x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
-                                    variazioneCosto -= (
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= (
                                             x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
                         # dopo n2 -> non vengono modificati
 
@@ -495,11 +497,11 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                     # se n2 non è l'ultimo nodo della sua rotta
                     if succN2[0] != -1:
                         # rimozione del vecchio arco out n2
-                        variazioneCosto -= nik2ij[v2, n2, succN2[0]]
+                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v2, n2, succN2[0]]
                         # aggiunta del nuovo arco in sostituzione di n2
-                        variazioneCosto += nik2ij[v2, precN2[0], succN2[0]]
+                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v2, precN2[0], succN2[0]]
                     # rimozione del vecchio arco in n2
-                    variazioneCosto -= nik2ij[v2, precN2[0], n2]
+                    smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v2, precN2[0], n2]
 
                     # ak2ij
                     # prima di precN2[0]
@@ -517,33 +519,31 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
 
                         # prima di precN2[0]
                         if flag == 0:
-                            variazioneCosto -= (
-                                    numeroPallet * ak2ij[v2, arc[0], arc[1]])
+                            smd10[v1, v2, n1, n2, numeroPallet] -= (
+                                    x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]])
                         # precN2[0], n2
                         if flag == 1:
-                            variazioneCosto -= (
-                                    numeroPallet * ak2ij[v2, precN2[0], n2])
+                            smd10[v1, v2, n1, n2, numeroPallet] -= (
+                                    x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                             if succN2[0] != -1:
                                 for gamma in succN2:
-                                    variazioneCosto += (
+                                    smd10[v1, v2, n1, n2, numeroPallet] += (
                                             x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
-                                    variazioneCosto -= (
+                                    smd10[v1, v2, n1, n2, numeroPallet] -= (
                                             x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                         # n2, succN2[0]
                         if flag == 2:
                             for gamma in succN2:
-                                variazioneCosto -= (
+                                smd10[v1, v2, n1, n2, numeroPallet] -= (
                                         x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
                         # dopo succN2[0] -> non vengono modificati
 
-
-                heapq.heappush(smd10, (variazioneCosto, [v1, v2, n1, n2, numeroPallet]))
 
 # inizializzazione del smd11
 # 1-1 Exchange
 # il cliente n1 della rotta v1 viene invertito con il cliente n2 della rotta v2
 #
-# smd11: heap che contiene la mossa con relativa variazione di costo
+# smd11: dizionario che contiene la mossa con relativa variazione di costo
 # rotte: dizionario dei percorsi dei veicoli assegnati ad un satellite
 # nik2ij: costo di instradamento del veicolo k∈K2 che attraversa l’arco (i,j)∈A2 nel secondo livello.
 # ak2ij: costo di trasporto del pallet con destinazione γ∈Γ che attraversa l’arco (i,j)∈A2 con il veicolo k∈K2
@@ -566,58 +566,58 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
             precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
 
             # viene creata la chiave
-            variazioneCosto = 0
+            smd11[v1, v2, n1, n2] = 0
 
             # se n1 e n2 fanno parte della stessa rotta
             if v1 == v2:
                 # se (n1, n2) è un arco già presente nella rotta
                 if (n1, n2) in rotte[v1]:
                     # nik2ij
-                    variazioneCosto += nik2ij[v1, precN1[0], n2]
-                    variazioneCosto += nik2ij[v1, n2, n1]
+                    smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], n2]
+                    smd11[v1, v2, n1, n2] += nik2ij[v1, n2, n1]
 
-                    variazioneCosto -= nik2ij[v1, precN1[0], n1]
-                    variazioneCosto -= nik2ij[v1, n1, n2]
+                    smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
+                    smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, n2]
 
                     # ak2ij
 
                     # archi successivi a n1 compreso
                     for gamma in [n1] + succN1:
-                        variazioneCosto += x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2]
-                        variazioneCosto -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
+                        smd11[v1, v2, n1, n2] += x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2]
+                        smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
 
                     # se n2 ha successori
                     if succN2[0] != -1:
                         # nik2ij
-                        variazioneCosto += nik2ij[v1, n1, succN2[0]]
-                        variazioneCosto += nik2ij[v1, n2, succN2[0]]
+                        smd11[v1, v2, n1, n2] += nik2ij[v1, n1, succN2[0]]
+                        smd11[v1, v2, n1, n2] += nik2ij[v1, n2, succN2[0]]
 
                         # ak2ij
 
                         # archi successivi a n2
                         for gamma in succN2:
-                            variazioneCosto += x2[v1, gamma, n1, n2] * ak2ij[v1, n2, n1]
-                            variazioneCosto -= x2[v1, gamma, n1, n2] * ak2ij[v1, n1, n2]
+                            smd11[v1, v2, n1, n2] += x2[v1, gamma, n1, n2] * ak2ij[v1, n2, n1]
+                            smd11[v1, v2, n1, n2] -= x2[v1, gamma, n1, n2] * ak2ij[v1, n1, n2]
 
-                            variazioneCosto += x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n1, succN2[0]]
-                            variazioneCosto -= x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n2, succN2[0]]
+                            smd11[v1, v2, n1, n2] += x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n1, succN2[0]]
+                            smd11[v1, v2, n1, n2] -= x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n2, succN2[0]]
 
                     # ak2ij
-                    variazioneCosto += x2[v1, n1, precN1[0], n1] * ak2ij[v1, n2, n1]
-                    variazioneCosto -= x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
+                    smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v1, n2, n1]
+                    smd11[v1, v2, n1, n2] -= x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
                 # n1 e n2 nella stessa rotta ma non (n1, n2)
                 else:
-                    variazioneCosto -= nik2ij[v1, precN1[0], n1]
-                    variazioneCosto -= nik2ij[v1, n1, succN1[0]]
-                    variazioneCosto += nik2ij[v1, precN1[0], n2]
-                    variazioneCosto += nik2ij[v1, n2, succN1[0]]
-                    variazioneCosto -= nik2ij[v1, precN2[0], n2]
-                    variazioneCosto += nik2ij[v1, precN2[0], n1]
+                    smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
+                    smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
+                    smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], n2]
+                    smd11[v1, v2, n1, n2] += nik2ij[v1, n2, succN1[0]]
+                    smd11[v1, v2, n1, n2] -= nik2ij[v1, precN2[0], n2]
+                    smd11[v1, v2, n1, n2] += nik2ij[v1, precN2[0], n1]
 
                     # se n2 ha successori
                     if succN2[0] != -1:
-                        variazioneCosto -= nik2ij[v1, n2, succN2[0]]
-                        variazioneCosto += nik2ij[v1, n1, succN2[0]]
+                        smd11[v1, v2, n1, n2] -= nik2ij[v1, n2, succN2[0]]
+                        smd11[v1, v2, n1, n2] += nik2ij[v1, n1, succN2[0]]
 
                     flag = 0
                     for arc in rotte[v1]:
@@ -643,31 +643,31 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                         # (precN1, n1)
                         if flag == 1:
                             for gamma in [n1] + succN1:
-                                variazioneCosto -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
-                                variazioneCosto += x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2]
+                                smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
+                                smd11[v1, v2, n1, n2] += x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2]
                         # (n1, succN1)
                         if flag == 2:
                             for gamma in succN1:
-                                variazioneCosto -= x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]]
+                                smd11[v1, v2, n1, n2] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]]
                                 if gamma != n2:
-                                    variazioneCosto += x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]]
-                            variazioneCosto += x2[v1, n1, precN1[0], n1] * ak2ij[v1, n2, succN1[0]]
+                                    smd11[v1, v2, n1, n2] += x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]]
+                            smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v1, n2, succN1[0]]
                         # (succN1, ...)
                         if flag == 3:
-                            variazioneCosto -= x2[v1, n2, arc[0], arc[1]] * ak2ij[v1, arc[0], arc[1]]
-                            variazioneCosto += x2[v1, n1, arc[0], arc[1]] * ak2ij[v1, arc[0], arc[1]]
+                            smd11[v1, v2, n1, n2] -= x2[v1, n2, arc[0], arc[1]] * ak2ij[v1, arc[0], arc[1]]
+                            smd11[v1, v2, n1, n2] += x2[v1, n1, arc[0], arc[1]] * ak2ij[v1, arc[0], arc[1]]
                         # (precN2, n2)
                         if flag == 4:
-                            variazioneCosto -= x2[v1, n2, precN2[0], n2] * ak2ij[v1, precN2[0], n2]
-                            variazioneCosto += x2[v1, n1, precN1[0], n1] * ak2ij[v1, precN2[0], n1]
+                            smd11[v1, v2, n1, n2] -= x2[v1, n2, precN2[0], n2] * ak2ij[v1, precN2[0], n2]
+                            smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v1, precN2[0], n1]
                         # (n2, succN2)
                         if flag == 5:
                             for gamma in succN2:
-                                variazioneCosto -= x2[v1, gamma, precN2[0], n2] * ak2ij[v1, precN2[0], n2]
-                                variazioneCosto += x2[v1, gamma, precN2[0], n2] * ak2ij[v1, precN2[0], n1]
+                                smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN2[0], n2] * ak2ij[v1, precN2[0], n2]
+                                smd11[v1, v2, n1, n2] += x2[v1, gamma, precN2[0], n2] * ak2ij[v1, precN2[0], n1]
 
-                                variazioneCosto -= x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n2, succN2[0]]
-                                variazioneCosto += x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n1, succN2[0]]
+                                smd11[v1, v2, n1, n2] -= x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n2, succN2[0]]
+                                smd11[v1, v2, n1, n2] += x2[v1, gamma, n2, succN2[0]] * ak2ij[v1, n1, succN2[0]]
             # rotte diverse, clienti diversi
             elif n1 != n2:
                 # v1
@@ -675,7 +675,7 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                 if n2 in [c[1] for c in rotte[v1]]:
                     # in v1: n2 in precN1
                     if n2 in precN1:
-                        variazioneCosto -= nik2ij[v1, precN1[0], n1]
+                        smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
 
                         # (..., n1)
                         flag1 = 0
@@ -694,32 +694,32 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
 
                             # (..., n1)
                             if flag1 == 0:
-                                variazioneCosto -= x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc[0], arc[1]]
+                                smd11[v1, v2, n1, n2] -= x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc[0], arc[1]]
                             # (n1, succN1[0])
                             if flag1 == 1:
-                                variazioneCosto -= nik2ij[v1, n1, succN1[0]]
-                                variazioneCosto += nik2ij[v1, precN1[0], succN1[0]]
+                                smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
+                                smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], succN1[0]]
                                 for gamma in succN1:
-                                    variazioneCosto -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
-                                    variazioneCosto -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, n1, succN1[0]]
-                                    variazioneCosto += x2[v1, gamma, precN1[0], n1] * ak2ij[
+                                    smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
+                                    smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, n1, succN1[0]]
+                                    smd11[v1, v2, n1, n2] += x2[v1, gamma, precN1[0], n1] * ak2ij[
                                         v1, precN1[0], succN1[0]]
                             # (..., n2)
                             if flag2 == 0:
-                                variazioneCosto += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]]
+                                smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]]
                     # in v1: n2 in succN1
                     elif n2 in succN1:
-                        variazioneCosto -= nik2ij[v1, precN1[0], n1]
-                        variazioneCosto -= nik2ij[v1, n1, succN1[0]]
-                        variazioneCosto += nik2ij[v1, precN1[0], succN1[0]]
+                        smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
+                        smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
+                        smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], succN1[0]]
 
                         # per tutti successori di n1
                         for gamma in succN1:
-                            variazioneCosto -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
-                            variazioneCosto -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, n1, succN1[0]]
-                            variazioneCosto += x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], succN1[0]]
+                            smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1]
+                            smd11[v1, v2, n1, n2] -= x2[v1, gamma, precN1[0], n1] * ak2ij[v1, n1, succN1[0]]
+                            smd11[v1, v2, n1, n2] += x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], succN1[0]]
 
-                        variazioneCosto += x2[v2, n2, precN2[0], n2] * ak2ij[v1, precN1[0], succN1[0]]
+                        smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, precN1[0], succN1[0]]
 
                         # (..., n1)
                         flag1 = 0
@@ -741,45 +741,45 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
 
                             # (..., n1)
                             if flag1 == 0:
-                                variazioneCosto -= x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc[0], arc[1]]
+                                smd11[v1, v2, n1, n2] -= x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc[0], arc[1]]
                             # (..., precN1[0]) oppure {(succN1[0], ...) ma succN1[0] diverso da n2}
                             if flag2 == 0:
-                                variazioneCosto += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]]
+                                smd11[v1, v2, n1, n2] += x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]]
                 # v1: se n2 non in v1
                 else:
                     # v1: se n1 ha successori
                     if succN1[0] != -1:
                         # nik2ij
                         # aggiungere costo arco (n2, succN1)
-                        variazioneCosto += nik2ij[v1, n2, succN1[0]]
+                        smd11[v1, v2, n1, n2] += nik2ij[v1, n2, succN1[0]]
                         # eliminare costo arco (n1, succN1)
-                        variazioneCosto -= nik2ij[v1, n1, succN1[0]]
+                        smd11[v1, v2, n1, n2] -= nik2ij[v1, n1, succN1[0]]
                         # ak2ij
                         for gamma in succN1:
                             # aggiungere costi pallet dei succN1 in (precN1, n2) e (n2, succN1)
-                            variazioneCosto += (x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2])
-                            variazioneCosto += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
+                            smd11[v1, v2, n1, n2] += (x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n2])
+                            smd11[v1, v2, n1, n2] += (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
                             # eliminare costi pallet dei succN1 da (precN1, n1) e (n1, succN1)
-                            variazioneCosto -= (x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
-                            variazioneCosto -= (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
+                            smd11[v1, v2, n1, n2] -= (x2[v1, gamma, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
+                            smd11[v1, v2, n1, n2] -= (x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
 
                     # v1: sempre
                     # nik2ij
                     # aggiungere costo arco (precN1, n2)
-                    variazioneCosto += nik2ij[v1, precN1[0], n2]
+                    smd11[v1, v2, n1, n2] += nik2ij[v1, precN1[0], n2]
                     # eliminare costo arco (precN1, n1)
-                    variazioneCosto -= nik2ij[v1, precN1[0], n1]
+                    smd11[v1, v2, n1, n2] -= nik2ij[v1, precN1[0], n1]
                     # ak2ij
                     for arc in rotte[v1]:
                         # (n1, succN1[0])
                         if arc[1] == n1:
                             break
                         # aggiungere costo pallet n2 ai precN1
-                        variazioneCosto += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
+                        smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
                         # eliminare costo pallet n1 dai precN1
-                        variazioneCosto -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc[0], arc[1]])
-                    variazioneCosto += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, precN1[0], n2])
-                    variazioneCosto -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
+                        smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, arc[0], arc[1]])
+                    smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, precN1[0], n2])
+                    smd11[v1, v2, n1, n2] -= (x2[v1, n1, precN1[0], n1] * ak2ij[v1, precN1[0], n1])
 
                 # v2
                 # v2: se n1 in v2
@@ -787,7 +787,7 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                     pass
                     # in v2: n1 in precN2
                     if n1 in precN2:
-                        variazioneCosto -= nik2ij[v2, precN2[0], n2]
+                        smd11[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
 
                         # (..., n2)
                         flag1 = 0
@@ -806,32 +806,32 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
 
                             # (..., n2)
                             if flag1 == 0:
-                                variazioneCosto -= x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]]
+                                smd11[v1, v2, n1, n2] -= x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]]
                             # (n2, succN2[0])
                             if flag1 == 1:
-                                variazioneCosto -= nik2ij[v2, n2, succN2[0]]
-                                variazioneCosto += nik2ij[v2, precN2[0], succN2[0]]
+                                smd11[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
+                                smd11[v1, v2, n1, n2] += nik2ij[v2, precN2[0], succN2[0]]
                                 for gamma in succN2:
-                                    variazioneCosto -= x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2]
-                                    variazioneCosto -= x2[v2, gamma, precN2[0], n2] * ak2ij[v2, n2, succN2[0]]
-                                    variazioneCosto += x2[v2, gamma, precN2[0], n2] * ak2ij[
+                                    smd11[v1, v2, n1, n2] -= x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2]
+                                    smd11[v1, v2, n1, n2] -= x2[v2, gamma, precN2[0], n2] * ak2ij[v2, n2, succN2[0]]
+                                    smd11[v1, v2, n1, n2] += x2[v2, gamma, precN2[0], n2] * ak2ij[
                                         v2, precN2[0], succN2[0]]
                             # (..., n1)
                             if flag2 == 0:
-                                variazioneCosto += x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc[0], arc[1]]
+                                smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc[0], arc[1]]
                     # in v2: n1 in succN2
                     elif n1 in succN2:
-                        variazioneCosto -= nik2ij[v2, precN2[0], n2]
-                        variazioneCosto -= nik2ij[v2, n2, succN2[0]]
-                        variazioneCosto += nik2ij[v2, precN2[0], succN2[0]]
+                        smd11[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
+                        smd11[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
+                        smd11[v1, v2, n1, n2] += nik2ij[v2, precN2[0], succN2[0]]
 
                         # per tutti i successori di n2
                         for gamma in succN2:
-                            variazioneCosto -= x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2]
-                            variazioneCosto -= x2[v2, gamma, precN2[0], n2] * ak2ij[v2, n2, succN2[0]]
-                            variazioneCosto += x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]]
+                            smd11[v1, v2, n1, n2] -= x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2]
+                            smd11[v1, v2, n1, n2] -= x2[v2, gamma, precN2[0], n2] * ak2ij[v2, n2, succN2[0]]
+                            smd11[v1, v2, n1, n2] += x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]]
 
-                        variazioneCosto += x2[v1, n1, precN1[0], n1] * ak2ij[v2, precN2[0], succN2[0]]
+                        smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v2, precN2[0], succN2[0]]
 
                         # (..., n2)
                         flag1 = 0
@@ -853,10 +853,10 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
 
                             # (..., n2)
                             if flag1 == 0:
-                                variazioneCosto -= x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]]
+                                smd11[v1, v2, n1, n2] -= x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]]
                             # (..., precN2[0]) oppure {(succN2[0], ...) ma succN2[0] diverso da n1}
                             if flag2 == 0:
-                                variazioneCosto += x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc[0], arc[1]]
+                                smd11[v1, v2, n1, n2] += x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc[0], arc[1]]
 
                 # v2: se n1 non in v2
                 else:
@@ -865,36 +865,36 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                     if succN2[0] != -1:
                         # nik2ij
                         # aggiungere costo arco (n1, succN2)
-                        variazioneCosto += nik2ij[v2, n1, succN2[0]]
+                        smd11[v1, v2, n1, n2] += nik2ij[v2, n1, succN2[0]]
                         # eliminare costo arco (n2, succN2)
-                        variazioneCosto -= nik2ij[v2, n2, succN2[0]]
+                        smd11[v1, v2, n1, n2] -= nik2ij[v2, n2, succN2[0]]
                         # ak2ij
                         # per tutti i successori di n2
                         for gamma in succN2:
                             # aggiungere costi pallet dei succN2 in (precN2, n1) e (n1, succN2)
-                            variazioneCosto += (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n1])
-                            variazioneCosto += (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n1, succN2[0]])
+                            smd11[v1, v2, n1, n2] += (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n1])
+                            smd11[v1, v2, n1, n2] += (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n1, succN2[0]])
                             # eliminare costi pallet dei succN2 da (precN2, n2) e (n2, succN2)
-                            variazioneCosto -= (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
-                            variazioneCosto -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
+                            smd11[v1, v2, n1, n2] -= (x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+                            smd11[v1, v2, n1, n2] -= (x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
 
                     # v2: sempre
                     # nik2ij
                     # aggiungere costo arco (precN2, n1)
-                    variazioneCosto += nik2ij[v2, precN2[0], n1]
+                    smd11[v1, v2, n1, n2] += nik2ij[v2, precN2[0], n1]
                     # eliminare costo arco (precN2, n2)
-                    variazioneCosto -= nik2ij[v2, precN2[0], n2]
+                    smd11[v1, v2, n1, n2] -= nik2ij[v2, precN2[0], n2]
                     # ak2ij
                     for arc in rotte[v2]:
                         # (n2, succN2[0])
                         if arc[1] == n2:
                             break
                         # aggiungere costo pallet n1 ai precN2
-                        variazioneCosto += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc[0], arc[1]])
+                        smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, arc[0], arc[1]])
                         # eliminare costo pallet n2 dai precN2
-                        variazioneCosto -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]])
-                    variazioneCosto += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, precN2[0], n1])
-                    variazioneCosto -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
+                        smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]])
+                    smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] * ak2ij[v2, precN2[0], n1])
+                    smd11[v1, v2, n1, n2] -= (x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
 
             # clienti uguali, rotte diverse
             elif v1 != v2 and n1 == n2:
@@ -903,17 +903,16 @@ def inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2):
                     # (n1, succN1[0])
                     if arc[0] == n1:
                         break
-                    variazioneCosto += (x2[v2, n2, precN2[0], n2] - x2[v1, n1, precN1[0], n1]) * ak2ij[
+                    smd11[v1, v2, n1, n2] += (x2[v2, n2, precN2[0], n2] - x2[v1, n1, precN1[0], n1]) * ak2ij[
                         v1, arc[0], arc[1]]
                 # per ogni arco in v2
                 for arc in rotte[v2]:
                     # (n2, succN2[0])
                     if arc[0] == n2:
                         break
-                    variazioneCosto += (x2[v1, n1, precN1[0], n1] - x2[v2, n2, precN2[0], n2]) * ak2ij[
+                    smd11[v1, v2, n1, n2] += (x2[v1, n1, precN1[0], n1] - x2[v2, n2, precN2[0], n2]) * ak2ij[
                         v2, arc[0], arc[1]]
 
-            heapq.heappush(smd11, (variazioneCosto, [v1, v2, n1, n2]))
 
 # restituisce una lista di tuple clienteVeicolo: [(cliente, veicolo), ...]
 #
@@ -935,7 +934,7 @@ def getClienteVeicolo(rotte):
 # restituisce due liste precList e succList rispettivamente dei clienti precedenti e successivi al nodo
 #
 # rotta: lista del percorso di un determinato veicolo
-# nodo: cliente di cui si vogliono trovare i clienti precedenti e successivi
+# nodo: cliente di cui si volgiono trovare i clienti precedenti e successivi
 def trovaPrecSuccList(rotta, nodo):
     precList = []
     succList = []
@@ -993,8 +992,8 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 
     # popolazione manuale di Gamma e K2 per avere la stessa soluzione iniziale
     # if s == 1:
-    # Gamma = [10, 13, 11, 17, 16, 5, 4, 7, 6, 18, 2, 15, 9, 14, 19, 12, 8, 3]
-    # K2 = [2, 3, 4]
+    #     Gamma = [3, 7, 6, 4, 5, 8]
+    #     K2 = [7, 8]
 
     print("Gamma: ", Gamma)
     print("K2: ", K2)
@@ -1110,10 +1109,12 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 # quantità di pallet trasportati.
 # x2: aggiornato se è stata trovata una soluzione ammissibile migliore, altrimenti invariato
 # w2: aggiornato se è stata trovata una soluzione ammissibile migliore, altrimenti invariato
-# minCostKey: tupla del heap che identifica la mossa che porta alla soluzione migliore, altrimenti restituisce -1 se è stato raggiunto un minimo locale
+# minCostKey: chiave dell'smd che identifica la mossa che porta alla soluzione migliore, altrimenti restituisce -1 se è stato raggiunto un minimo locale
 # True/False: se è stata trovata una soluzione migliore rispetto alla precedente
 #
-# heapSMD: heap unico che contiene la variazione della funzione obiettivo e la relativa mossa
+# heapSMD: lista unica dei costi che contiene la variazione della funzione obiettivo in base alle mosse applicate
+# smd10: dizionario che contiene la mossa con relativa variazione di costo (1-0 Exchange)
+# smd11: dizionario che contiene la mossa con relativa variazione di costo (1-1 Exchange)
 # x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
 # w2: variabile di instradamento, che vale 1 se il veicolo k∈K2 attraversa l’arco (i,j)∈A2, altrimenti 0
 # rotte: dizionario dei percorsi dei veicoli assegnati ad un satellite
@@ -1125,7 +1126,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 # A2: insieme di archi che collegano clienti e satelliti tra di loro
 # Gamma: l'insieme di clienti
 # CdiS: L’insieme di container c∈C trasportati verso il satellite s∈Sneg secondo la soluzione di Prob1
-def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
+def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     print("\nSTART localSearch()")
     itMAX = len(heapSMD)
     itNonAmmissibili = 0
@@ -1137,10 +1138,10 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)
 
         itNonAmmissibili += 1
 
-        # salva la variazione del costo minore e la relativa chiave
+        # salva la chiave del valore minore
         valoreHeap = heapq.heappop(heapSMD)
         # la chiave avrà lunghezza 5 e lunghezza 4 rispettivamente per 1-0 Exchange e 1-1 Exchange
-        minCostKey = valoreHeap[1]
+        minCostKey = [key for key, value in list(smd10.items()) + list(smd11.items()) if value == valoreHeap][0]
 
         # estraggo la chiave
         v1 = minCostKey[0]
@@ -1373,9 +1374,9 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)
                     w2TMP[v1, n1, n2] = 1
 
                     # ak2ij
-                    # dopo di n1 se n1 non ha successori
+                    # prima di n1
                     if succN1[0] == -1:
-                        x2TMP[v1, n2, n1, n2] = numeroPallet
+                        x2TMP[v1, n2, n1, n2] = x2[v2, n2, precN2[0], n2]
                     flag = 0
                     for arc in rotte[v1]:
                         # n1, n2
@@ -1387,29 +1388,27 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)
 
                         # prima di n1
                         if flag == 0:
-                            x2TMP[v1, n2, arc[0], arc[1]] = numeroPallet
+                            x2TMP[v1, n2, arc[0], arc[1]] = x2[v2, n2, precN2[0], n2]
                         # n1, n2
                         if flag == 1:
-                            x2TMP[v1, n2, n1, n2] = numeroPallet
-                            # if succN1[0] != -1:
-                            for gamma in succN1:
-                                x2TMP[v1, gamma, n1, n2] = x2[v1, gamma, n1, succN1[0]]
-                                x2TMP[v1, gamma, n2, succN1[0]] = x2[v1, gamma, n1, succN1[0]]
-                                x2TMP[v1, gamma, n1, succN1[0]] = 0
+                            x2TMP[v1, n2, n1, n2] = x2[v2, n2, precN2[0], n2]
+                            if succN1[0] != -1:
+                                for gamma in succN1:
+                                    x2TMP[v1, gamma, n1, n2] = x2[v1, gamma, n1, succN1[0]]
+                                    x2TMP[v1, gamma, n2, succN1[0]] = x2[v1, gamma, n1, succN1[0]]
+                                    x2TMP[v1, gamma, n1, succN1[0]] = 0
                         # dopo n2 -> non vengono modificati
 
                     # v2
                     # nik2ij
-                    # se vengono spostati tutti i pallet
-                    if numeroPallet == numeroTotPallet:
-                        # se n2 non è l'ultimo nodo della sua rotta
-                        if succN2[0] != -1:
-                            # rimozione del vecchio arco out n2
-                            w2TMP[v2, n2, succN2[0]] = 0
-                            # aggiunta del nuovo arco in sostituzione di n2
-                            w2TMP[v2, precN2[0], succN2[0]] = 1
-                        # rimozione del vecchio arco in n2
-                        w2TMP[v2, precN2[0], n2] = 0
+                    # se n2 non è l'ultimo nodo della sua rotta
+                    if succN2[0] != -1:
+                        # rimozione del vecchio arco out n2
+                        w2TMP[v2, n2, succN2[0]] = 0
+                        # aggiunta del nuovo arco in sostituzione di n2
+                        w2TMP[v2, precN2[0], succN2[0]] = 1
+                    # rimozione del vecchio arco in n2
+                    w2TMP[v2, precN2[0], n2] = 0
 
                     # ak2ij
                     # prima di precN2[0]
@@ -1427,17 +1426,17 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)
 
                         # prima di precN2[0]
                         if flag == 0:
-                            x2TMP[v2, n2, arc[0], arc[1]] = numeroPallet
+                            x2TMP[v2, n2, arc[0], arc[1]] = x2[v2, n2, precN2[0], n2]
                         # precN2[0], n2
                         if flag == 1:
-                            x2TMP[v2, n2, precN2[0], n2] -= numeroPallet
-                            if numeroPallet == numeroTotPallet:
+                            x2TMP[v2, n2, precN2[0], n2] = 0
+                            if succN2[0] != -1:
                                 for gamma in succN2:
+                                    x2TMP[v2, gamma, precN2[0], succN2[0]] = x2[v2, gamma, precN2[0], n2]
                                     x2TMP[v2, gamma, precN2[0], n2] = 0
                         # n2, succN2[0]
-                        if flag == 2 and numeroPallet == numeroTotPallet:
+                        if flag == 2:
                             for gamma in succN2:
-                                x2TMP[v2, gamma, precN2[0], succN2[0]] = x2[v2, gamma, precN2[0], n2]
                                 x2TMP[v2, gamma, n2, succN2[0]] = 0
                         # dopo succN2[0] -> non vengono modificati
 
@@ -1445,7 +1444,7 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)
                 if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
                     # print("rotte: {}".format(rotte))
                     print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(
-                        itNonAmmissibili, minCostKey, valoreHeap[0]))
+                        itNonAmmissibili, minCostKey, smd10[minCostKey]))
                     # soluzione ammissibile trovata
                     if numeroTotPallet == numeroPallet:
                         # tutti i pallet spostati in v1
@@ -1796,7 +1795,7 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)
                 # print("rotte: {}".format(rotte))
                 print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
                                                                                                         minCostKey,
-                                                                                                        valoreHeap[0]))
+                                                                                                        smd11[minCostKey]))
                 # soluzione ammissibile trovata
                 return x2TMP, w2TMP, minCostKey, True
     # non è stata trovata nessuna mossa migliorativa
@@ -2192,100 +2191,3 @@ def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSo
     file.write("\n\nTotal time elapsed: {:.2f}s.".format(timeElapsedTotal))
     # chiusura file
     file.close()
-
-
-def testareCosto(smdValue, cost, costNew):
-    if round(cost + smdValue, 1) != round(costNew, 1):
-        print("\n\n\n\n\n\n\n\n\n#####################################################################################")
-        print("#####################################################################################")
-        print("#####################################################################################")
-        print("smdValue: {},\ncost: {},\ncostNew: {},\n\ncost + smdValue: {}".format(smdValue, cost, costNew, cost + smdValue))
-        print("\n\n\n\n\n\n\n\n\n")
-
-def updateSMD(key, smd10, smd11, rotte, nik2ij, ak2ij, x2, x2TMP, w2, w2TMP, numeroTotPallet):
-    # lista dei nodi precedenti e dei nodi successivi
-    precN1, succN1 = trovaPrecSuccList(rotte[key[0]], key[2])
-    precN2, succN2 = trovaPrecSuccList(rotte[key[1]], key[3])
-
-    if len(key) == 5:
-        updateSMD10_10(key, smd10, numeroTotPallet, nik2ij, ak2ij, x2, x2TMP, w2, w2TMP, precN1, precN2, succN1, succN2)
-        updateSMD10_11(key, smd11, nik2ij, ak2ij, x2, x2TMP, w2, w2TMP, precN2, succN1, succN2)
-    if len(key) == 4:
-        updateSMD11_10(key, smd10, nik2ij, ak2ij, x2, x2TMP, w2, w2TMP, precN1, precN2, succN1, succN2)
-        updateSMD11_11(key, smd11, nik2ij, ak2ij, x2, x2TMP, w2, w2TMP, precN1, precN2, succN1, succN2)
-
-def updateSMD10_10(key, smd10, numeroTotPallet, nik2ij, ak2ij, x2, x2TMP, w2, w2TMP, precN1, precN2, succN1, succN2):
-    # estraggo la chiave
-    v1 = key[0]
-    v2 = key[1]
-    n1 = key[2]
-    n2 = key[3]
-    numeroPallet = key[4]
-
-    # se vengono spostati tutti i pallet: arco precN2-n2 e/o n2-succN2 eliminato/i
-    if numeroPallet == numeroTotPallet and v1 != v2:
-        for mossa, value in smd10.items:
-            # n1 = A
-            # + (n1 - n2) , - (n1 - succN1)
-            if mossa[2] == n1 and mossa[0] == v1 :
-                # non sono sicura
-                smd10[mossa[0], mossa[1], n1, mossa[3], mossa[4]] += (x2TMP[v1, n2, n1, n2] * ak2ij[v1, n1, n2]) # numeroPallet
-                if succN1[0] != -1:
-                    for gamma in succN1:
-                        smd10[mossa[0], mossa[1], n1, mossa[3], mossa[4]] -= (x2[mossa[0], gamma, n1, succN1[0]] * ak2ij[mossa[0], n1, succN1[0]])
-                        smd10[mossa[0], mossa[1], n1, mossa[3], mossa[4]] += (x2TMP[mossa[0], gamma, n1, succN1[0]] * ak2ij[mossa[0], n1, succN1[0]])
-
-                        smd10[mossa[0], mossa[1], n2, succN1[0], mossa[4]] += (x2TMP[v1, gamma, n2, succN1[0]] * ak2ij[v1, n2, succN1[0]])
-                if precN1[0] != -1:
-                    for gamma in precN1:
-                        smd10[mossa[0], mossa[1], n1, succN1[0], mossa[4]] += (x2TMP[v1, gamma, n2, succN1[0]] * ak2ij[v1, n2, succN1[0]])
-
-
-def updateSMD10_11(key, smd11, nik2ij, ak2ij, x2, x2TMP, w2, w2TMP, precN2, succN1, succN2):
-    # test
-    return
-
-def updateSMD11_10(key, smd10, nik2ij, ak2ij, x2Old, x2New, w2Old, w2New, precN1, precN2, succN1, succN2):
-    # estraggo la chiave
-    v1 = key[0]
-    v2 = key[1]
-    n1 = key[2]
-    n2 = key[3]
-
-    for keySMD10, valueSMD10 in smd10.items():
-        # n1
-        # n1 = pred(A)
-        if keySMD10[0] == v1 and keySMD10[2] == precN1:
-            pass
-        # n1 = A
-        if keySMD10[0] == v1 and keySMD10[2] == n1:
-            pass
-        # n1 = pred(B)
-        if keySMD10[1] == v2 and keySMD10[2] == precN2:
-            pass
-        # n1 = B
-        if keySMD10[1] == v2 and keySMD10[2] == n2:
-            pass
-
-        # n2
-        # n2 = pred(A)
-        if keySMD10[0] == v1 and keySMD10[3] == precN1:
-            pass
-        # n2 = A
-        if keySMD10[0] == v1 and keySMD10[3] == n1:
-            pass
-        # n2 = succ(A)
-        if keySMD10[0] == v1 and keySMD10[3] == succN1:
-            pass
-        # n2 = pred(B)
-        if keySMD10[1] == v2 and keySMD10[3] == precN2:
-            pass
-        # n2 = B
-        if keySMD10[1] == v2 and keySMD10[3] == n2:
-            pass
-        # n2 = succ(B)
-        if keySMD10[1] == v2 and keySMD10[3] == succN2:
-            pass
-
-def updateSMD11_11(key, smd11, nik2ij, ak2ij, x2Old, x2New, w2Old, w2New, precN1, precN2, succN1, succN2):
-    return
