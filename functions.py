@@ -1113,8 +1113,6 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 # True/False: se è stata trovata una soluzione migliore rispetto alla precedente
 #
 # heapSMD: lista unica dei costi che contiene la variazione della funzione obiettivo in base alle mosse applicate
-# smd10: dizionario che contiene la mossa con relativa variazione di costo (1-0 Exchange)
-# smd11: dizionario che contiene la mossa con relativa variazione di costo (1-1 Exchange)
 # x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
 # w2: variabile di instradamento, che vale 1 se il veicolo k∈K2 attraversa l’arco (i,j)∈A2, altrimenti 0
 # rotte: dizionario dei percorsi dei veicoli assegnati ad un satellite
