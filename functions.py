@@ -1126,7 +1126,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
 # A2: insieme di archi che collegano clienti e satelliti tra di loro
 # Gamma: l'insieme di clienti
 # CdiS: L’insieme di container c∈C trasportati verso il satellite s∈Sneg secondo la soluzione di Prob1
-def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
+def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     print("\nSTART localSearch()")
     itMAX = len(heapSMD)
     itNonAmmissibili = 0
@@ -1141,7 +1141,8 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
         # salva la chiave del valore minore
         valoreHeap = heapq.heappop(heapSMD)
         # la chiave avrà lunghezza 5 e lunghezza 4 rispettivamente per 1-0 Exchange e 1-1 Exchange
-        minCostKey = [key for key, value in list(smd10.items()) + list(smd11.items()) if value == valoreHeap][0]
+        # minCostKey = [key for key, value in list(smd10.items()) + list(smd11.items()) if value == valoreHeap][0]
+        minCostKey = valoreHeap[1]
 
         # estraggo la chiave
         v1 = minCostKey[0]
@@ -1444,7 +1445,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                 if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
                     # print("rotte: {}".format(rotte))
                     print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(
-                        itNonAmmissibili, minCostKey, smd10[minCostKey]))
+                        itNonAmmissibili, minCostKey, valoreHeap[0]))
                     # soluzione ammissibile trovata
                     if numeroTotPallet == numeroPallet:
                         # tutti i pallet spostati in v1
@@ -1795,7 +1796,7 @@ def localSearch(heapSMD, smd10, smd11, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2
                 # print("rotte: {}".format(rotte))
                 print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
                                                                                                         minCostKey,
-                                                                                                        smd11[minCostKey]))
+                                                                                                        valoreHeap[0]))
                 # soluzione ammissibile trovata
                 return x2TMP, w2TMP, minCostKey, True
     # non è stata trovata nessuna mossa migliorativa
