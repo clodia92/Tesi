@@ -6,15 +6,46 @@ import pathlib
 from functions import *
 
 
-def updateSMD(key, rotte, x2, x2TMP):
-    return
+def updateSMD(key, smd11, rotte, x2, x2TMP):
+    v1Mossa = key[0]
+    v2Mossa = key[1]
+    n1Mossa = key[2]
+    n2Mossa = key[3]
 
+    precN1Mossa, succN1Mossa = trovaPrecSuccList(rotte[v1Mossa], n1Mossa)
+    precN2Mossa, succN2Mossa = trovaPrecSuccList(rotte[v2Mossa], n2Mossa)
 
+    # flag1 è True finchè non si supera n1 sulla rotta v1
+    flag1 = True
+    # flag2 è True finchè non si supera n2 sulla rotta v2
+    flag2 = True
 
+    for k in rotte:
 
+        for arc in rotte[k]:
+            # applicare le regole per n1
+            if k == v1Mossa and n1Mossa == arc[1]:
+                flag1 = False
+            else:
 
+                if flag1 == True:
+                    # (k, v1Mossa, arc[1], n1Mossa)
+                    pass
+                else:
+                    # (v1Mossa, k, n1Mossa, arc[1])
+                    pass
 
+            # applicare le regole per n2
+            if k == v2Mossa and n2Mossa == arc[1]:
+                flag2 = False
+            else:
 
+                if flag2 == True:
+                    # (k, v2Mossa, arc[1], n2Mossa)
+                    pass
+                else:
+                    # (v2Mossa, k, n2Mossa, arc[1])
+                    pass
 
 
 def updateSMDold(key, smd10, smd11, rotte, nik2ij, ak2ij, x2, x2TMP, w2, w2TMP, numeroTotPallet):
