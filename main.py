@@ -339,7 +339,7 @@ if __name__ == "__main__":
                             updateRotteSmd10(rotte, keyLocalSearch, flagAllPallets)
                         # 1-1 Exchange
                         elif len(keyLocalSearch) == 4:
-                            updateRotteSmd11(rotte, keyLocalSearch)
+                            n1InV2, n2InV1 = updateRotteSmd11(rotte, keyLocalSearch)
 
                         # aggiornare x2 e w2 dopo una mossa ammissibile
                         myProb.x2 = deepcopy(x2TMP)

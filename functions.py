@@ -1873,6 +1873,9 @@ def updateRotteSmd11(rotte, keyLocalSearch):
     n1 = keyLocalSearch[2]
     n2 = keyLocalSearch[3]
 
+    n1InV2 = False
+    n2InV1 = False
+
     # lista dei nodi precedenti e dei nodi successivi
     precN1, succN1 = trovaPrecSuccList(rotte[v1], n1)
     precN2, succN2 = trovaPrecSuccList(rotte[v2], n2)
@@ -1899,6 +1902,7 @@ def updateRotteSmd11(rotte, keyLocalSearch):
         # v1
         # v1: se n2 in v1
         if n2 in [c[1] for c in rotte[v1]]:
+            n2InV1 = True
             index = rotte[v1].index((precN1[0], n1))
             rotte[v1].remove((precN1[0], n1))
             if succN1[0] != -1:
@@ -1913,6 +1917,7 @@ def updateRotteSmd11(rotte, keyLocalSearch):
         # v2
         # v2: se n1 in v2
         if n1 in [c[1] for c in rotte[v2]]:
+            n1InV2 = True
             index = rotte[v2].index((precN2[0], n2))
             rotte[v2].remove((precN2[0], n2))
             if succN2[0] != -1:
@@ -1928,6 +1933,7 @@ def updateRotteSmd11(rotte, keyLocalSearch):
         # non viene effettuata nessuna modifica nelle rotte
         pass
 
+    return n1InV2, n2InV1
 
 # Tabu Search: risale al nodo padre e aggiunge alla tabu list la mossa appena effettuata
 # heapSMD: lista unica dei costi che contiene la variazione della funzione obiettivo in base alle mosse applicate

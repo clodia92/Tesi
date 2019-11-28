@@ -5,8 +5,14 @@ import pathlib
 
 from functions import *
 
-
-def updateSMD(key, smd11, rotte, x2, x2TMP):
+# key: chiave della mossa appena effettuata
+# smd11: Vecchio smd da aggiornare
+# rotte: rotte aggiornate dopo la mossa
+# x2: x2 old
+# x2TMP: x2 aggiornato dopo la mossa
+# n1InV2: indica se n1 è presente in v2 prima di effettuare la mossa
+# n2InV1: indica se n2 è presente in v1 prima di effettuare la mossa
+def updateSMD(key, smd11, rotte, x2, x2TMP, n1InV2, n2InV1):
     v1Mossa = key[0]
     v2Mossa = key[1]
     n1Mossa = key[2]
@@ -20,7 +26,17 @@ def updateSMD(key, smd11, rotte, x2, x2TMP):
     # flag2 è True finchè non si supera n2 sulla rotta v2
     flag2 = True
 
+
     for k in rotte:
+        # indica se n1 e n2 sono presenti nella rotta aggiornata
+        n1InRotta = False
+        n2InRotta = False
+        for arc in rotte[k]:
+            if arc[1] == n1Mossa and k != v2Mossa:
+                n1InRotta = True
+            if arc[1] == n2Mossa and k != v1Mossa:
+                n2InRotta = True
+
 
         for arc in rotte[k]:
             # applicare le regole per n1
