@@ -1,0 +1,7 @@
+Questo branch è stato creato per l'implementazione del SMD. Tale implementazione è risultata meno efficiente e più
+complessa del previsto. Si è scelto dunque di non proseguire e concentrarsi sulla granularità e sulla visita di
+soluzioni non ammissibili durante la ricerca.
+
+Il file functionsUpdateSMD.py contiene il punto di partenza di tale implementazione. Inoltre, la funzione
+updateRotteSmd11, oltre a modificare l'SMD11, ora restituisce anche due variabili che indicano se n1 è presente in v2 e
+n2 è presente in v1 (prima di effettuare la mossa).
