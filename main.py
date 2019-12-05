@@ -127,14 +127,14 @@ if __name__ == "__main__":
     startTimeTotal = time.time()
 
     print("Start Prob3: ")
-    myProb = Prob3("2_2_100_0_20")
+    myProb = Prob3("006")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
-    itNSIMax = 10
+    itNSIMax = 1
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
     itMosseTSMax = 20
     # modificare elapsedTimeTotalMax per modificare il tempo massimo di esecuzione (in secondi)
-    elapsedTimeTotalMax = 3600
+    elapsedTimeTotalMax = 150
 
     # modificare alternate10or11 per modificare se alternare 1-0 exchange e 1-1 exchange (1 o -1)
     # oppure utilizzare sempre entrambe contemporaneamente (0)
@@ -242,6 +242,7 @@ if __name__ == "__main__":
                                                                                myProb.Pgac, myProb.PsGa,
                                                                                myProb.K2diS[s], myProb.A2,
                                                                                myProb.GammadiS[s], myProb.CdiS)
+            vincolo35 = True
             # variabile che contiene il costo della soluzione appena trovata
             cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2,
                                myProb.nik2ij, myProb.ak2ij, s)
@@ -314,7 +315,7 @@ if __name__ == "__main__":
                     if elapsedTimeTotal < elapsedTimeTotalMax:
                         # parte il LocalSearch
                         # print("LS, alternate10or11: {}: ".format(alternate10or11))
-                        x2TMP, w2TMP, keyLocalSearch, flagAllPallets = localSearch(heapSMD, deepcopy(myProb.x2),
+                        x2TMP, w2TMP, keyLocalSearch, flagAllPallets, vincolo35 = localSearch(heapSMD, deepcopy(myProb.x2),
                                                                                    deepcopy(myProb.w2), rotte, s,
                                                                                    myProb.uk2, myProb.Pgac, myProb.PsGa,
                                                                                    myProb.K2diS[s], myProb.A2,
@@ -322,6 +323,9 @@ if __name__ == "__main__":
                         # aggiornamento del costo
                         costNew = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
                                               myProb.ak2ij, s)
+                        # il costo viene penalizzato se la soluzione viola il vincolo35
+                        if not vincolo35:
+                            costNew += costNew/100 * 20
 
                         # print("localSearch, key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
                     # è stato raggiunto il tempo massimo di esecuzione
@@ -450,7 +454,7 @@ if __name__ == "__main__":
                         # questo aggiornamento deve essere fatto ogni volta che viene effettuato il LocalSearch
                         # perché se si imposta elapsedTimeTotalMax tale da non permettere di arrivare ad un minimo
                         # locale, allora deve esere salvata la soluzione con costo minimo trovata fino ad allora
-                        if costNew < dictSolutions[s][bestSolutionIndice][0]:
+                        if costNew < dictSolutions[s][bestSolutionIndice][0] and vincolo35:
                             bestSolutionIndice = soluzionePrecedente
                             # print("bestSolution:\ncosto: {}, rotte: {}".format(dictSolutions[s][bestSolutionIndice][0],
                             #                                                    dictSolutions[s][bestSolutionIndice][3]))
