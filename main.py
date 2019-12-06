@@ -324,7 +324,7 @@ if __name__ == "__main__":
                         costNew = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
                                               myProb.ak2ij, s)
                         # il costo viene penalizzato se la soluzione viola il vincolo35
-                        if not vincolo35:
+                        if not vincolo35 and costNew != cost:
                             costNew += costNew/100 * 20
 
                         # print("localSearch, key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
