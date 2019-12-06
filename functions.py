@@ -72,17 +72,17 @@ def assignx2w2(x2, w2, trasportoPalletDiGamma, rotte):
 # PsGa: l’insieme di pallet con destinazione γ∈Γs trasportati al satellite s∈Sneg secondo la soluzione di Prob1
 # K2: l'insieme di PCV (veicoli del secondo livello)
 # A2: insieme di archi che collegano clienti e satelliti tra di loro
-# Gamma: l'insieme di clienti
+# GammadiS: l'insieme di clienti i cui pallet sono stati assegnati al satellite s
 # CdiS: L’insieme di container c∈C trasportati verso il satellite s∈Sneg secondo la soluzione di Prob1
-def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
+def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2, A2, GammadiS, CdiS):
     # chiama le funzioni dei singoli vincoli
-    vincolo29 = BuildConstr29(Gamma, x2, K2, PsGa, sat)
-    vincolo30 = BuildConstr30(Gamma, x2, K2, Pgac, CdiS, sat)
-    vincolo31 = BuildConstr31(Gamma, K2, x2, sat)
-    vincolo32 = BuildConstr32(K2, w2, Gamma, sat)
-    vincolo34 = BuildConstr34(K2, Gamma, w2, sat)
-    vincolo35 = BuildConstr35(K2, A2, x2, Gamma, uk2, w2, sat)
-    vincolo36 = BuildConstr36(K2, Gamma, w2, sat)
+    vincolo29 = BuildConstr29(GammadiS, x2, K2, PsGa, sat)
+    vincolo30 = BuildConstr30(GammadiS, x2, K2, Pgac, CdiS, sat)
+    vincolo31 = BuildConstr31(GammadiS, K2, x2, sat)
+    vincolo32 = BuildConstr32(K2, w2, GammadiS, sat)
+    vincolo34 = BuildConstr34(K2, GammadiS, w2, sat)
+    vincolo35 = BuildConstr35(K2, A2, x2, GammadiS, uk2, w2, sat)
+    vincolo36 = BuildConstr36(K2, GammadiS, w2, sat)
 
     if vincolo29 and vincolo30 and vincolo31 and vincolo32 and vincolo34 and vincolo35 and vincolo36:
         return True
@@ -478,7 +478,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s):
                         # prima di n1
                         if flag == 0:
                             smd10[v1, v2, n1, n2, numeroPallet] += (
-                                        x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
+                                    x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
                         # n1, n2
                         if flag == 1:
                             smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
@@ -977,9 +977,9 @@ def trovaPrecSuccList(rotta, nodo):
 # PsGa: l’insieme di pallet con destinazione γ∈Γs trasportati al satellite s∈Sneg secondo la soluzione di Prob1
 # K2: l'insieme di PCV (veicoli del secondo livello)
 # A2: insieme di archi che collegano clienti e satelliti tra di loro
-# Gamma: l'insieme di clienti
+# GammadiS: l'insieme di clienti i cui pallet sono stati assegnati al satellite s
 # CdiS: L’insieme di container c∈C trasportati verso il satellite s∈Sneg secondo la soluzione di Prob1
-def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
+def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, GammadiS, CdiS):
     print("\nSTART findSolutionBase()")
 
     # soluzione alternativa invertita
@@ -987,7 +987,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     # K2.reverse()
 
     # soluzione alternativa random
-    shuffle(Gamma)
+    shuffle(GammadiS)
     shuffle(K2)
 
     # popolazione manuale di Gamma e K2 per avere la stessa soluzione iniziale
@@ -995,7 +995,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     #     Gamma = [3, 7, 6, 4, 5, 8]
     #     K2 = [7, 8]
 
-    print("Gamma: ", Gamma)
+    print("Gamma: ", GammadiS)
     print("K2: ", K2)
 
     x2TMP = deepcopy(x2)
@@ -1020,7 +1020,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     for v in K2:
         uk2diS[v] = uk2[v]
 
-    for gamma in Gamma:
+    for gamma in GammadiS:
         PGa[gamma] = PsGa[(s, gamma)]
         palletDaConsegnare += PGa[gamma]
 
@@ -1036,55 +1036,55 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
             posV = (posV + 1) % len(K2)
 
         # se il cliente deve ancora ricevere dei pallet
-        if (PGa[Gamma[posG]] > 0):
+        if (PGa[GammadiS[posG]] > 0):
             # consegna a gamma
             # gamma non viene splittato
             # lo spazio della rotta è sufficiente per ospitare tutti i pallet di gamma
-            if (PGa[Gamma[posG]] <= (uk2diS[K2[posV]] - palletTrasportatiDiK2[posV])):
+            if (PGa[GammadiS[posG]] <= (uk2diS[K2[posV]] - palletTrasportatiDiK2[posV])):
                 # aggiorno le rotte
                 if K2[posV] in trasportoPalletDiGamma:
-                    trasportoPalletDiGamma[K2[posV]] += [(Gamma[posG], PGa[Gamma[posG]])]
+                    trasportoPalletDiGamma[K2[posV]] += [(GammadiS[posG], PGa[GammadiS[posG]])]
 
                     # aggiorno rotte[k]
-                    rotte[K2[posV]] += [(rotte[K2[posV]][-1][1], Gamma[posG])]
+                    rotte[K2[posV]] += [(rotte[K2[posV]][-1][1], GammadiS[posG])]
 
                 else:
-                    trasportoPalletDiGamma[K2[posV]] = [(Gamma[posG], PGa[Gamma[posG]])]
+                    trasportoPalletDiGamma[K2[posV]] = [(GammadiS[posG], PGa[GammadiS[posG]])]
 
                     # aggiorno rotte[k]
-                    rotte[K2[posV]] = [(s, Gamma[posG])]
+                    rotte[K2[posV]] = [(s, GammadiS[posG])]
 
-                palletDaConsegnare -= PGa[Gamma[posG]]
-                palletTrasportatiDiK2[posV] += PGa[Gamma[posG]]
-                PGa[Gamma[posG]] = 0
+                palletDaConsegnare -= PGa[GammadiS[posG]]
+                palletTrasportatiDiK2[posV] += PGa[GammadiS[posG]]
+                PGa[GammadiS[posG]] = 0
             # gamma viene splittato
             # la rotta non ha raggiunto il limite di capienza
             elif uk2diS[K2[posV]] != palletTrasportatiDiK2[posV]:
                 # aggiorno le rotte
                 if K2[posV] in trasportoPalletDiGamma:
                     trasportoPalletDiGamma[K2[posV]] += [
-                        (Gamma[posG], (uk2diS[K2[posV]] - palletTrasportatiDiK2[posV]))]
+                        (GammadiS[posG], (uk2diS[K2[posV]] - palletTrasportatiDiK2[posV]))]
 
                     # aggiorno rotte[k]
-                    rotte[K2[posV]] += [(rotte[K2[posV]][-1][1], Gamma[posG])]
+                    rotte[K2[posV]] += [(rotte[K2[posV]][-1][1], GammadiS[posG])]
                 else:
                     trasportoPalletDiGamma[K2[posV]] = [
-                        (Gamma[posG], (uk2diS[K2[posV]] - palletTrasportatiDiK2[posV]))]
+                        (GammadiS[posG], (uk2diS[K2[posV]] - palletTrasportatiDiK2[posV]))]
 
                     # aggiorno rotte[k]
-                    rotte[K2[posV]] = [(s, Gamma[posG])]
+                    rotte[K2[posV]] = [(s, GammadiS[posG])]
 
                 palletDaConsegnare -= uk2diS[K2[posV]] - palletTrasportatiDiK2[posV]
                 palletTrasportatiDiK2PosV = palletTrasportatiDiK2[posV]  # variabile temporanea
-                palletTrasportatiDiK2[posV] += PGa[Gamma[posG]]
-                PGa[Gamma[posG]] -= uk2diS[K2[posV]] - palletTrasportatiDiK2PosV
+                palletTrasportatiDiK2[posV] += PGa[GammadiS[posG]]
+                PGa[GammadiS[posG]] -= uk2diS[K2[posV]] - palletTrasportatiDiK2PosV
                 # full
 
             # passo al veicolo sucessivo
             posV = (posV + 1) % len(K2)
 
         # passo al cliente sucessivo
-        posG = (posG + 1) % len(Gamma)
+        posG = (posG + 1) % len(GammadiS)
 
     print("trasportoPalletDiGamma: {}".format(trasportoPalletDiGamma))
     print("rotte : {}".format(rotte))
@@ -1092,7 +1092,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
     assignx2w2(x2TMP, w2TMP, trasportoPalletDiGamma, rotte)
 
     # verifica dell'ammissibilità della soluzione
-    if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
+    if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, GammadiS, CdiS):
         # soluzione ammissibile trovata
         x2 = deepcopy(x2TMP)
         w2 = deepcopy(w2TMP)
@@ -1792,9 +1792,10 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)
             # verificare ammissibilità
             if verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
                 # print("rotte: {}".format(rotte))
-                print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
-                                                                                                        minCostKey,
-                                                                                                        valoreHeap[0]))
+                print(
+                    "localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}.".format(itNonAmmissibili,
+                                                                                                      minCostKey,
+                                                                                                      valoreHeap[0]))
                 # soluzione ammissibile trovata
                 return x2TMP, w2TMP, minCostKey, True
     # non è stata trovata nessuna mossa migliorativa
@@ -1947,7 +1948,8 @@ def updateRotteSmd11(rotte, keyLocalSearch):
 # nik2ij: costo di instradamento del veicolo k∈K2 che attraversa l’arco (i,j)∈A2 nel secondo livello.
 # ak2ij: costo di trasporto del pallet con destinazione γ∈Γ che attraversa l’arco (i,j)∈A2 con il veicolo k∈K2
 # s: satellite
-def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSearch, nik2ij, ak2ij, s, alternate10or11):
+def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSearch, nik2ij, ak2ij, s,
+               alternate10or11):
     print("\nSTART tabuSearch()")
     # prende i padri di soluzionePrecedente
     padriDiAttuale = deepcopy(dictSolutionsDiS[soluzionePrecedente][4])
@@ -2106,10 +2108,12 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
 
     if alternate10or11 == 0:
         filename = pathlib.Path(
-            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0and1-1" + "_StartBest")
+            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(
+                itMosseTSMax) + "_1-0and1-1" + "_StartBest")
     elif alternate10or11 == 1 or alternate10or11 == -1:
         filename = pathlib.Path(
-            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0or1-1" + "_StartBest")
+            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(
+                itMosseTSMax) + "_1-0or1-1" + "_StartBest")
     # per creare file con numero che va ad aumentare:
     # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
 
@@ -2164,10 +2168,12 @@ def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSo
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
     if alternate10or11 == 0:
         filename = pathlib.Path(
-            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0and1-1" + "_StartBest")
+            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(
+                itMosseTSMax) + "_1-0and1-1" + "_StartBest")
     elif alternate10or11 == 1 or alternate10or11 == -1:
         filename = pathlib.Path(
-            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0or1-1" + "_StartBest")
+            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(
+                itMosseTSMax) + "_1-0or1-1" + "_StartBest")
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     # apertura file in append

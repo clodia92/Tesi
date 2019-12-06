@@ -121,6 +121,7 @@ class Prob3:
 
         pass
 
+
 if __name__ == "__main__":
 
     # commento
@@ -128,7 +129,7 @@ if __name__ == "__main__":
     startTimeTotal = time.time()
 
     print("Start Prob3: ")
-    myProb = Prob3("018")
+    myProb = Prob3("2_2_100_0_20")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
     itNSIMax = 10
@@ -160,9 +161,11 @@ if __name__ == "__main__":
 
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
     if alternate10or11 == 0:
-        filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0and1-1" + "_StartBest")
+        filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
+            itMosseTSMax) + "_1-0and1-1" + "_StartBest")
     elif alternate10or11 == 1 or alternate10or11 == -1:
-        filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0or1-1" + "_StartBest")
+        filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
+            itMosseTSMax) + "_1-0or1-1" + "_StartBest")
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     file = open(filename, 'w')
@@ -186,9 +189,11 @@ if __name__ == "__main__":
         # scrittura file stacco per ogni soluzione diversa
         pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
         if alternate10or11 == 0:
-            filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0and1-1")
+            filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
+                itMosseTSMax) + "_1-0and1-1")
         elif alternate10or11 == 1 or alternate10or11 == -1:
-            filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0or1-1")
+            filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
+                itMosseTSMax) + "_1-0or1-1")
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
         file = open(filename, 'a')
@@ -197,9 +202,11 @@ if __name__ == "__main__":
 
         pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
         if alternate10or11 == 0:
-            filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0and1-1" + "_StartBest")
+            filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
+                itMosseTSMax) + "_1-0and1-1" + "_StartBest")
         elif alternate10or11 == 1 or alternate10or11 == -1:
-            filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0or1-1" + "_StartBest")
+            filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
+                itMosseTSMax) + "_1-0or1-1" + "_StartBest")
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
         file = open(filename, 'a')
@@ -235,13 +242,11 @@ if __name__ == "__main__":
             # trova una soluzione di base ammissibile
             resultSolutionBase, myProb.x2, myProb.w2, rotte = findSolutionBase(s, myProb.x2, myProb.w2, myProb.uk2,
                                                                                myProb.Pgac, myProb.PsGa,
-                                                                               myProb.K2diS[s],
-                                                                               myProb.A2, myProb.GammadiS[s],
-                                                                               myProb.CdiS)
+                                                                               myProb.K2diS[s], myProb.A2,
+                                                                               myProb.GammadiS[s], myProb.CdiS)
             # variabile che contiene il costo della soluzione appena trovata
-            cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
-                               myProb.ak2ij,
-                               s)
+            cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2,
+                               myProb.nik2ij, myProb.ak2ij, s)
             # variabile che contiente il costo della nuova soluzione (inizialmente maggiore di cost)
             costNew = cost + 1
 
@@ -391,8 +396,7 @@ if __name__ == "__main__":
                                 # aggiunta di una nuova soluzione
                                 dictSolutions[s].append(
                                     [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), deepcopy(padri),
-                                     [],
-                                     [keyLocalSearch]])
+                                     [], [keyLocalSearch]])
                                 for padreSingolo in padri:
                                     dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
                                 padri = [len(dictSolutions[s]) - 1]
@@ -446,8 +450,8 @@ if __name__ == "__main__":
 
                         # aggiornamento della bestSolution finora trovata
                         # questo aggiornamento deve essere fatto ogni volta che viene effettuato il LocalSearch
-                        # perché se si imposta elapsedTimeTotalMax tale da non permettere di arrivare ad un minimo locale,
-                        # allora deve esere salvata la soluzione con costo minimo trovata fino ad allora
+                        # perché se si imposta elapsedTimeTotalMax tale da non permettere di arrivare ad un minimo
+                        # locale, allora deve esere salvata la soluzione con costo minimo trovata fino ad allora
                         if costNew < dictSolutions[s][bestSolutionIndice][0]:
                             bestSolutionIndice = soluzionePrecedente
                             # print("bestSolution:\ncosto: {}, rotte: {}".format(dictSolutions[s][bestSolutionIndice][0],
