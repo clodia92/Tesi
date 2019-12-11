@@ -127,8 +127,9 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
                 for numeroPallet in range(1, x2[v2, n2, precN2[0], n2]):
                     # se viene trattato un cliente splittato sulle rotte v1 e v2
                     if (n2 in [c[1] for c in rotte[v1]]) and v1 != v2 and n2 != n1:
-                        # viene creata la chiave
-                        smd10[v1, v2, n1, n2, numeroPallet] = 0
+                        # variabile di appoggio per il valore che dovrebbe assumere smd10[v1, v2, n1, n2, numeroPallet]
+                        valSMD = 0
+
                         # calcolo dei costi
                         # v1
                         # nik2ij
@@ -140,7 +141,7 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
                             if arc[0] == n2:
                                 break
                             # prima di precN2[0]
-                            smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, arc[0], arc[1]])
+                            valSMD += (numeroPallet * ak2ij[v1, arc[0], arc[1]])
 
                         # v2
                         # nik2ij -> non essendo eliminato l'arco in v2, non vi sono ripercussioni sull'smd per nik2ij
@@ -151,13 +152,17 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
                             if arc[0] == n2:
                                 break
                             # prima di precN2[0]
-                            smd10[v1, v2, n1, n2, numeroPallet] -= (numeroPallet * ak2ij[v2, arc[0], arc[1]])
+                            valSMD -= (numeroPallet * ak2ij[v2, arc[0], arc[1]])
+
+                        # viene creata la chiave ed assegnato il rispettivo valore se valSMD non supera granularityThreshold
+                        if valSMD < granularityThreshold:
+                            smd10[v1, v2, n1, n2, numeroPallet] = valSMD
 
                     # l'arco non deve esistere nella soluzione attuale
                     # un veicolo non puo' essere spostato dietro se stesso
                     elif v1 != v2 and n2 != n1:
-                        # viene creata la chiave
-                        smd10[v1, v2, n1, n2, numeroPallet] = 0
+                        # variabile di appoggio per il valore che dovrebbe assumere smd10[v1, v2, n1, n2, numeroPallet]
+                        valSMD = 0
 
                         # calcolo dei costi
                         # v1
@@ -165,17 +170,17 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
                         # se n1 non è l'ultimo nodo della sua rotta
                         if succN1[0] != -1:
                             # aggiunta del nuovo arco out n2
-                            smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
+                            valSMD += nik2ij[v1, n2, succN1[0]]
                             # rimozione del vecchio arco da sostituire con n2
-                            smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
+                            valSMD -= nik2ij[v1, n1, succN1[0]]
                         # aggiunta del nuovo arco in n2
-                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
+                        valSMD += nik2ij[v1, n1, n2]
 
                         # ak2ij
                         # prima di n1
                         flag = 0
                         if succN1[0] == -1:
-                            smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, n1, n2])
+                            valSMD += (numeroPallet * ak2ij[v1, n1, n2])
                         for arc in rotte[v1]:
                             # n1, n2
                             if arc[0] == n1:
@@ -186,17 +191,17 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
 
                             # prima di n1
                             if flag == 0:
-                                smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, arc[0], arc[1]])
+                                valSMD += (numeroPallet * ak2ij[v1, arc[0], arc[1]])
                             # n1, n2
                             if flag == 1:
-                                smd10[v1, v2, n1, n2, numeroPallet] += (numeroPallet * ak2ij[v1, n1, n2])
+                                valSMD += (numeroPallet * ak2ij[v1, n1, n2])
                                 if succN1[0] != -1:
                                     for gamma in succN1:
-                                        smd10[v1, v2, n1, n2, numeroPallet] += (
+                                        valSMD += (
                                                 x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2])
-                                        smd10[v1, v2, n1, n2, numeroPallet] += (
+                                        valSMD += (
                                                 x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
-                                        smd10[v1, v2, n1, n2, numeroPallet] -= (
+                                        valSMD -= (
                                                 x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
                             # dopo n2 -> non vengono modificati
 
@@ -210,8 +215,12 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
                             if arc[0] == n2:
                                 break
 
-                            smd10[v1, v2, n1, n2, numeroPallet] -= (numeroPallet * ak2ij[v2, arc[0], arc[1]])
+                            valSMD -= (numeroPallet * ak2ij[v2, arc[0], arc[1]])
                             # dopo N2 -> non vengono modificati
+
+                        # viene creata la chiave ed assegnato il rispettivo valore se valSMD non supera granularityThreshold
+                        if valSMD < granularityThreshold:
+                            smd10[v1, v2, n1, n2, numeroPallet] = valSMD
 
                 # Senza split (vengono spostati tutti i pallet del cliente)
                 numeroPallet = x2[v2, n2, precN2[0], n2]
@@ -219,8 +228,9 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
                 # se viene trattato un cliente splittato sulle rotte v1 e v2
                 # Spostamento di tutti i pallet verso un altro veicolo
                 if n2 in [c[1] for c in rotte[v1]] and v1 != v2 and n2 != n1:
-                    # viene creata la chiave
-                    smd10[v1, v2, n1, n2, numeroPallet] = 0
+                    # variabile di appoggio per il valore che dovrebbe assumere smd10[v1, v2, n1, n2, numeroPallet]
+                    valSMD = 0
+
                     # calcolo dei costi
                     # v1
                     # nik2ij
@@ -232,11 +242,11 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
                         if arc[0] == n2:
                             break
                         # prima di precN2[0]
-                        smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
+                        valSMD += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
 
                     # v2
                     # rimozione del vecchio arco in n2
-                    smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v2, precN2[0], n2]
+                    valSMD -= nik2ij[v2, precN2[0], n2]
                     # prima di precN2[0]
                     flag = 0
                     for arc in rotte[v2]:
@@ -252,46 +262,51 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
 
                         # prima di precN2[0]
                         if flag == 0:
-                            smd10[v1, v2, n1, n2, numeroPallet] -= (
+                            valSMD -= (
                                     x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]])
                         # precN2[0], n2
                         if flag == 1:
-                            smd10[v1, v2, n1, n2, numeroPallet] -= (
+                            valSMD -= (
                                     x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                             if succN2[0] != -1:
                                 for gamma in succN2:
-                                    smd10[v1, v2, n1, n2, numeroPallet] += (
+                                    valSMD += (
                                             x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
-                                    smd10[v1, v2, n1, n2, numeroPallet] -= (
+                                    valSMD -= (
                                             x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                         # n2, succN2[0]
                         if flag == 2:
                             # rimozione del vecchio arco out n2
-                            smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v2, n2, succN2[0]]
+                            valSMD -= nik2ij[v2, n2, succN2[0]]
                             # aggiunta del nuovo arco in sostituzione di n2
-                            smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v2, precN2[0], succN2[0]]
+                            valSMD += nik2ij[v2, precN2[0], succN2[0]]
                             for gamma in succN2:
-                                smd10[v1, v2, n1, n2, numeroPallet] -= (
+                                valSMD -= (
                                         x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
                         # dopo succN2[0] -> non vengono modificati
+
+                    # viene creata la chiave ed assegnato il rispettivo valore se valSMD non supera granularityThreshold
+                    if valSMD < granularityThreshold:
+                        smd10[v1, v2, n1, n2, numeroPallet] = valSMD
 
                 # se n1 e n2 sono sullo stesso veicolo
                 elif v1 == v2 and ((n1, n2) not in rotte[v1]):
                     # se esiste l'arco (n2, n1)
                     if (n2, n1) in rotte[v1]:
-                        smd10[v1, v2, n1, n2, numeroPallet] = 0
+                        # variabile di appoggio per il valore che dovrebbe assumere smd10[v1, v2, n1, n2, numeroPallet]
+                        valSMD = 0
 
                         # nik2ij
-                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, precN2[0], n2]
-                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n2, n1]
+                        valSMD -= nik2ij[v1, precN2[0], n2]
+                        valSMD -= nik2ij[v1, n2, n1]
 
-                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, precN2[0], n1]
-                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
+                        valSMD += nik2ij[v1, precN2[0], n1]
+                        valSMD += nik2ij[v1, n1, n2]
 
                         # se n1 ha successori
                         if succN1[0] != -1:
-                            smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
-                            smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
+                            valSMD -= nik2ij[v1, n1, succN1[0]]
+                            valSMD += nik2ij[v1, n2, succN1[0]]
 
                         # ak2ij
                         flag = 0
@@ -310,37 +325,41 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
                             # precN2[0], ...
                             if flag == 1:
                                 for gamma in [n2] + succN2:
-                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, precN2[0], n2] * ak2ij[
+                                    valSMD -= x2[v1, gamma, precN2[0], n2] * ak2ij[
                                         v1, precN2[0], n2]
-                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, precN2[0], n2] * ak2ij[
+                                    valSMD += x2[v1, gamma, precN2[0], n2] * ak2ij[
                                         v1, precN2[0], n1]
                             # n2, succN2[0]
                             if flag == 2:
                                 for gamma in succN2:
-                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n2, n1] * ak2ij[v1, n2, n1]
+                                    valSMD -= x2[v1, gamma, n2, n1] * ak2ij[v1, n2, n1]
                             # n1, succN1[0]
                             if flag == 3:
                                 for gamma in succN1:
-                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    valSMD -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n1, succN1[0]]
-                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    valSMD += x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n1, n2]
-                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    valSMD += x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n2, succN1[0]]
                                 break
-                        smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
+                        valSMD += x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
+
+                        # viene creata la chiave ed assegnato il rispettivo valore se valSMD non supera granularityThreshold
+                        if valSMD < granularityThreshold:
+                            smd10[v1, v2, n1, n2, numeroPallet] = valSMD
 
                     # se n2 in succN1
                     elif n2 in succN1 and ((n1, n2) not in rotte[v1]):
-                        # viene creata la chiave
-                        smd10[v1, v2, n1, n2, numeroPallet] = 0
+                        # variabile di appoggio per il valore che dovrebbe assumere smd10[v1, v2, n1, n2, numeroPallet]
+                        valSMD = 0
 
                         # nik2ij
-                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
-                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, precN2[0], n2]
+                        valSMD -= nik2ij[v1, n1, succN1[0]]
+                        valSMD -= nik2ij[v1, precN2[0], n2]
 
-                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
-                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
+                        valSMD += nik2ij[v1, n1, n2]
+                        valSMD += nik2ij[v1, n2, succN1[0]]
 
                         # ak2ij
                         # prima di n1
@@ -362,40 +381,43 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
                             # (n1, succN1)
                             if flag == 1:
                                 for gamma in succN1:
-                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    valSMD -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n1, succN1[0]]
-                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    valSMD += x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n1, n2]
                                     if gamma != n2:
-                                        smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                        valSMD += x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                             v1, n2, succN1[0]]
                             # (succN1, ...)
                             if flag == 2:
-                                smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, n2, precN2[0], n2] * ak2ij[
+                                valSMD -= x2[v1, n2, precN2[0], n2] * ak2ij[
                                     v1, arc[0], arc[1]]
                             # (n2, succN2)
                             if flag == 3:
-                                smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, precN2[0], n2]
-                                smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n2, succN2[0]]
+                                valSMD += nik2ij[v1, precN2[0], n2]
+                                valSMD -= nik2ij[v1, n2, succN2[0]]
                                 for gamma in succN2:
-                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n2, succN2[0]] * ak2ij[
+                                    valSMD -= x2[v1, gamma, n2, succN2[0]] * ak2ij[
                                         v1, n2, succN2[0]]
-                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n2, succN2[0]] * ak2ij[
+                                    valSMD += x2[v1, gamma, n2, succN2[0]] * ak2ij[
                                         v1, precN2[0], succN2[0]]
+                        # viene creata la chiave ed assegnato il rispettivo valore se valSMD non supera granularityThreshold
+                        if valSMD < granularityThreshold:
+                            smd10[v1, v2, n1, n2, numeroPallet] = valSMD
 
                     # se n1 in succN2 ma non (n2, n1)
                     elif n1 in succN2 and ((n2, n1) not in rotte[v1]):
-                        # viene creata la chiave
-                        smd10[v1, v2, n1, n2, numeroPallet] = 0
+                        # variabile di appoggio per il valore che dovrebbe assumere smd10[v1, v2, n1, n2, numeroPallet]
+                        valSMD = 0
 
                         # nik2ij
-                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, precN2[0], n2]
-                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n2, succN2[0]]
+                        valSMD -= nik2ij[v1, precN2[0], n2]
+                        valSMD -= nik2ij[v1, n2, succN2[0]]
 
-                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, precN2[0], succN2[0]]
-                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
+                        valSMD += nik2ij[v1, precN2[0], succN2[0]]
+                        valSMD += nik2ij[v1, n1, n2]
 
-                        smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
+                        valSMD += x2[v1, n2, precN2[0], n2] * ak2ij[v1, n1, n2]
 
                         # prima di n2
                         flag = 0
@@ -419,36 +441,38 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
                             # (precN2, n2)
                             if flag == 1:
                                 for gamma in [n2] + succN2:
-                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, precN2[0], n2] * ak2ij[
+                                    valSMD -= x2[v1, gamma, precN2[0], n2] * ak2ij[
                                         v1, precN2[0], n2]
-                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, precN2[0], n2] * ak2ij[
+                                    valSMD += x2[v1, gamma, precN2[0], n2] * ak2ij[
                                         v1, precN2[0], succN2[0]]
                             # (n2, succN2)
                             if flag == 2:
                                 for gamma in succN2:
-                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n2, succN2[0]] * ak2ij[
+                                    valSMD -= x2[v1, gamma, n2, succN2[0]] * ak2ij[
                                         v1, n2, succN2[0]]
                             # (succN2, ...)
                             if flag == 3:
-                                smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, n2, precN2[0], n2] * ak2ij[
+                                valSMD += x2[v1, n2, precN2[0], n2] * ak2ij[
                                     v1, arc[0], arc[1]]
                             # (n1, succN1)
                             if flag == 4:
-                                smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
-                                smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
+                                valSMD -= nik2ij[v1, n1, succN1[0]]
+                                valSMD += nik2ij[v1, n2, succN1[0]]
                                 for gamma in succN1:
-                                    smd10[v1, v2, n1, n2, numeroPallet] -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    valSMD -= x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n1, succN1[0]]
-                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    valSMD += x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n1, n2]
-                                    smd10[v1, v2, n1, n2, numeroPallet] += x2[v1, gamma, n1, succN1[0]] * ak2ij[
+                                    valSMD += x2[v1, gamma, n1, succN1[0]] * ak2ij[
                                         v1, n2, succN1[0]]
-
+                        # viene creata la chiave ed assegnato il rispettivo valore se valSMD non supera granularityThreshold
+                        if valSMD < granularityThreshold:
+                            smd10[v1, v2, n1, n2, numeroPallet] = valSMD
                 # l'arco non deve esistere nella soluzione attuale
                 # un veicolo non puo' essere spostato dietro se stesso
                 elif v1 != v2 and n2 != n1:
-                    # viene creata la chiave
-                    smd10[v1, v2, n1, n2, numeroPallet] = 0
+                    # variabile di appoggio per il valore che dovrebbe assumere smd10[v1, v2, n1, n2, numeroPallet]
+                    valSMD = 0
 
                     # calcolo dei costi
                     # v1
@@ -456,17 +480,17 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
                     # se n1 non è l'ultimo nodo della sua rotta
                     if succN1[0] != -1:
                         # aggiunta del nuovo arco out n2
-                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n2, succN1[0]]
+                        valSMD += nik2ij[v1, n2, succN1[0]]
                         # rimozione del vecchio arco da sostituire con n2
-                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v1, n1, succN1[0]]
+                        valSMD -= nik2ij[v1, n1, succN1[0]]
                     # aggiunta del nuovo arco in n2
-                    smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v1, n1, n2]
+                    valSMD += nik2ij[v1, n1, n2]
 
                     # ak2ij
                     # prima di n1
                     flag = 0
                     if succN1[0] == -1:
-                        smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
+                        valSMD += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
                     for arc in rotte[v1]:
                         # n1, n2
                         if arc[0] == n1:
@@ -478,18 +502,18 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
 
                         # prima di n1
                         if flag == 0:
-                            smd10[v1, v2, n1, n2, numeroPallet] += (
+                            valSMD += (
                                     x2[v2, n2, precN2[0], n2] * ak2ij[v1, arc[0], arc[1]])
                         # n1, n2
                         if flag == 1:
-                            smd10[v1, v2, n1, n2, numeroPallet] += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
+                            valSMD += (x2[v2, n2, precN2[0], n2] * ak2ij[v1, n1, n2])
                             if succN1[0] != -1:
                                 for gamma in succN1:
-                                    smd10[v1, v2, n1, n2, numeroPallet] += (
+                                    valSMD += (
                                             x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, n2])
-                                    smd10[v1, v2, n1, n2, numeroPallet] += (
+                                    valSMD += (
                                             x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n2, succN1[0]])
-                                    smd10[v1, v2, n1, n2, numeroPallet] -= (
+                                    valSMD -= (
                                             x2[v1, gamma, n1, succN1[0]] * ak2ij[v1, n1, succN1[0]])
                         # dopo n2 -> non vengono modificati
 
@@ -498,11 +522,11 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
                     # se n2 non è l'ultimo nodo della sua rotta
                     if succN2[0] != -1:
                         # rimozione del vecchio arco out n2
-                        smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v2, n2, succN2[0]]
+                        valSMD -= nik2ij[v2, n2, succN2[0]]
                         # aggiunta del nuovo arco in sostituzione di n2
-                        smd10[v1, v2, n1, n2, numeroPallet] += nik2ij[v2, precN2[0], succN2[0]]
+                        valSMD += nik2ij[v2, precN2[0], succN2[0]]
                     # rimozione del vecchio arco in n2
-                    smd10[v1, v2, n1, n2, numeroPallet] -= nik2ij[v2, precN2[0], n2]
+                    valSMD -= nik2ij[v2, precN2[0], n2]
 
                     # ak2ij
                     # prima di precN2[0]
@@ -520,25 +544,28 @@ def inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold):
 
                         # prima di precN2[0]
                         if flag == 0:
-                            smd10[v1, v2, n1, n2, numeroPallet] -= (
+                            valSMD -= (
                                     x2[v2, n2, precN2[0], n2] * ak2ij[v2, arc[0], arc[1]])
                         # precN2[0], n2
                         if flag == 1:
-                            smd10[v1, v2, n1, n2, numeroPallet] -= (
+                            valSMD -= (
                                     x2[v2, n2, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                             if succN2[0] != -1:
                                 for gamma in succN2:
-                                    smd10[v1, v2, n1, n2, numeroPallet] += (
+                                    valSMD += (
                                             x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], succN2[0]])
-                                    smd10[v1, v2, n1, n2, numeroPallet] -= (
+                                    valSMD -= (
                                             x2[v2, gamma, precN2[0], n2] * ak2ij[v2, precN2[0], n2])
                         # n2, succN2[0]
                         if flag == 2:
                             for gamma in succN2:
-                                smd10[v1, v2, n1, n2, numeroPallet] -= (
+                                valSMD -= (
                                         x2[v2, gamma, n2, succN2[0]] * ak2ij[v2, n2, succN2[0]])
                         # dopo succN2[0] -> non vengono modificati
 
+                    # viene creata la chiave ed assegnato il rispettivo valore se valSMD non supera granularityThreshold
+                    if valSMD < granularityThreshold:
+                        smd10[v1, v2, n1, n2, numeroPallet] = valSMD
 
 # inizializzazione del smd11
 # 1-1 Exchange
