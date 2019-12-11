@@ -129,7 +129,7 @@ if __name__ == "__main__":
     startTimeTotal = time.time()
 
     print("Start Prob3: ")
-    myProb = Prob3("2_2_100_0_20")
+    myProb = Prob3("006")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
     itNSIMax = 10
@@ -144,6 +144,13 @@ if __name__ == "__main__":
     # -1:   1-1 start
     #  0:   1-0 and 1-1
     alternate10or11 = 0
+
+    # beta: valore che oscilla nell'intervallo [0.5 , 5]
+    beta = 0.5
+
+    # inizializzazione del valore soglia granularità
+    granularityThreshold = 0
+
 
     # creazione file: il file vecchio viene sovrascritto
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
@@ -260,6 +267,13 @@ if __name__ == "__main__":
             elapsedTimeTotal = time.time() - startTimeTotal
             # se è stata trovata una soluzione iniziale
             if resultSolutionBase and elapsedTimeTotal < elapsedTimeTotalMax:
+
+                zSoluzioneIniziale = cost
+
+                # determinazione del valore soglia granularità in base alla soluzione iniziale trovata
+                granularityThreshold = - beta * (zSoluzioneIniziale/(len(myProb.GammadiS) + len(myProb.K2diS)))
+
+
                 print("Soluzione di base trovata, costo: {}.".format(cost))
                 # lista dei padri della soluzione
                 padri = [-1]
@@ -274,12 +288,12 @@ if __name__ == "__main__":
                 # SMD10
                 if alternate10or11 == 1:
                     # vengono inizializzati gli SMD
-                    inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+                    inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s, granularityThreshold)
 
                 # SMD11
                 elif alternate10or11 == -1:
                     # vengono inizializzati gli SMD
-                    inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+                    inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, granularityThreshold)
 
                 # SMD10 and SMD11
                 elif alternate10or11 == 0:
@@ -305,6 +319,8 @@ if __name__ == "__main__":
 
                 # flag per segnalare che sono stati analizzati entrambi i tipo di mossa quando vengono alternate
                 flagTried10and11 = False
+
+
 
                 # iterazioni continuano finché non si presentano determinate condizioni
                 # (esplorazione completa tramite Tabu Search, numero di iterazioni limitate, ecc)
