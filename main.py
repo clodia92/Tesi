@@ -124,7 +124,7 @@ class Prob3:
 
 if __name__ == "__main__":
 
-    # commento
+    # granularity
 
     startTimeTotal = time.time()
 
