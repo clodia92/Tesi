@@ -117,7 +117,7 @@ def BuildConstr34(K2, GammadiS, w2, sat):
 
 
 # generate Constraint 35
-def BuildConstr35(K2, A2, x2, GammadiS, uk2, w2, sat):
+def BuildConstr35(K2, A2, x2, GammadiS, uk2, w2, sat, uk2increased):
     vincolo35 = True
 
     # for all vehicles in the "s" satellite
@@ -126,8 +126,7 @@ def BuildConstr35(K2, A2, x2, GammadiS, uk2, w2, sat):
         for i, j in A2:
 
             if i != j:
-                vincolo35 = sum([x2[(k, ga, i, j)] for ga in GammadiS]) <= (
-                        uk2[k] * w2[(k, i, j)])
+                vincolo35 = sum([x2[(k, ga, i, j)] for ga in GammadiS]) <= (uk2[k] * w2[(k, i, j)])
                 if (not vincolo35):
                     return vincolo35
 

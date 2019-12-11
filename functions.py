@@ -53,7 +53,7 @@ def generateVariablesModelThree(x2, w2, K2diS, GammadiS, A2, sat):
 # x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
 # w2: variabile di instradamento, che vale 1 se il veicolo k∈K2 attraversa l’arco (i,j)∈A2, altrimenti 0
 # trasportoPalletDiGamma: dizionario delle rotte per ogni veicolo con relativi pallet
-# rotte: dizionario della lista ordinata di archi per ogni veicolo:
+# rotte: dizionario della lista ordinata di archi per ogni veicolo
 def assignx2w2(x2, w2, trasportoPalletDiGamma, rotte):
     for k in rotte:
         for posArc, (arcI, arcJ) in enumerate(rotte[k]):
@@ -74,14 +74,14 @@ def assignx2w2(x2, w2, trasportoPalletDiGamma, rotte):
 # A2: insieme di archi che collegano clienti e satelliti tra di loro
 # GammadiS: l'insieme di clienti i cui pallet sono stati assegnati al satellite s
 # CdiS: L’insieme di container c∈C trasportati verso il satellite s∈Sneg secondo la soluzione di Prob1
-def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2, A2, GammadiS, CdiS):
+def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2, A2, GammadiS, CdiS, uk2increased):
     # chiama le funzioni dei singoli vincoli
     vincolo29 = BuildConstr29(GammadiS, x2, K2, PsGa, sat)
     vincolo30 = BuildConstr30(GammadiS, x2, K2, Pgac, CdiS, sat)
     vincolo31 = BuildConstr31(GammadiS, K2, x2, sat)
     vincolo32 = BuildConstr32(K2, w2, GammadiS, sat)
     vincolo34 = BuildConstr34(K2, GammadiS, w2, sat)
-    vincolo35 = BuildConstr35(K2, A2, x2, GammadiS, uk2, w2, sat)
+    vincolo35 = BuildConstr35(K2, A2, x2, GammadiS, uk2, w2, sat, uk2increased)
     vincolo36 = BuildConstr36(K2, GammadiS, w2, sat)
 
     # if vincolo29 and vincolo30 and vincolo31 and vincolo32 and vincolo34 and vincolo35 and vincolo36:
@@ -1093,8 +1093,9 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, GammadiS, CdiS):
     assignx2w2(x2TMP, w2TMP, trasportoPalletDiGamma, rotte)
 
     # verifica dell'ammissibilità della soluzione
+    # l'ultimo parametro passato è 0 perché la capacità della soluzione iniziale non deve essere mai aumentata
     soluzioneAmmissibile, vincolo35 = verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, GammadiS,
-                                                                   CdiS)
+                                                                   CdiS, 0)
     # la soluzione iniziale deve essere ammissibile
     if soluzioneAmmissibile and vincolo35:
         # soluzione ammissibile trovata
@@ -1128,7 +1129,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, GammadiS, CdiS):
 # A2: insieme di archi che collegano clienti e satelliti tra di loro
 # Gamma: l'insieme di clienti
 # CdiS: L’insieme di container c∈C trasportati verso il satellite s∈Sneg secondo la soluzione di Prob1
-def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS):
+def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS, uk2increased):
     print("\nSTART localSearch()")
     itMAX = len(heapSMD)
     itNonAmmissibili = 0
@@ -1444,7 +1445,8 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)
                         # dopo succN2[0] -> non vengono modificati
 
                 # verifica dell'ammissibilità della soluzione
-                soluzioneAmmissibile, vincolo35 = verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)
+                soluzioneAmmissibile, vincolo35 = verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2,
+                                                                               Gamma, CdiS, uk2increased)
                 if soluzioneAmmissibile:
                     # print("rotte: {}".format(rotte))
                     print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}, vincolo35: {}.".format(
@@ -1795,7 +1797,7 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)
                     x2TMP[v2, n2, arc[0], arc[1]] = x2[v1, n1, precN1[0], n1]
 
             # verifica dell'ammissibilità della soluzione
-            soluzioneAmmissibile, vincolo35 = verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)
+            soluzioneAmmissibile, vincolo35 = verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS, uk2increased)
             if soluzioneAmmissibile:
                 # print("rotte: {}".format(rotte))
                 print(
@@ -2206,3 +2208,22 @@ def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSo
     file.write("\n\nTotal time elapsed: {:.2f}s.".format(timeElapsedTotal))
     # chiusura file
     file.close()
+
+# restituisce una lista di veicoli che superano la propria capacità massima
+
+# K2diS: L’insieme di PCV selezionati assegnati al satellite s∈S dalla soluzione di Prob2
+# uk2: numero massimo di pallet che possono essere trasportati dal veicolo k∈K2 nel secondo livello
+# x2: variabile di trasporto del pallet, che rappresenta il numero di pallet che vengono spediti lungo l’arco (i,j)∈A2 al cliente γ∈Γ dal veicolo k∈K2, altrimenti 0
+# rotte: dizionario della lista ordinata di archi per ogni veicolo
+def findInfeasibleK2(K2diS, uk2, x2, rotte):
+    infeasibleK2 = []
+
+    for k in K2diS:
+        tmpCap = 0
+        for arc0, arc1 in rotte[k]:
+            tmpCap += x2[k, arc1, arc0, arc1]
+
+        if tmpCap > uk2[k]:
+            infeasibleK2.append(k)
+
+    return infeasibleK2

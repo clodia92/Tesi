@@ -127,7 +127,7 @@ if __name__ == "__main__":
     startTimeTotal = time.time()
 
     print("Start Prob3: ")
-    myProb = Prob3("006")
+    myProb = Prob3("2_2_100_0_20")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
     itNSIMax = 1
@@ -142,6 +142,13 @@ if __name__ == "__main__":
     # -1:   1-1 start
     #  0:   1-0 and 1-1
     alternate10or11 = 0
+
+    # infeasible solutions
+    # violare il vincolo35
+    # penalità (in percentuale) da applicare al costo totale delle soluzioni non ammissibili
+    penalty = 0
+    # aumento di capacità (in percentuale) da applicare al vincolo35
+    uk2increased = 0
 
     # creazione file: il file vecchio viene sovrascritto
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
@@ -316,16 +323,21 @@ if __name__ == "__main__":
                         # parte il LocalSearch
                         # print("LS, alternate10or11: {}: ".format(alternate10or11))
                         x2TMP, w2TMP, keyLocalSearch, flagAllPallets, vincolo35 = localSearch(heapSMD, deepcopy(myProb.x2),
-                                                                                   deepcopy(myProb.w2), rotte, s,
-                                                                                   myProb.uk2, myProb.Pgac, myProb.PsGa,
-                                                                                   myProb.K2diS[s], myProb.A2,
-                                                                                   myProb.GammadiS[s], myProb.CdiS)
+                                                                                    deepcopy(myProb.w2), rotte, s,
+                                                                                    myProb.uk2, myProb.Pgac, myProb.PsGa,
+                                                                                    myProb.K2diS[s], myProb.A2,
+                                                                                    myProb.GammadiS[s], myProb.CdiS,
+                                                                                    uk2increased)
+                        # vengono trovati i veicoli che superano la propria capacità
+                        # e il loro costo viene penalizzato in computeCost
+                        infeasibleK2 = findInfeasibleK2(myProb.K2diS, myProb.uk2, myProb.x2, rotte)
                         # aggiornamento del costo
                         costNew = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
                                               myProb.ak2ij, s)
                         # il costo viene penalizzato se la soluzione viola il vincolo35
                         if not vincolo35 and costNew != cost:
-                            costNew += costNew/100 * 20
+                            # penalizza il costo dei veicoli
+                            costNew += costNew/100 * penalty
 
                         # print("localSearch, key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
                     # è stato raggiunto il tempo massimo di esecuzione
