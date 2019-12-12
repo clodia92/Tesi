@@ -28,6 +28,36 @@ def computeCost(x2, w2, K2diS, GammadiS, A2, nik2ij, ak2ij, sat):
     return myObjFunction
 
 
+# generate Objective Function for model Three with penalty
+def computeCostPenalty(x2, w2, K2diS, GammadiS, A2, nik2ij, ak2ij, sat, infeasibleK2, penalty):
+    cost = 0
+
+    # for all vehicles in the "s" satellite
+    for k in K2diS[sat]:
+        tmpCost = 0
+        # for all arcs in A2
+        for i, j in A2:
+            # print("A2", A2)
+
+            if i != j:
+
+                tmpCost += w2[(k, i, j)] * nik2ij[(k, i, j)]
+
+                # for all customers in the "s" satellite
+                for ga in GammadiS[sat]:
+                    # print("GammadiS[1]", GammadiS[sat])
+
+                    tmpCost += x2[(k, ga, i, j)] * ak2ij[(k, i, j)]
+
+        # se la capacità di k viene superata, penalizza la rotta
+        if k in infeasibleK2:
+            tmpCost += tmpCost / 100 * penalty
+
+        cost += tmpCost
+
+    return cost
+
+
 # generate Constraint 29
 def BuildConstr29(GammadiS, x2, K2, PsGa, sat):
     vincolo29 = True

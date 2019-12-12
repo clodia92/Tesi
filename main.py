@@ -5,7 +5,7 @@ __date__ = "2019"
 
 from lettura import readFile
 from functions import *
-from constraintsModelThree import computeCost
+from constraintsModelThree import computeCostPenalty
 
 from copy import deepcopy
 import heapq
@@ -146,7 +146,7 @@ if __name__ == "__main__":
     # infeasible solutions
     # violare il vincolo35
     # penalità (in percentuale) da applicare al costo totale delle soluzioni non ammissibili
-    penalty = 0
+    penalty = 20
     # aumento di capacità (in percentuale) da applicare al vincolo35
     uk2increased = 0
 
@@ -250,9 +250,10 @@ if __name__ == "__main__":
                                                                                myProb.K2diS[s], myProb.A2,
                                                                                myProb.GammadiS[s], myProb.CdiS)
             vincolo35 = True
+            infeasibleK2 = []
             # variabile che contiene il costo della soluzione appena trovata
-            cost = computeCost(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2,
-                               myProb.nik2ij, myProb.ak2ij, s)
+            cost = computeCostPenalty(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2,
+                                      myProb.nik2ij, myProb.ak2ij, s, infeasibleK2, penalty)
             # variabile che contiente il costo della nuova soluzione (inizialmente maggiore di cost)
             costNew = cost + 1
 
@@ -330,14 +331,14 @@ if __name__ == "__main__":
                                                                                     uk2increased)
                         # vengono trovati i veicoli che superano la propria capacità
                         # e il loro costo viene penalizzato in computeCost
-                        infeasibleK2 = findInfeasibleK2(myProb.K2diS, myProb.uk2, myProb.x2, rotte)
+                        infeasibleK2 = findInfeasibleK2(myProb.K2diS[s], myProb.uk2, myProb.x2, rotte)
                         # aggiornamento del costo
-                        costNew = computeCost(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
-                                              myProb.ak2ij, s)
-                        # il costo viene penalizzato se la soluzione viola il vincolo35
-                        if not vincolo35 and costNew != cost:
+                        costNew = computeCostPenalty(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
+                                                     myProb.ak2ij, s, infeasibleK2, penalty)
+                        # il costo totale viene penalizzato se la soluzione viola il vincolo35
+                        # if not vincolo35 and costNew != cost:
                             # penalizza il costo dei veicoli
-                            costNew += costNew/100 * penalty
+                            # costNew += costNew/100 * penalty
 
                         # print("localSearch, key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
                     # è stato raggiunto il tempo massimo di esecuzione

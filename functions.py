@@ -988,8 +988,8 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, GammadiS, CdiS):
     # K2.reverse()
 
     # soluzione alternativa random
-    shuffle(GammadiS)
-    shuffle(K2)
+    # shuffle(GammadiS)
+    # shuffle(K2)
 
     # popolazione manuale di Gamma e K2 per avere la stessa soluzione iniziale
     # if s == 1:
@@ -1800,8 +1800,7 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS,
             soluzioneAmmissibile, vincolo35 = verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS, uk2increased)
             if soluzioneAmmissibile:
                 # print("rotte: {}".format(rotte))
-                print(
-                    "localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}, vincolo35: {}.".format(itNonAmmissibili,
+                print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}, vincolo35: {}.".format(itNonAmmissibili,
                                                                                                       minCostKey,
                                                                                                       valoreHeap[0], vincolo35))
                 # soluzione ammissibile trovata
@@ -2220,7 +2219,7 @@ def findInfeasibleK2(K2diS, uk2, x2, rotte):
 
     for k in K2diS:
         tmpCap = 0
-        for arc0, arc1 in rotte[k]:
+        for (arc0, arc1) in rotte[k]:
             tmpCap += x2[k, arc1, arc0, arc1]
 
         if tmpCap > uk2[k]:
