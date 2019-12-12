@@ -329,9 +329,18 @@ if __name__ == "__main__":
                                                                                     myProb.K2diS[s], myProb.A2,
                                                                                     myProb.GammadiS[s], myProb.CdiS,
                                                                                     uk2increased)
-                        # vengono trovati i veicoli che superano la propria capacità
-                        # e il loro costo viene penalizzato in computeCost
-                        infeasibleK2 = findInfeasibleK2(myProb.K2diS[s], myProb.uk2, myProb.x2, rotte)
+                        if not vincolo35:
+                            rotteUpdated = deepcopy(rotte)
+                            # aggiornare rotte dopo una mossa ammissibile
+                            # 1-0 Exchange
+                            if len(keyLocalSearch) == 5:
+                                updateRotteSmd10(rotteUpdated, keyLocalSearch, flagAllPallets)
+                            # 1-1 Exchange
+                            elif len(keyLocalSearch) == 4:
+                                updateRotteSmd11(rotteUpdated, keyLocalSearch)
+                            # vengono trovati i veicoli che superano la propria capacità
+                            # e il loro costo viene penalizzato in computeCost
+                            infeasibleK2 = findInfeasibleK2(myProb.K2diS[s], myProb.uk2, x2TMP, rotteUpdated)
                         # aggiornamento del costo
                         costNew = computeCostPenalty(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
                                                      myProb.ak2ij, s, infeasibleK2, penalty)
