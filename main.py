@@ -129,7 +129,7 @@ if __name__ == "__main__":
     startTimeTotal = time.time()
 
     print("Start Prob3: ")
-    myProb = Prob3("006")
+    myProb = Prob3("018")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
     itNSIMax = 10
@@ -146,7 +146,7 @@ if __name__ == "__main__":
     alternate10or11 = 0
 
     # beta: valore che oscilla nell'intervallo [0.5 , 5]
-    beta = 0.5
+    beta = 0.01
 
     # inizializzazione del valore soglia granularità
     granularityThreshold = 0
@@ -298,8 +298,8 @@ if __name__ == "__main__":
                 # SMD10 and SMD11
                 elif alternate10or11 == 0:
                     # vengono inizializzati gli SMD
-                    inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
-                    inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+                    inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s, granularityThreshold)
+                    inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, granularityThreshold)
                 # crea la lista unica dei costi in cui verrà salvato l'heap
                 # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
                 # genera le liste contenenti le tuple: (valore differenza, chiave mossa)
@@ -373,16 +373,16 @@ if __name__ == "__main__":
                         alternate10or11 = alternate10or11 * -1
                         # SMD10
                         if alternate10or11 == 1:
-                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s, granularityThreshold)
 
                         # SMD11
                         elif alternate10or11 == -1:
-                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, granularityThreshold)
 
                         # SMD10 and SMD11
                         elif alternate10or11 == 0:
-                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
-                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s, granularityThreshold)
+                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, granularityThreshold)
 
                         print("Soluzione migliore trovata, costo: {}.".format(cost))
                         # print("rotte: {}".format(rotte))
@@ -482,18 +482,18 @@ if __name__ == "__main__":
                         # SMD10
                         if alternate10or11 == 1:
                             # vengono inizializzati gli SMD
-                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s, granularityThreshold)
 
                         # SMD11
                         elif alternate10or11 == -1:
                             # vengono inizializzati gli SMD
-                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, granularityThreshold)
 
                         # SMD10 and SMD11
                         elif alternate10or11 == 0:
                             # vengono inizializzati gli SMD
-                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
-                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s, granularityThreshold)
+                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, granularityThreshold)
 
                         # eliminare le mosse tabu dagli SMD
                         for mossaTabu in tabuList[s]:
@@ -538,7 +538,7 @@ if __name__ == "__main__":
                             # applica Tabu Search
                             heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, soluzionePrecedente, padri, alternate10or11 = tabuSearch(
                                 dictSolutions[s], soluzionePrecedente, tabuList[s], oldKeyLocalSearch, myProb.nik2ij,
-                                myProb.ak2ij, s, alternate10or11)
+                                myProb.ak2ij, s, alternate10or11, granularityThreshold)
                             oldKeyLocalSearch = -1
                             itMosseTS += 1
                             flagTried10and11 = False

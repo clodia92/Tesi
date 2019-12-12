@@ -1025,8 +1025,8 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, GammadiS, CdiS):
 
     # popolazione manuale di Gamma e K2 per avere la stessa soluzione iniziale
     # if s == 1:
-    #     Gamma = [3, 7, 6, 4, 5, 8]
-    #     K2 = [7, 8]
+    #     Gamma = [5, 2, 6, 4, 7, 3]
+    #     K2 = [2, 3]
 
     print("Gamma: ", GammadiS)
     print("K2: ", K2)
@@ -1165,7 +1165,7 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)
     # x2TMP = deepcopy(x2)
     # w2TMP = deepcopy(w2)
 
-    while heapSMD[0][0] < 0 and itNonAmmissibili < itMAX:
+    while heapSMD != [] and heapSMD[0][0] < 0 and itNonAmmissibili < itMAX:
 
         itNonAmmissibili += 1
 
@@ -1981,8 +1981,10 @@ def updateRotteSmd11(rotte, keyLocalSearch):
 # nik2ij: costo di instradamento del veicolo k∈K2 che attraversa l’arco (i,j)∈A2 nel secondo livello.
 # ak2ij: costo di trasporto del pallet con destinazione γ∈Γ che attraversa l’arco (i,j)∈A2 con il veicolo k∈K2
 # s: satellite
+# alternate10or11: flag per alternare 1-0 exchange e 1-1 exchange
+# granularityThreshold: valore soglia che non deve essere superato da qualsiasi elemento dell'smd
 def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSearch, nik2ij, ak2ij, s,
-               alternate10or11):
+               alternate10or11, granularityThreshold):
     print("\nSTART tabuSearch()")
     # prende i padri di soluzionePrecedente
     padriDiAttuale = deepcopy(dictSolutionsDiS[soluzionePrecedente][4])
@@ -2014,18 +2016,18 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
     # SMD10
     if alternate10or11 == 1:
         # vengono inizializzati gli SMD
-        inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s)
+        inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold)
 
     # SMD11
     elif alternate10or11 == -1:
         # vengono inizializzati gli SMD
-        inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2)
+        inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2, granularityThreshold)
 
     # SMD10 and SMD11
     elif alternate10or11 == 0:
         # vengono inizializzati gli SMD
-        inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s)
-        inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2)
+        inizializzaSMD10(smd10, rotte, nik2ij, ak2ij, x2, s, granularityThreshold)
+        inizializzaSMD11(smd11, rotte, nik2ij, ak2ij, x2, granularityThreshold)
 
     # print("stampa tabuList: {}".format(tabuListDiS))
 
