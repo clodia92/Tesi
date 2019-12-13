@@ -1657,10 +1657,10 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)
                         if arc[1] == n1:
                             break
                         # aggiungere pallet n2 ai precN1
-                        x2TMP[v2, n2, arc[0], arc[1]] = palletN2
+                        x2TMP[v1, n2, arc[0], arc[1]] = palletN2
                         # eliminare pallet n1 dai precN1
                         x2TMP[v1, n1, arc[0], arc[1]] = 0
-                    x2TMP[v2, n2, precN1[0], n2] = palletN2
+                    x2TMP[v1, n2, precN1[0], n2] = palletN2
                     x2TMP[v1, n1, precN1[0], n1] = 0
 
                 # v2
@@ -1768,10 +1768,10 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)
                         if arc[1] == n2:
                             break
                         # aggiungere pallet n1 ai precN2
-                        x2TMP[v1, n1, arc[0], arc[1]] = palletN1
+                        x2TMP[v2, n1, arc[0], arc[1]] = palletN1
                         # eliminare pallet n2 dai precN2
                         x2TMP[v2, n2, arc[0], arc[1]] = 0
-                    x2TMP[v1, n1, precN2[0], n1] = palletN1
+                    x2TMP[v2, n1, precN2[0], n1] = palletN1
                     x2TMP[v2, n2, precN2[0], n2] = 0
 
             # clienti uguali ma rotte diverse
