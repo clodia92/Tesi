@@ -329,7 +329,8 @@ if __name__ == "__main__":
                                                                                     myProb.K2diS[s], myProb.A2,
                                                                                     myProb.GammadiS[s], myProb.CdiS,
                                                                                     uk2increased)
-                        if not vincolo35:
+                        # DEBUG
+                        if not vincolo35 and keyLocalSearch!= -1:
                             rotteUpdated = deepcopy(rotte)
                             # aggiornare rotte dopo una mossa ammissibile
                             # 1-0 Exchange
@@ -356,7 +357,7 @@ if __name__ == "__main__":
                         costNew = cost
 
                     # effettua mossa migliorativa
-                    if keyLocalSearch != -1 and costNew < cost:
+                    if keyLocalSearch != -1:# and costNew < cost:
                         flagTried10and11 = False
 
                         itMosseLS += 1
