@@ -1132,7 +1132,7 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS)
     # x2TMP = deepcopy(x2)
     # w2TMP = deepcopy(w2)
 
-    while heapSMD[0][0] < 0 and itNonAmmissibili < itMAX:
+    while heapSMD != [] and heapSMD[0][0] < 0 and itNonAmmissibili < itMAX:
 
         itNonAmmissibili += 1
 

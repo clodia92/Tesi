@@ -124,6 +124,8 @@ class Prob3:
 
 if __name__ == "__main__":
 
+    # commento
+
     startTimeTotal = time.time()
 
     print("Start Prob3: ")
