@@ -2208,6 +2208,7 @@ def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSo
     # chiusura file
     file.close()
 
+
 # restituisce una lista di veicoli che superano la propria capacità massima
 
 # K2diS: L’insieme di PCV selezionati assegnati al satellite s∈S dalla soluzione di Prob2

@@ -134,7 +134,7 @@ if __name__ == "__main__":
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
     itMosseTSMax = 20
     # modificare elapsedTimeTotalMax per modificare il tempo massimo di esecuzione (in secondi)
-    elapsedTimeTotalMax = 150
+    elapsedTimeTotalMax = 3600
 
     # modificare alternate10or11 per modificare se alternare 1-0 exchange e 1-1 exchange (1 o -1)
     # oppure utilizzare sempre entrambe contemporaneamente (0)
@@ -235,6 +235,7 @@ if __name__ == "__main__":
             # padri: lista di indici alle soluzioni di partenza in solutions
             # figli: lista di indici alle soluzioni ricavate in solutions
             # mossaDiArrivo: mossa che ha portato all'attuale soluzione
+            # infeasibleK2: lista dei veicoli che superano la capacità
             dictSolutions[s] = []
 
             # tabu list per ogni satellite. Vengono riportati l'indice della soluzione e la mossa che l'ha determinata
@@ -270,9 +271,9 @@ if __name__ == "__main__":
                 print("Soluzione di base trovata, costo: {}.".format(cost))
                 # lista dei padri della soluzione
                 padri = [-1]
-                # aggiungo la soluzione alle soluzioni
+                # aggiungo la soluzione iniziale alle soluzioni
                 dictSolutions[s].append(
-                    [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [], [-1]])
+                    [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), padri, [], [-1], []])
                 # aggiornamento di padri
                 padri = [len(dictSolutions[s]) - 1]
                 # indice della soluzione attuale che genera un figlio con il local search
@@ -329,22 +330,30 @@ if __name__ == "__main__":
                                                                                     myProb.K2diS[s], myProb.A2,
                                                                                     myProb.GammadiS[s], myProb.CdiS,
                                                                                     uk2increased)
-                        # DEBUG
-                        if not vincolo35 and keyLocalSearch!= -1:
-                            rotteUpdated = deepcopy(rotte)
-                            # aggiornare rotte dopo una mossa ammissibile
-                            # 1-0 Exchange
-                            if len(keyLocalSearch) == 5:
-                                updateRotteSmd10(rotteUpdated, keyLocalSearch, flagAllPallets)
-                            # 1-1 Exchange
-                            elif len(keyLocalSearch) == 4:
-                                updateRotteSmd11(rotteUpdated, keyLocalSearch)
-                            # vengono trovati i veicoli che superano la propria capacità
-                            # e il loro costo viene penalizzato in computeCost
-                            infeasibleK2 = findInfeasibleK2(myProb.K2diS[s], myProb.uk2, x2TMP, rotteUpdated)
-                        # aggiornamento del costo
-                        costNew = computeCostPenalty(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2, myProb.nik2ij,
-                                                     myProb.ak2ij, s, infeasibleK2, penalty)
+                        # se è stata trova una nuova mossa
+                        if keyLocalSearch != -1:
+                            # se il vincolo 35 non è stato violato
+                            if vincolo35:
+                                infeasibleK2 = []
+                            # se il vincolo 35 è stato violato
+                            else:
+                                rotteUpdated = deepcopy(rotte)
+                                # aggiornare rotte dopo una mossa ammissibile
+                                # 1-0 Exchange
+                                if len(keyLocalSearch) == 5:
+                                    updateRotteSmd10(rotteUpdated, keyLocalSearch, flagAllPallets)
+                                # 1-1 Exchange
+                                elif len(keyLocalSearch) == 4:
+                                    updateRotteSmd11(rotteUpdated, keyLocalSearch)
+
+                                # vengono trovati i veicoli che superano la propria capacità
+                                # e il loro costo viene penalizzato in computeCost
+                                infeasibleK2 = findInfeasibleK2(myProb.K2diS[s], myProb.uk2, x2TMP, rotteUpdated)
+
+                            # aggiornamento del costo
+                            costNew = computeCostPenalty(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2,
+                                                         myProb.nik2ij, myProb.ak2ij, s, infeasibleK2, penalty)
+
                         # il costo totale viene penalizzato se la soluzione viola il vincolo35
                         # if not vincolo35 and costNew != cost:
                             # penalizza il costo dei veicoli
@@ -421,7 +430,7 @@ if __name__ == "__main__":
                                 # aggiunta di una nuova soluzione
                                 dictSolutions[s].append(
                                     [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), deepcopy(padri),
-                                     [], [keyLocalSearch]])
+                                     [], [keyLocalSearch], infeasibleK2])
                                 for padreSingolo in padri:
                                     dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
                                 padri = [len(dictSolutions[s]) - 1]
@@ -434,7 +443,7 @@ if __name__ == "__main__":
                                 # aggiunta di una nuova soluzione
                                 dictSolutions[s].append(
                                     [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte),
-                                     [soluzionePrecedente], [], [keyLocalSearch]])
+                                     [soluzionePrecedente], [], [keyLocalSearch], infeasibleK2])
                                 padri = [len(dictSolutions[s]) - 1]
 
                                 soluzionePrecedente = len(dictSolutions[s]) - 1
@@ -443,7 +452,7 @@ if __name__ == "__main__":
                             # aggiunta di una nuova soluzione
                             dictSolutions[s].append(
                                 [cost, deepcopy(myProb.x2), deepcopy(myProb.w2), deepcopy(rotte), [soluzionePrecedente],
-                                 [], [keyLocalSearch]])
+                                 [], [keyLocalSearch], infeasibleK2])
                             for padreSingolo in padri:
                                 dictSolutions[s][padreSingolo][5].append(len(dictSolutions[s]) - 1)
                             padri = [len(dictSolutions[s]) - 1]
@@ -476,7 +485,8 @@ if __name__ == "__main__":
                         # aggiornamento della bestSolution finora trovata
                         # questo aggiornamento deve essere fatto ogni volta che viene effettuato il LocalSearch
                         # perché se si imposta elapsedTimeTotalMax tale da non permettere di arrivare ad un minimo
-                        # locale, allora deve esere salvata la soluzione con costo minimo trovata fino ad allora
+                        # locale, allora deve esere salvata la soluzione con costo minimo trovata fino ad allora.
+                        # Inoltre, il vincolo 35 non deve essere violato
                         if costNew < dictSolutions[s][bestSolutionIndice][0] and vincolo35:
                             bestSolutionIndice = soluzionePrecedente
                             # print("bestSolution:\ncosto: {}, rotte: {}".format(dictSolutions[s][bestSolutionIndice][0],
@@ -551,15 +561,15 @@ if __name__ == "__main__":
                             oldKeyLocalSearch = -1
                             itMosseTS += 1
                             flagTried10and11 = False
+                            costNew = cost
 
                         # condizione di uscita
                         else:
                             print("dictSolutions[{}]:".format(s))
                             for solution in dictSolutions[s]:
-                                print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(
+                                print("{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}, infeasibleK2: {}".format(
                                     dictSolutions[s].index(solution), solution[0], solution[3], solution[4],
-                                    solution[5],
-                                    solution[6]))
+                                    solution[5], solution[6], solution[7]))
 
                             print(
                                 "\n\n\nLa soluzione migliore trovata, itMosseLS: {}, itMosseTS: {}, costo: {}.".format(
