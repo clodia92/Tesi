@@ -145,7 +145,7 @@ if __name__ == "__main__":
     #  0:   1-0 and 1-1
     alternate10or11 = 0
 
-    # beta: valore che oscilla nell'intervallo [0.5 , 5]
+    # beta: valore che oscilla in un determinato intercallo. Se uguale a zero si annulla la soglia di granularità
     beta = 0.01
 
     # inizializzazione del valore soglia granularità
