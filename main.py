@@ -353,11 +353,9 @@ if __name__ == "__main__":
                             # aggiornamento del costo
                             costNew = computeCostPenalty(x2TMP, w2TMP, myProb.K2diS, myProb.GammadiS, myProb.A2,
                                                          myProb.nik2ij, myProb.ak2ij, s, infeasibleK2, penalty)
-
-                        # il costo totale viene penalizzato se la soluzione viola il vincolo35
-                        # if not vincolo35 and costNew != cost:
-                            # penalizza il costo dei veicoli
-                            # costNew += costNew/100 * penalty
+                        else:
+                            infeasibleK2 = []
+                            costNew = cost
 
                         # print("localSearch, key: {} cost: {}, costNew: {}".format(keyLocalSearch, cost, costNew))
                     # è stato raggiunto il tempo massimo di esecuzione
@@ -561,7 +559,6 @@ if __name__ == "__main__":
                             oldKeyLocalSearch = -1
                             itMosseTS += 1
                             flagTried10and11 = False
-                            costNew = cost
 
                         # condizione di uscita
                         else:

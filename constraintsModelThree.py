@@ -51,6 +51,7 @@ def computeCostPenalty(x2, w2, K2diS, GammadiS, A2, nik2ij, ak2ij, sat, infeasib
 
         # se la capacità di k viene superata, penalizza la rotta
         if k in infeasibleK2:
+            # print("penalizzare rotta: {}, costo: {}, penalty: {}".format(k, tmpCost, penalty))
             tmpCost += tmpCost / 100 * penalty
 
         cost += tmpCost
