@@ -159,10 +159,10 @@ if __name__ == "__main__":
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
     if alternate10or11 == 0:
         filename = pathlib.Path(
-            "outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_and")
+            "outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_and" + "_" + str(beta))
     elif alternate10or11 == 1 or alternate10or11 == -1:
         filename = pathlib.Path(
-            "outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_or")
+            "outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_or" + "_" + str(beta))
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     file = open(filename, 'w')
@@ -172,10 +172,10 @@ if __name__ == "__main__":
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
     if alternate10or11 == 0:
         filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
-            itMosseTSMax) + "_and" + "_" + str(betaInt) + "-" + str(betaDec) + "_StartBest")
+            itMosseTSMax) + "_and" + "_" + str(beta) + "_StartBest")
     elif alternate10or11 == 1 or alternate10or11 == -1:
         filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
-            itMosseTSMax) + "_or" + "_" + str(betaInt) + "-" + str(betaDec) + "_StartBest")
+            itMosseTSMax) + "_or" + "_" + str(beta) + "_StartBest")
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     file = open(filename, 'w')
@@ -200,10 +200,10 @@ if __name__ == "__main__":
         pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
         if alternate10or11 == 0:
             filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_and" + "_" + str(betaInt) + "-" + str(betaDec))
+                itMosseTSMax) + "_and" + "_" + str(beta))
         elif alternate10or11 == 1 or alternate10or11 == -1:
             filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_or" + "_" + str(betaInt) + "-" + str(betaDec))
+                itMosseTSMax) + "_or" + "_" + str(beta))
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
         file = open(filename, 'a')
@@ -213,10 +213,10 @@ if __name__ == "__main__":
         pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
         if alternate10or11 == 0:
             filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_and" + "_" + str(betaInt) + "-" + str(betaDec) + "_StartBest")
+                itMosseTSMax) + "_and" + "_" + str(beta) + "_StartBest")
         elif alternate10or11 == 1 or alternate10or11 == -1:
             filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_or" + "_" + str(betaInt) + "-" + str(betaDec) + "_StartBest")
+                itMosseTSMax) + "_or" + "_" + str(beta) + "_StartBest")
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
         file = open(filename, 'a')
@@ -575,9 +575,9 @@ if __name__ == "__main__":
 
                             # creazione file output
                             writeOutput(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS,
-                                        itMosseTS, itNSIMax, itMosseTSMax, alternate10or11, betaInt, betaDec)
+                                        itMosseTS, itNSIMax, itMosseTSMax, alternate10or11, beta)
                             writeOutputStartBest(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsedS,
-                                                 itMosseLS, itMosseTS, itNSI, itNSIMax, itMosseTSMax, alternate10or11, betaInt, betaDec)
+                                                 itMosseLS, itMosseTS, itNSI, itNSIMax, itMosseTSMax, alternate10or11, beta)
 
                             break
             # se non è stata trovata una soluzione iniziale
@@ -590,4 +590,4 @@ if __name__ == "__main__":
 
     # scrittura su file della bestSolution in assoluto
     writeOutputStartBestwriteOutputStartBestAssoluta(myProb.nomeFile, myProb.Sneg, bestSolution, itNSIMax, itMosseTSMax,
-                                                     elapsedTimeTotal, alternate10or11, betaInt, betaDec)
+                                                     elapsedTimeTotal, alternate10or11, beta)

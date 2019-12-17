@@ -2067,10 +2067,9 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
 # itNSIMax: soluzioni iniziali da esplorare
 # itMosseTSMax: numero iterazioni del Tabu Search da effettuare
 # alternate10or11: identifica come sono state applicate le mosse
-# betaInt: parte intera del valore soglia beta
-# betaDec: decimali del valore soglia beta
+# beta: valore soglia granularità
 def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS, itMosseTS, itNSIMax,
-                itMosseTSMax, alternate10or11, betaInt, betaDec):
+                itMosseTSMax, alternate10or11, beta):
     # creazione cartella
     print("\nOutput file, s: {}.".format(s))
 
@@ -2078,10 +2077,10 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
 
     if alternate10or11 == 0:
         filename = pathlib.Path(
-            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_and" + "_" + str(betaInt) + "-" + str(betaDec))
+            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_and" + "_" + str(beta))
     elif alternate10or11 == 1 or alternate10or11 == -1:
         filename = pathlib.Path(
-            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_or" + "_" + str(betaInt) + "-" + str(betaDec))
+            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_or" + "_" + str(beta))
     # per creare file con numero che va ad aumentare:
     # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
 
@@ -2142,10 +2141,9 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
 # itNSIMax: soluzioni iniziali da esplorare
 # itMosseTSMax: numero iterazioni del Tabu Search da effettuare
 # alternate10or11: identifica come sono state applicate le mosse
-# betaInt: parte intera del valore soglia beta
-# betaDec: decimali del valore soglia beta
+# beta: valore soglia granularità
 def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS, itMosseTS, itNSI,
-                         itNSIMax, itMosseTSMax, alternate10or11, betaInt, betaDec):
+                         itNSIMax, itMosseTSMax, alternate10or11, beta):
     # creazione cartella di output
     print("Output file: start - best, s: {}.".format(s))
 
@@ -2154,11 +2152,11 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
     if alternate10or11 == 0:
         filename = pathlib.Path(
             "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_and" + "_" + str(betaInt) + "-" + str(betaDec) + "_StartBest")
+                itMosseTSMax) + "_and" + "_" + str(beta) + "_StartBest")
     elif alternate10or11 == 1 or alternate10or11 == -1:
         filename = pathlib.Path(
             "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_or" + "_" + str(betaInt) + "-" + str(betaDec) + "_StartBest")
+                itMosseTSMax) + "_or" + "_" + str(beta) + "_StartBest")
     # per creare file con numero che va ad aumentare:
     # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
 
@@ -2211,20 +2209,19 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
 # itMosseTSMax: numero iterazioni del Tabu Search da effettuare
 # timeElapsedS: tempo impiegato per la determinazione del risultato
 # alternate10or11: identifica come sono state applicate le mosse
-# betaInt: parte intera del valore soglia beta
-# betaDec: decimali del valore soglia beta
+# beta: valore soglia granularità
 def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSolution, itNSIMax, itMosseTSMax,
-                                                     timeElapsedTotal, alternate10or11, betaInt, betaDec):
+                                                     timeElapsedTotal, alternate10or11, beta):
     # scrittura su file della bestSolution in assoluto
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
     if alternate10or11 == 0:
         filename = pathlib.Path(
             "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_and" + "_" + str(betaInt) + "-" + str(betaDec) + "_StartBest")
+                itMosseTSMax) + "_and" + "_" + str(beta) + "_StartBest")
     elif alternate10or11 == 1 or alternate10or11 == -1:
         filename = pathlib.Path(
             "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_or" + "_" + str(betaInt) + "-" + str(betaDec) + "_StartBest")
+                itMosseTSMax) + "_or" + "_" + str(beta) + "_StartBest")
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     # apertura file in append
