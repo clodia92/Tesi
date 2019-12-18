@@ -10,6 +10,7 @@ from constraintsModelThree import computeCost
 from copy import deepcopy
 import heapq
 import time
+from math import modf
 
 
 class Prob3:
@@ -124,12 +125,12 @@ class Prob3:
 
 if __name__ == "__main__":
 
-    # commento
+    # granularity
 
     startTimeTotal = time.time()
 
     print("Start Prob3: ")
-    myProb = Prob3("2_2_100_0_20")
+    myProb = Prob3("018")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
     itNSIMax = 10
@@ -145,14 +146,23 @@ if __name__ == "__main__":
     #  0:   1-0 and 1-1
     alternate10or11 = 0
 
+    # beta: valore che oscilla in un determinato intercallo. Se uguale a zero si annulla la soglia di granularità
+    beta = 0.01
+
+    betaDec, betaInt = modf(beta)
+
+    # inizializzazione del valore soglia granularità
+    granularityThreshold = 0
+
+
     # creazione file: il file vecchio viene sovrascritto
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
     if alternate10or11 == 0:
         filename = pathlib.Path(
-            "outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0and1-1")
+            "outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_and" + "_" + str(beta))
     elif alternate10or11 == 1 or alternate10or11 == -1:
         filename = pathlib.Path(
-            "outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_1-0or1-1")
+            "outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_or" + "_" + str(beta))
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     file = open(filename, 'w')
@@ -162,10 +172,10 @@ if __name__ == "__main__":
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
     if alternate10or11 == 0:
         filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
-            itMosseTSMax) + "_1-0and1-1" + "_StartBest")
+            itMosseTSMax) + "_and" + "_" + str(beta) + "_StartBest")
     elif alternate10or11 == 1 or alternate10or11 == -1:
         filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
-            itMosseTSMax) + "_1-0or1-1" + "_StartBest")
+            itMosseTSMax) + "_or" + "_" + str(beta) + "_StartBest")
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     file = open(filename, 'w')
@@ -190,10 +200,10 @@ if __name__ == "__main__":
         pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
         if alternate10or11 == 0:
             filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_1-0and1-1")
+                itMosseTSMax) + "_and" + "_" + str(beta))
         elif alternate10or11 == 1 or alternate10or11 == -1:
             filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_1-0or1-1")
+                itMosseTSMax) + "_or" + "_" + str(beta))
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
         file = open(filename, 'a')
@@ -203,10 +213,10 @@ if __name__ == "__main__":
         pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
         if alternate10or11 == 0:
             filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_1-0and1-1" + "_StartBest")
+                itMosseTSMax) + "_and" + "_" + str(beta) + "_StartBest")
         elif alternate10or11 == 1 or alternate10or11 == -1:
             filename = pathlib.Path("outputTabuSearchProb3/" + myProb.nomeFile + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_1-0or1-1" + "_StartBest")
+                itMosseTSMax) + "_or" + "_" + str(beta) + "_StartBest")
         filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
         file = open(filename, 'a')
@@ -260,6 +270,13 @@ if __name__ == "__main__":
             elapsedTimeTotal = time.time() - startTimeTotal
             # se è stata trovata una soluzione iniziale
             if resultSolutionBase and elapsedTimeTotal < elapsedTimeTotalMax:
+
+                zSoluzioneIniziale = cost
+
+                # determinazione del valore soglia granularità in base alla soluzione iniziale trovata
+                granularityThreshold = - beta * (zSoluzioneIniziale/(len(myProb.GammadiS) + len(myProb.K2diS)))
+
+
                 print("Soluzione di base trovata, costo: {}.".format(cost))
                 # lista dei padri della soluzione
                 padri = [-1]
@@ -274,18 +291,18 @@ if __name__ == "__main__":
                 # SMD10
                 if alternate10or11 == 1:
                     # vengono inizializzati gli SMD
-                    inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+                    inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s, granularityThreshold)
 
                 # SMD11
                 elif alternate10or11 == -1:
                     # vengono inizializzati gli SMD
-                    inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+                    inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, granularityThreshold)
 
                 # SMD10 and SMD11
                 elif alternate10or11 == 0:
                     # vengono inizializzati gli SMD
-                    inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
-                    inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+                    inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s, granularityThreshold)
+                    inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, granularityThreshold)
                 # crea la lista unica dei costi in cui verrà salvato l'heap
                 # non usare list(smd10.values()) direttamente perché tale lista non è modificabile e quindi non sarà un heap
                 # genera le liste contenenti le tuple: (valore differenza, chiave mossa)
@@ -305,6 +322,8 @@ if __name__ == "__main__":
 
                 # flag per segnalare che sono stati analizzati entrambi i tipo di mossa quando vengono alternate
                 flagTried10and11 = False
+
+
 
                 # iterazioni continuano finché non si presentano determinate condizioni
                 # (esplorazione completa tramite Tabu Search, numero di iterazioni limitate, ecc)
@@ -357,16 +376,16 @@ if __name__ == "__main__":
                         alternate10or11 = alternate10or11 * -1
                         # SMD10
                         if alternate10or11 == 1:
-                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s, granularityThreshold)
 
                         # SMD11
                         elif alternate10or11 == -1:
-                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, granularityThreshold)
 
                         # SMD10 and SMD11
                         elif alternate10or11 == 0:
-                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
-                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s, granularityThreshold)
+                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, granularityThreshold)
 
                         print("Soluzione migliore trovata, costo: {}.".format(cost))
                         # print("rotte: {}".format(rotte))
@@ -466,18 +485,18 @@ if __name__ == "__main__":
                         # SMD10
                         if alternate10or11 == 1:
                             # vengono inizializzati gli SMD
-                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
+                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s, granularityThreshold)
 
                         # SMD11
                         elif alternate10or11 == -1:
                             # vengono inizializzati gli SMD
-                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, granularityThreshold)
 
                         # SMD10 and SMD11
                         elif alternate10or11 == 0:
                             # vengono inizializzati gli SMD
-                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s)
-                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2)
+                            inizializzaSMD10(smd10, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, s, granularityThreshold)
+                            inizializzaSMD11(smd11, rotte, myProb.nik2ij, myProb.ak2ij, myProb.x2, granularityThreshold)
 
                         # eliminare le mosse tabu dagli SMD
                         for mossaTabu in tabuList[s]:
@@ -522,7 +541,7 @@ if __name__ == "__main__":
                             # applica Tabu Search
                             heapSMD, smd10, smd11, myProb.x2, myProb.w2, rotte, cost, soluzionePrecedente, padri, alternate10or11 = tabuSearch(
                                 dictSolutions[s], soluzionePrecedente, tabuList[s], oldKeyLocalSearch, myProb.nik2ij,
-                                myProb.ak2ij, s, alternate10or11)
+                                myProb.ak2ij, s, alternate10or11, granularityThreshold)
                             oldKeyLocalSearch = -1
                             itMosseTS += 1
                             flagTried10and11 = False
@@ -556,9 +575,9 @@ if __name__ == "__main__":
 
                             # creazione file output
                             writeOutput(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS,
-                                        itMosseTS, itNSIMax, itMosseTSMax, alternate10or11)
+                                        itMosseTS, itNSIMax, itMosseTSMax, alternate10or11, beta)
                             writeOutputStartBest(myProb.nomeFile, s, dictSolutions, bestSolutionIndice, timeElapsedS,
-                                                 itMosseLS, itMosseTS, itNSI, itNSIMax, itMosseTSMax, alternate10or11)
+                                                 itMosseLS, itMosseTS, itNSI, itNSIMax, itMosseTSMax, alternate10or11, beta)
 
                             break
             # se non è stata trovata una soluzione iniziale
@@ -571,4 +590,4 @@ if __name__ == "__main__":
 
     # scrittura su file della bestSolution in assoluto
     writeOutputStartBestwriteOutputStartBestAssoluta(myProb.nomeFile, myProb.Sneg, bestSolution, itNSIMax, itMosseTSMax,
-                                                     elapsedTimeTotal, alternate10or11)
+                                                     elapsedTimeTotal, alternate10or11, beta)
