@@ -130,7 +130,7 @@ if __name__ == "__main__":
     startTimeTotal = time.time()
 
     print("Start Prob3: ")
-    myProb = Prob3("018")
+    myProb = Prob3("006")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
     itNSIMax = 10
@@ -149,8 +149,6 @@ if __name__ == "__main__":
     # beta: valore che oscilla in un determinato intercallo. Se uguale a zero si annulla la soglia di granularità
     beta = 0.01
 
-    betaDec, betaInt = modf(beta)
-
     # inizializzazione del valore soglia granularità
     granularityThreshold = 0
 
@@ -166,7 +164,7 @@ if __name__ == "__main__":
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     file = open(filename, 'w')
-    file.write("itNSIMax: {}, itMosseTSMax: {}.\n".format(itNSIMax, itMosseTSMax))
+    file.write("itNSIMax: {}, itMosseTSMax: {}, beta: {}.\n".format(itNSIMax, itMosseTSMax, beta))
     file.close()
 
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
@@ -179,7 +177,7 @@ if __name__ == "__main__":
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     file = open(filename, 'w')
-    file.write("itNSIMax: {}, itMosseTSMax: {}.\n".format(itNSIMax, itMosseTSMax))
+    file.write("itNSIMax: {}, itMosseTSMax: {}, beta: {}.\n".format(itNSIMax, itMosseTSMax, beta))
     file.close()
     # creazione file: il file vecchio viene sovrascritto
 
