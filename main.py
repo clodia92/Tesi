@@ -125,9 +125,10 @@ class Prob3:
 
 if __name__ == "__main__":
 
-    # granularity
-
     startTimeTotal = time.time()
+
+########################################################################################################################
+### SETTINGS
 
     print("Start Prob3: ")
     myProb = Prob3("006")
@@ -146,19 +147,20 @@ if __name__ == "__main__":
     #  0:   1-0 and 1-1
     alternate10or11 = 0
 
-    # infeasible solutions
-    # violare il vincolo35
+    # infeasible solutions: violare il vincolo35 (impostare entrambe a 0 per non permettere la violazione del vincolo)
     # penalità (in percentuale) da applicare al costo totale delle soluzioni non ammissibili
     penalty = 20
     # aumento di capacità (in percentuale) da applicare al vincolo35
     uk2Increased = 50
-    
-    # beta: valore che oscilla in un determinato intercallo. Se uguale a zero si annulla la soglia di granularità
-    beta = 0.01
 
+    # granularity
+    # beta: valore che oscilla in un determinato intervallo. Se uguale a zero si annulla la soglia di granularità
+    beta = 0.01
     # inizializzazione del valore soglia granularità
     granularityThreshold = 0
 
+### SETTINGS
+########################################################################################################################
     # creazione file: il file vecchio viene sovrascritto
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
     if alternate10or11 == 0:
