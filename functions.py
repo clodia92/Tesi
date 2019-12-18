@@ -74,21 +74,22 @@ def assignx2w2(x2, w2, trasportoPalletDiGamma, rotte):
 # A2: insieme di archi che collegano clienti e satelliti tra di loro
 # GammadiS: l'insieme di clienti i cui pallet sono stati assegnati al satellite s
 # CdiS: L’insieme di container c∈C trasportati verso il satellite s∈Sneg secondo la soluzione di Prob1
-def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2, A2, GammadiS, CdiS, uk2increased):
+def verificaSoluzioneAmmissibile(sat, x2, w2, uk2, Pgac, PsGa, K2, A2, GammadiS, CdiS, uk2Increased):
     # chiama le funzioni dei singoli vincoli
     vincolo29 = BuildConstr29(GammadiS, x2, K2, PsGa, sat)
     vincolo30 = BuildConstr30(GammadiS, x2, K2, Pgac, CdiS, sat)
     vincolo31 = BuildConstr31(GammadiS, K2, x2, sat)
     vincolo32 = BuildConstr32(K2, w2, GammadiS, sat)
     vincolo34 = BuildConstr34(K2, GammadiS, w2, sat)
-    vincolo35 = BuildConstr35(K2, A2, x2, GammadiS, uk2, w2, sat, uk2increased)
+    vincolo35 = BuildConstr35(K2, A2, x2, GammadiS, uk2, w2)
+    vincolo35Infeasible = BuildConstr35Infeasible(K2, A2, x2, GammadiS, uk2, w2, uk2Increased)
     vincolo36 = BuildConstr36(K2, GammadiS, w2, sat)
 
     # if vincolo29 and vincolo30 and vincolo31 and vincolo32 and vincolo34 and vincolo35 and vincolo36:
     if vincolo29 and vincolo30 and vincolo31 and vincolo32 and vincolo34 and vincolo36:
-        return True, vincolo35
+        return True, vincolo35Infeasible
     else:
-        return False, vincolo35
+        return False, vincolo35Infeasible
 
 
 # inizializzazione del smd10
@@ -1097,7 +1098,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, GammadiS, CdiS):
     soluzioneAmmissibile, vincolo35 = verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, GammadiS,
                                                                    CdiS, 0)
     # la soluzione iniziale deve essere ammissibile
-    if soluzioneAmmissibile and vincolo35:
+    if soluzioneAmmissibile and vincolo35 == 0:
         # soluzione ammissibile trovata
         x2 = deepcopy(x2TMP)
         w2 = deepcopy(w2TMP)
@@ -1129,7 +1130,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, GammadiS, CdiS):
 # A2: insieme di archi che collegano clienti e satelliti tra di loro
 # Gamma: l'insieme di clienti
 # CdiS: L’insieme di container c∈C trasportati verso il satellite s∈Sneg secondo la soluzione di Prob1
-def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS, uk2increased):
+def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS, uk2Increased):
     print("\nSTART localSearch()")
     itMAX = len(heapSMD)
     itNonAmmissibili = 0
@@ -1446,7 +1447,7 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS,
 
                 # verifica dell'ammissibilità della soluzione
                 soluzioneAmmissibile, vincolo35 = verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2,
-                                                                               Gamma, CdiS, uk2increased)
+                                                                               Gamma, CdiS, uk2Increased)
                 if soluzioneAmmissibile:
                     # print("rotte: {}".format(rotte))
                     print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}, vincolo35: {}.".format(
@@ -1797,7 +1798,7 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS,
                     x2TMP[v2, n2, arc[0], arc[1]] = x2[v1, n1, precN1[0], n1]
 
             # verifica dell'ammissibilità della soluzione
-            soluzioneAmmissibile, vincolo35 = verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS, uk2increased)
+            soluzioneAmmissibile, vincolo35 = verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS, uk2Increased)
             if soluzioneAmmissibile:
                 # print("rotte: {}".format(rotte))
                 print("localSearch TRUE, itNonAmmissibili: {}, mossa: {}, differenza costo: {}, vincolo35: {}.".format(itNonAmmissibili,

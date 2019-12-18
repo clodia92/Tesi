@@ -148,7 +148,7 @@ def BuildConstr34(K2, GammadiS, w2, sat):
 
 
 # generate Constraint 35
-def BuildConstr35(K2, A2, x2, GammadiS, uk2, w2, sat, uk2increased):
+def BuildConstr35(K2, A2, x2, GammadiS, uk2, w2):
     vincolo35 = True
 
     # for all vehicles in the "s" satellite
@@ -162,6 +162,26 @@ def BuildConstr35(K2, A2, x2, GammadiS, uk2, w2, sat, uk2increased):
                     return vincolo35
 
     return vincolo35
+
+
+# generate Constraint 35
+def BuildConstr35Infeasible(K2, A2, x2, GammadiS, uk2, w2, uk2Increased):
+    vincolo35 = -1
+
+    # for all vehicles in the "s" satellite
+    for k in K2:
+        # for all arcs in A2
+        for i, j in A2:
+
+            if i != j:
+                # sommaPallet = sum([x2[(k, ga, i, j)] for ga in GammadiS])
+
+                if sum([x2[(k, ga, i, j)] for ga in GammadiS]) <= (uk2[k] * w2[(k, i, j)]):
+                    return 0
+                elif sum([x2[(k, ga, i, j)] for ga in GammadiS]) <= int(((uk2[k] + (uk2[k] / 100 * uk2Increased)) * w2[(k, i, j)])):
+                    return 1
+                else:
+                    return -1
 
 
 # generate Constraint 36
