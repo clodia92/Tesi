@@ -2076,8 +2076,10 @@ def tabuSearch(dictSolutionsDiS, soluzionePrecedente, tabuListDiS, oldKeyLocalSe
 # itMosseTSMax: numero iterazioni del Tabu Search da effettuare
 # alternate10or11: identifica come sono state applicate le mosse
 # beta: valore soglia granularità
+# penalty: penalità (in percentuale) da applicare al costo totale delle soluzioni non ammissibili
+# uk2Increased: aumento di capacità (in percentuale) da applicare al vincolo35
 def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS, itMosseTS, itNSIMax,
-                itMosseTSMax, alternate10or11, beta):
+                itMosseTSMax, alternate10or11, beta, penalty, uk2Increased):
     # creazione cartella
     print("\nOutput file, s: {}.".format(s))
 
@@ -2085,10 +2087,10 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
 
     if alternate10or11 == 0:
         filename = pathlib.Path(
-            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_and" + "_" + str(beta))
+            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_and" + "_" + str(beta) + "_" + str(penalty) + "_" + str(uk2Increased))
     elif alternate10or11 == 1 or alternate10or11 == -1:
         filename = pathlib.Path(
-            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_or" + "_" + str(beta))
+            "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(itMosseTSMax) + "_or" + "_" + str(beta) + "_" + str(penalty) + "_" + str(uk2Increased))
     # per creare file con numero che va ad aumentare:
     # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
 
@@ -2150,8 +2152,10 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
 # itMosseTSMax: numero iterazioni del Tabu Search da effettuare
 # alternate10or11: identifica come sono state applicate le mosse
 # beta: valore soglia granularità
+# penalty: penalità (in percentuale) da applicare al costo totale delle soluzioni non ammissibili
+# uk2Increased: aumento di capacità (in percentuale) da applicare al vincolo35
 def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsedS, itMosseLS, itMosseTS, itNSI,
-                         itNSIMax, itMosseTSMax, alternate10or11, beta):
+                         itNSIMax, itMosseTSMax, alternate10or11, beta, penalty, uk2Increased):
     # creazione cartella di output
     print("Output file: start - best, s: {}.".format(s))
 
@@ -2160,11 +2164,11 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
     if alternate10or11 == 0:
         filename = pathlib.Path(
             "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_and" + "_" + str(beta) + "_StartBest")
+                itMosseTSMax) + "_and" + "_" + str(beta) + "_" + str(penalty) + "_" + str(uk2Increased) + "_StartBest")
     elif alternate10or11 == 1 or alternate10or11 == -1:
         filename = pathlib.Path(
             "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_or" + "_" + str(beta) + "_StartBest")
+                itMosseTSMax) + "_or" + "_" + str(beta) + "_" + str(penalty) + "_" + str(uk2Increased) + "_StartBest")
     # per creare file con numero che va ad aumentare:
     # verificare numero di file già esistenti nella cartella che iniziano con nomeFileinput
 
@@ -2218,18 +2222,20 @@ def writeOutputStartBest(nomeFileInput, s, dictSolutions, bestSolutionIndice, ti
 # timeElapsedS: tempo impiegato per la determinazione del risultato
 # alternate10or11: identifica come sono state applicate le mosse
 # beta: valore soglia granularità
+# penalty: penalità (in percentuale) da applicare al costo totale delle soluzioni non ammissibili
+# uk2Increased: aumento di capacità (in percentuale) da applicare al vincolo35
 def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSolution, itNSIMax, itMosseTSMax,
-                                                     timeElapsedTotal, alternate10or11, beta):
+                                                     timeElapsedTotal, alternate10or11, beta, penalty, uk2Increased):
     # scrittura su file della bestSolution in assoluto
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
     if alternate10or11 == 0:
         filename = pathlib.Path(
             "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_and" + "_" + str(beta) + "_StartBest")
+                itMosseTSMax) + "_and" + "_" + str(beta) + "_" + str(penalty) + "_" + str(uk2Increased) + "_StartBest")
     elif alternate10or11 == 1 or alternate10or11 == -1:
         filename = pathlib.Path(
             "outputTabuSearchProb3/" + nomeFileInput + "_" + str(itNSIMax) + "_" + str(
-                itMosseTSMax) + "_or" + "_" + str(beta) + "_StartBest")
+                itMosseTSMax) + "_or" + "_" + str(beta) + "_" + str(penalty) + "_" + str(uk2Increased) + "_StartBest")
     filename.touch(exist_ok=True)  # will create file, if it exists will do nothing
 
     # apertura file in append
