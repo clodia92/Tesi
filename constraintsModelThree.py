@@ -28,6 +28,37 @@ def computeCost(x2, w2, K2diS, GammadiS, A2, nik2ij, ak2ij, sat):
     return myObjFunction
 
 
+# generate Objective Function for model Three with penalty
+def computeCostPenalty(x2, w2, K2diS, GammadiS, A2, nik2ij, ak2ij, sat, infeasibleK2, penalty):
+    cost = 0
+
+    # for all vehicles in the "s" satellite
+    for k in K2diS[sat]:
+        tmpCost = 0
+        # for all arcs in A2
+        for i, j in A2:
+            # print("A2", A2)
+
+            if i != j:
+
+                tmpCost += w2[(k, i, j)] * nik2ij[(k, i, j)]
+
+                # for all customers in the "s" satellite
+                for ga in GammadiS[sat]:
+                    # print("GammadiS[1]", GammadiS[sat])
+
+                    tmpCost += x2[(k, ga, i, j)] * ak2ij[(k, i, j)]
+
+        # se la capacità di k viene superata, penalizza la rotta
+        if k in infeasibleK2:
+            # print("penalizzare rotta: {}, costo: {}, penalty: {}".format(k, tmpCost, penalty))
+            tmpCost += tmpCost / 100 * penalty
+
+        cost += tmpCost
+
+    return cost
+
+
 # generate Constraint 29
 def BuildConstr29(GammadiS, x2, K2, PsGa, sat):
     vincolo29 = True
@@ -117,7 +148,7 @@ def BuildConstr34(K2, GammadiS, w2, sat):
 
 
 # generate Constraint 35
-def BuildConstr35(K2, A2, x2, GammadiS, uk2, w2, sat):
+def BuildConstr35(K2, A2, x2, GammadiS, uk2, w2):
     vincolo35 = True
 
     # for all vehicles in the "s" satellite
@@ -126,12 +157,39 @@ def BuildConstr35(K2, A2, x2, GammadiS, uk2, w2, sat):
         for i, j in A2:
 
             if i != j:
-                vincolo35 = sum([x2[(k, ga, i, j)] for ga in GammadiS]) <= (
-                        uk2[k] * w2[(k, i, j)])
+                vincolo35 = sum([x2[(k, ga, i, j)] for ga in GammadiS]) <= (uk2[k] * w2[(k, i, j)])
                 if (not vincolo35):
                     return vincolo35
 
     return vincolo35
+
+
+# generate Constraint 35
+# restituisce:
+# 1: se viene rispettata la capacità
+# 0: se non viene rispettata la capacità ma viene rispettato l'incremento di capacità
+# -1: se non viene rispettato l'incremento di capacità
+def BuildConstr35Infeasible(K2, A2, x2, GammadiS, uk2, w2, uk2Increased):
+    vincolo35Increased = 1
+
+    # for all vehicles in the "s" satellite
+    for k in K2:
+        cap = uk2[k]
+        capIncreased = int(uk2[k] + (uk2[k] / 100 * uk2Increased))
+        # for all arcs in A2
+        for i, j in A2:
+
+            if i != j:
+                sommaPallet = sum([x2[(k, ga, i, j)] for ga in GammadiS])
+
+                if sommaPallet <= cap:
+                    pass
+                elif sommaPallet > cap and sommaPallet <= capIncreased:
+                    vincolo35Increased = 0
+                else:
+                    return -1
+
+    return vincolo35Increased
 
 
 # generate Constraint 36
