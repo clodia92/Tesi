@@ -989,8 +989,8 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, GammadiS, CdiS):
     # K2.reverse()
 
     # soluzione alternativa random
-    # shuffle(GammadiS)
-    # shuffle(K2)
+    shuffle(GammadiS)
+    shuffle(K2)
 
     # popolazione manuale di Gamma e K2 per avere la stessa soluzione iniziale
     # if s == 1:
@@ -1098,7 +1098,7 @@ def findSolutionBase(s, x2, w2, uk2, Pgac, PsGa, K2, A2, GammadiS, CdiS):
     soluzioneAmmissibile, vincolo35 = verificaSoluzioneAmmissibile(s, x2TMP, w2TMP, uk2, Pgac, PsGa, K2, A2, GammadiS,
                                                                    CdiS, 0)
     # la soluzione iniziale deve essere ammissibile
-    if soluzioneAmmissibile and vincolo35 == 0:
+    if soluzioneAmmissibile and vincolo35 == 1:
         # soluzione ammissibile trovata
         x2 = deepcopy(x2TMP)
         w2 = deepcopy(w2TMP)
@@ -1809,7 +1809,7 @@ def localSearch(heapSMD, x2, w2, rotte, s, uk2, Pgac, PsGa, K2, A2, Gamma, CdiS,
     # non è stata trovata nessuna mossa migliorativa
     # print("rotte: {}".format(rotte))
     print("localSearch FALSE, mossa: -1.")
-    return x2, w2, -1, False, False
+    return x2, w2, -1, False, -1
 
 
 # aggiorna le rotte secondo la mossa effettuata (Exchange 1-0)

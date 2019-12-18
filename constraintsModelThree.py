@@ -165,23 +165,31 @@ def BuildConstr35(K2, A2, x2, GammadiS, uk2, w2):
 
 
 # generate Constraint 35
+# restituisce:
+# 1: se viene rispettata la capacità
+# 0: se non viene rispettata la capacità ma viene rispettato l'incremento di capacità
+# -1: se non viene rispettato l'incremento di capacità
 def BuildConstr35Infeasible(K2, A2, x2, GammadiS, uk2, w2, uk2Increased):
-    vincolo35 = -1
+    vincolo35Increased = 1
 
     # for all vehicles in the "s" satellite
     for k in K2:
+        cap = uk2[k]
+        capIncreased = int(uk2[k] + (uk2[k] / 100 * uk2Increased))
         # for all arcs in A2
         for i, j in A2:
 
             if i != j:
-                # sommaPallet = sum([x2[(k, ga, i, j)] for ga in GammadiS])
+                sommaPallet = sum([x2[(k, ga, i, j)] for ga in GammadiS])
 
-                if sum([x2[(k, ga, i, j)] for ga in GammadiS]) <= (uk2[k] * w2[(k, i, j)]):
-                    return 0
-                elif sum([x2[(k, ga, i, j)] for ga in GammadiS]) <= int(((uk2[k] + (uk2[k] / 100 * uk2Increased)) * w2[(k, i, j)])):
-                    return 1
+                if sommaPallet <= cap:
+                    pass
+                elif sommaPallet > cap and sommaPallet <= capIncreased:
+                    vincolo35Increased = 0
                 else:
                     return -1
+
+    return vincolo35Increased
 
 
 # generate Constraint 36

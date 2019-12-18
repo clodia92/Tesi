@@ -127,7 +127,7 @@ if __name__ == "__main__":
     startTimeTotal = time.time()
 
     print("Start Prob3: ")
-    myProb = Prob3("006")
+    myProb = Prob3("018")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
     itNSIMax = 1
@@ -250,7 +250,7 @@ if __name__ == "__main__":
                                                                                myProb.Pgac, myProb.PsGa,
                                                                                myProb.K2diS[s], myProb.A2,
                                                                                myProb.GammadiS[s], myProb.CdiS)
-            vincolo35 = 0
+            vincolo35 = 1
             infeasibleK2 = []
             # variabile che contiene il costo della soluzione appena trovata
             cost = computeCostPenalty(myProb.x2, myProb.w2, myProb.K2diS, myProb.GammadiS, myProb.A2,
@@ -333,10 +333,10 @@ if __name__ == "__main__":
                         # se è stata trova una nuova mossa
                         if keyLocalSearch != -1:
                             # se il vincolo 35 non è stato violato
-                            if vincolo35 == 0:
+                            if vincolo35 == 1:
                                 infeasibleK2 = []
-                            # se il vincolo 35 è stato violato
-                            elif vincolo35 == 1:
+                            # se il vincolo 35 è stato violato rispettando l'incremento di capacità
+                            elif vincolo35 == 0:
                                 rotteUpdated = deepcopy(rotte)
                                 # aggiornare rotte dopo una mossa ammissibile
                                 # 1-0 Exchange
@@ -485,7 +485,7 @@ if __name__ == "__main__":
                         # perché se si imposta elapsedTimeTotalMax tale da non permettere di arrivare ad un minimo
                         # locale, allora deve esere salvata la soluzione con costo minimo trovata fino ad allora.
                         # Inoltre, il vincolo 35 non deve essere violato
-                        if costNew < dictSolutions[s][bestSolutionIndice][0] and vincolo35 == 0:
+                        if costNew < dictSolutions[s][bestSolutionIndice][0] and vincolo35 == 1:
                             bestSolutionIndice = soluzionePrecedente
                             # print("bestSolution:\ncosto: {}, rotte: {}".format(dictSolutions[s][bestSolutionIndice][0],
                             #                                                    dictSolutions[s][bestSolutionIndice][3]))
