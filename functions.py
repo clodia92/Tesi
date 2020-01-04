@@ -2105,14 +2105,14 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
     # scrittura di ogni singola soluzione
     for solution in dictSolutions[s]:
         file.write(
-            "\n{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(dictSolutions[s].index(solution),
+            "\n{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}, infeasibleK2: {}".format(dictSolutions[s].index(solution),
                                                                                    solution[0], solution[3],
                                                                                    solution[4], solution[5],
-                                                                                   solution[6]))
+                                                                                   solution[6], solution[7]))
 
     # scrittura della soluzione migliore
     file.write("\nbestSolutionIndice: {}".format(bestSolutionIndice))
-    file.write("\n{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}".format(bestSolutionIndice,
+    file.write("\n{} -> costo: {}, rotte: {}, padri: {}, figli: {}, mosse: {}, infeasibleK2: {}".format(bestSolutionIndice,
                                                                                       dictSolutions[s][
                                                                                           bestSolutionIndice][0],
                                                                                       dictSolutions[s][
@@ -2122,7 +2122,9 @@ def writeOutput(nomeFileInput, s, dictSolutions, bestSolutionIndice, timeElapsed
                                                                                       dictSolutions[s][
                                                                                           bestSolutionIndice][5],
                                                                                       dictSolutions[s][
-                                                                                          bestSolutionIndice][6]))
+                                                                                          bestSolutionIndice][6],
+                                                                                      dictSolutions[s][
+                                                                                          bestSolutionIndice][7]))
     # pallet richiesti da ogni cliente
     trasportoPalletDiGamma = {}
     for k in dictSolutions[s][bestSolutionIndice][3]:

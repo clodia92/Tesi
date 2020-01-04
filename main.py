@@ -245,7 +245,7 @@ if __name__ == "__main__":
             print("\n\n\nSTART satellite: {}".format(s))
             start_timeS = time.time()
 
-            # lista delle soluzioni trovate: (cost, x2, w2, rotte, padri, figli, mossaDiArrivo)
+            # lista delle soluzioni trovate: (cost, x2, w2, rotte, padri, figli, mossaDiArrivo, infeasibleK2)
             # padri: lista di indici alle soluzioni di partenza in solutions
             # figli: lista di indici alle soluzioni ricavate in solutions
             # mossaDiArrivo: mossa che ha portato all'attuale soluzione
