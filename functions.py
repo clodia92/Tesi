@@ -2251,7 +2251,7 @@ def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSo
     for s in Sneg:
         file.write("\ns: {}".format(s))
         file.write(
-            "\nitNSI: {}, \ncosto: {}, \nrotte: {}".format(bestSolution[s][7], bestSolution[s][0], bestSolution[s][3]))
+            "\nitNSI: {}, \ncosto: {}, \nrotte: {}".format(bestSolution[s][8], bestSolution[s][0], bestSolution[s][3]))
         # pallet richiesti da ogni cliente
         trasportoPalletDiGamma = {}
         for k in bestSolution[s][3]:
