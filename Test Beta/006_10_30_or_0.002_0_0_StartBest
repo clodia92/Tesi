@@ -1,0 +1,183 @@
+itNSIMax: 10, itMosseTSMax: 30, beta: 0.002, penalty: 0%, uk2Increased: 0%.
+##########################################################################################
+s: 1, itNSI: 1.
+soluzione iniziale: 0
+0 -> 
+costo: 36230.299999999996, 
+rotte: {3: [(1, 2), (2, 4), (4, 7)], 2: [(1, 3), (3, 6), (6, 5)]}
+trasportoPalletDiGamma: {3: [(2, 6), (4, 17), (7, 11)], 2: [(3, 11), (6, 5), (5, 20)]}
+bestSolutionIndice: 20
+20 -> 
+costo: 33146.6, 
+rotte: {3: [(1, 3), (3, 2), (2, 7), (7, 6)], 2: [(1, 4), (4, 5)]}
+trasportoPalletDiGamma: {3: [(3, 11), (2, 6), (7, 11), (6, 5)], 2: [(4, 17), (5, 20)]}
+itMosseLS: 34, itMosseTS: 30
+numero di soluzioni totali trovati: 22.
+time elapsed: 1.03s.
+
+
+##########################################################################################
+s: 1, itNSI: 2.
+soluzione iniziale: 0
+0 -> 
+costo: 40975.399999999994, 
+rotte: {2: [(1, 5), (5, 3), (3, 2)], 3: [(1, 4), (4, 6), (6, 7)]}
+trasportoPalletDiGamma: {2: [(5, 20), (3, 11), (2, 6)], 3: [(4, 17), (6, 5), (7, 11)]}
+bestSolutionIndice: 8
+8 -> 
+costo: 30412.1, 
+rotte: {2: [(1, 3), (3, 2), (2, 4)], 3: [(1, 5), (5, 6), (6, 7)]}
+trasportoPalletDiGamma: {2: [(3, 11), (2, 6), (4, 17)], 3: [(5, 20), (6, 5), (7, 11)]}
+itMosseLS: 35, itMosseTS: 30
+numero di soluzioni totali trovati: 18.
+time elapsed: 0.94s.
+
+
+##########################################################################################
+s: 1, itNSI: 3.
+soluzione iniziale: 0
+0 -> 
+costo: 55455.6, 
+rotte: {3: [(1, 6), (6, 4), (4, 2), (2, 7)], 2: [(1, 5), (5, 3), (3, 7)]}
+trasportoPalletDiGamma: {3: [(6, 5), (4, 17), (2, 6), (7, 2)], 2: [(5, 20), (3, 11), (7, 9)]}
+bestSolutionIndice: 0
+0 -> 
+costo: 55455.6, 
+rotte: {3: [(1, 6), (6, 4), (4, 2), (2, 7)], 2: [(1, 5), (5, 3), (3, 7)]}
+trasportoPalletDiGamma: {3: [(6, 5), (4, 17), (2, 6), (7, 2)], 2: [(5, 20), (3, 11), (7, 9)]}
+itMosseLS: 35, itMosseTS: 30
+numero di soluzioni totali trovati: 15.
+time elapsed: 1.09s.
+
+
+##########################################################################################
+s: 1, itNSI: 4.
+soluzione iniziale: 0
+0 -> 
+costo: 36864.5, 
+rotte: {2: [(1, 6), (6, 5), (5, 7)], 3: [(1, 2), (2, 3), (3, 4)]}
+trasportoPalletDiGamma: {2: [(6, 5), (5, 20), (7, 11)], 3: [(2, 6), (3, 11), (4, 17)]}
+bestSolutionIndice: 3
+3 -> 
+costo: 30412.1, 
+rotte: {2: [(1, 5), (5, 6), (6, 7)], 3: [(1, 3), (3, 2), (2, 4)]}
+trasportoPalletDiGamma: {2: [(5, 20), (6, 5), (7, 11)], 3: [(3, 11), (2, 6), (4, 17)]}
+itMosseLS: 36, itMosseTS: 30
+numero di soluzioni totali trovati: 19.
+time elapsed: 0.68s.
+
+
+##########################################################################################
+s: 1, itNSI: 5.
+soluzione iniziale: 0
+0 -> 
+costo: 48984.5, 
+rotte: {2: [(1, 7), (7, 5), (5, 4)], 3: [(1, 2), (2, 6), (6, 3), (3, 4)]}
+trasportoPalletDiGamma: {2: [(7, 11), (5, 20), (4, 9)], 3: [(2, 6), (6, 5), (3, 11), (4, 8)]}
+bestSolutionIndice: 6
+6 -> 
+costo: 30412.1, 
+rotte: {2: [(1, 5), (5, 6), (6, 7)], 3: [(1, 3), (3, 2), (2, 4)]}
+trasportoPalletDiGamma: {2: [(5, 20), (6, 5), (7, 11)], 3: [(3, 11), (2, 6), (4, 17)]}
+itMosseLS: 39, itMosseTS: 30
+numero di soluzioni totali trovati: 22.
+time elapsed: 0.91s.
+
+
+##########################################################################################
+s: 1, itNSI: 6.
+soluzione iniziale: 0
+0 -> 
+costo: 47459.8, 
+rotte: {2: [(1, 7), (7, 2), (2, 3), (3, 6)], 3: [(1, 4), (4, 5), (5, 6)]}
+trasportoPalletDiGamma: {2: [(7, 11), (2, 6), (3, 11), (6, 2)], 3: [(4, 17), (5, 20), (6, 3)]}
+bestSolutionIndice: 5
+5 -> 
+costo: 30417.199999999997, 
+rotte: {2: [(1, 5), (5, 7), (7, 6)], 3: [(1, 3), (3, 2), (2, 4)]}
+trasportoPalletDiGamma: {2: [(5, 20), (7, 11), (6, 5)], 3: [(3, 11), (2, 6), (4, 17)]}
+itMosseLS: 37, itMosseTS: 30
+numero di soluzioni totali trovati: 25.
+time elapsed: 1.58s.
+
+
+##########################################################################################
+s: 1, itNSI: 7.
+soluzione iniziale: 0
+0 -> 
+costo: 45267.7, 
+rotte: {2: [(1, 6), (6, 4), (4, 3)], 3: [(1, 5), (5, 7), (7, 2)]}
+trasportoPalletDiGamma: {2: [(6, 5), (4, 17), (3, 11)], 3: [(5, 20), (7, 11), (2, 6)]}
+bestSolutionIndice: 14
+14 -> 
+costo: 30412.1, 
+rotte: {2: [(1, 5), (5, 6), (6, 7)], 3: [(1, 3), (3, 2), (2, 4)]}
+trasportoPalletDiGamma: {2: [(5, 20), (6, 5), (7, 11)], 3: [(3, 11), (2, 6), (4, 17)]}
+itMosseLS: 37, itMosseTS: 30
+numero di soluzioni totali trovati: 30.
+time elapsed: 1.32s.
+
+
+##########################################################################################
+s: 1, itNSI: 8.
+soluzione iniziale: 0
+0 -> 
+costo: 49087.3, 
+rotte: {3: [(1, 4), (4, 6), (6, 2), (2, 3)], 2: [(1, 7), (7, 5), (5, 3)]}
+trasportoPalletDiGamma: {3: [(4, 17), (6, 5), (2, 6), (3, 2)], 2: [(7, 11), (5, 20), (3, 9)]}
+bestSolutionIndice: 10
+10 -> 
+costo: 30417.199999999997, 
+rotte: {3: [(1, 3), (3, 2), (2, 4)], 2: [(1, 5), (5, 7), (7, 6)]}
+trasportoPalletDiGamma: {3: [(3, 11), (2, 6), (4, 17)], 2: [(5, 20), (7, 11), (6, 5)]}
+itMosseLS: 34, itMosseTS: 30
+numero di soluzioni totali trovati: 20.
+time elapsed: 1.07s.
+
+
+##########################################################################################
+s: 1, itNSI: 9.
+soluzione iniziale: 0
+0 -> 
+costo: 35728.399999999994, 
+rotte: {2: [(1, 6), (6, 5), (5, 7)], 3: [(1, 4), (4, 2), (2, 3)]}
+trasportoPalletDiGamma: {2: [(6, 5), (5, 20), (7, 11)], 3: [(4, 17), (2, 6), (3, 11)]}
+bestSolutionIndice: 7
+7 -> 
+costo: 30412.1, 
+rotte: {2: [(1, 5), (5, 6), (6, 7)], 3: [(1, 3), (3, 2), (2, 4)]}
+trasportoPalletDiGamma: {2: [(5, 20), (6, 5), (7, 11)], 3: [(3, 11), (2, 6), (4, 17)]}
+itMosseLS: 35, itMosseTS: 30
+numero di soluzioni totali trovati: 18.
+time elapsed: 0.84s.
+
+
+##########################################################################################
+s: 1, itNSI: 10.
+soluzione iniziale: 0
+0 -> 
+costo: 44734.59999999999, 
+rotte: {3: [(1, 6), (6, 4), (4, 2), (2, 5)], 2: [(1, 3), (3, 7), (7, 5)]}
+trasportoPalletDiGamma: {3: [(6, 5), (4, 17), (2, 6), (5, 2)], 2: [(3, 11), (7, 11), (5, 18)]}
+bestSolutionIndice: 16
+16 -> 
+costo: 30417.199999999997, 
+rotte: {3: [(1, 3), (3, 2), (2, 4)], 2: [(1, 5), (5, 7), (7, 6)]}
+trasportoPalletDiGamma: {3: [(3, 11), (2, 6), (4, 17)], 2: [(5, 20), (7, 11), (6, 5)]}
+itMosseLS: 33, itMosseTS: 30
+numero di soluzioni totali trovati: 18.
+time elapsed: 0.83s.
+
+
+##########################################################################################
+##########################################################################################
+##########################################################################################
+Soluzione migliore in assoluto trovata:
+
+s: 1
+itNSI: 2, 
+costo: 30412.1, 
+rotte: {2: [(1, 3), (3, 2), (2, 4)], 3: [(1, 5), (5, 6), (6, 7)]}
+trasportoPalletDiGamma: {2: [(3, 11), (2, 6), (4, 17)], 3: [(5, 20), (6, 5), (7, 11)]}
+
+Total time elapsed: 10.32s.
