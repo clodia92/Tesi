@@ -131,12 +131,12 @@ if __name__ == "__main__":
 ### SETTINGS
 
     print("Start Prob3: ")
-    myProb = Prob3("006")
+    myProb = Prob3("040")
 
     # modificare itNSI per modificare il numero di soluzioni iniziali da esplorare
-    itNSIMax = 10
+    itNSIMax = 50
     # modificare itMosseTSMax per modificare il numero iterazioni del Tabu Search da effettuare
-    itMosseTSMax = 20
+    itMosseTSMax = 5
     # modificare elapsedTimeTotalMax per modificare il tempo massimo di esecuzione (in secondi)
     elapsedTimeTotalMax = 3600
 
@@ -145,22 +145,24 @@ if __name__ == "__main__":
     #  1:   1-0 start
     # -1:   1-1 start
     #  0:   1-0 and 1-1
-    alternate10or11 = 0
+    alternate10or11 = 1
 
     # infeasible solutions: violare il vincolo35 (impostare entrambe a 0 per non permettere la violazione del vincolo)
     # penalità (in percentuale) da applicare al costo totale delle soluzioni non ammissibili
-    penalty = 20
+    penalty = 5
     # aumento di capacità (in percentuale) da applicare al vincolo35
-    uk2Increased = 50
+    uk2Increased = 10
 
     # granularity
-    # beta: valore che oscilla in un determinato intervallo. Se uguale a zero si annulla la soglia di granularità
-    beta = 0.01
-    # inizializzazione del valore soglia granularità
-    granularityThreshold = 0
+    # beta: valore che oscilla in un determinato intervallo (necessario al calocolo di granularityThreshold). Se uguale a zero si annulla la soglia di granularità
+    beta = 0.005
 
 ### SETTINGS
 ########################################################################################################################
+
+    # inizializzazione del valore soglia granularità
+    granularityThreshold = 0
+
     # creazione file: il file vecchio viene sovrascritto
     pathlib.Path('outputTabuSearchProb3').mkdir(parents=True, exist_ok=True)
     if alternate10or11 == 0:
@@ -557,7 +559,6 @@ if __name__ == "__main__":
                         heapq.heapify(heapSMD)
 
                     # non esiste mossa migliorativa
-                    # oppure è stato raggiunto il tempo massimo
                     # e sono state esplorati entrambi i tipi di mossa
                     elif keyLocalSearch == -1 and costNew == cost and flagTried10and11 == True:
                         # elapsedTimeTotal = time.time() - startTimeTotal
