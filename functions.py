@@ -2250,6 +2250,7 @@ def writeOutputStartBestwriteOutputStartBestAssoluta(nomeFileInput, Sneg, bestSo
     # scrittura della soluzione migliore per ogni satellite
     for s in Sneg:
         file.write("\ns: {}".format(s))
+        print("bestSolution", bestSolution)
         file.write(
             "\nitNSI: {}, \ncosto: {}, \nrotte: {}".format(bestSolution[s][8], bestSolution[s][0], bestSolution[s][3]))
         # pallet richiesti da ogni cliente
