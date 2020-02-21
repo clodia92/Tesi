@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import csv
+from pathlib import Path
 
 
 class readFile:
@@ -100,7 +101,8 @@ class readFile:
         self.A2fromPark = []
         self.A2toPark = []
 
-        with open(nomeFile + ".csv") as csvfile:
+        nomeFilePath = Path("input/" + nomeFile)
+        with open(str(nomeFilePath) + ".csv") as csvfile:
             spamreader = csv.reader(csvfile, delimiter=",")
             for row in spamreader:
 
